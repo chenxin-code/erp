@@ -1,0 +1,56 @@
+<!-- UM 文本编辑器 -->
+<link rel="stylesheet" href="__RES__/umeditor/themes/default/css/umeditor.css">
+<script src="__RES__/umeditor/umeditor.config.js"></script>
+<script src="__RES__/umeditor/umeditor.min.js"></script>
+<script src="__RES__/umeditor/lang/zh-cn/zh-cn.js"></script>
+
+<div id="VueBox">
+    <div id="Descr"></div>
+    <button class="btn" @click="saveDescr()">保存</button>
+    <button class="btn" @click="back()">返回</button>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Id: '{:I(\'get.Id\')}',
+            Descr: '{$Descr}'
+        },
+        methods: {
+            saveDescr: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'saveDescr_api\')}',
+                    type: 'post',
+                    data: {
+                        Id: _this.Id,
+                        Descr: UM.getEditor('Descr').getContent()
+                    },
+                    //beforeSend: function () {},
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            swal({type: 'success', title: respon.msg}).then(function () {
+                                _this.back();
+                            });
+                        }else{
+                            swal({type: 'error', title: respon.msg});
+                        }
+                    }
+                });
+            },
+            back: function () {
+                window.location.href = '{:U(\'lists\')}?lastCurPage={$_GET[\'lastCurPage\']}';
+            }
+        },
+        mounted: function () {
+            UM.getEditor('Descr',{
+                initialContent: this.Descr,
+                initialFrameWidth: '100%',
+                initialFrameHeight: 500,
+                initialStyle: '.edui-container{margin:15px auto;color:#000;}textarea{color:#000;}'
+            });
+        }
+    });
+</script>

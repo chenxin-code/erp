@@ -1,0 +1,40 @@
+<script src="__RES__/qrcode.min.js"></script>
+
+<style>
+    #qrcode img {
+        margin: 100px auto 15px auto;
+        width: 150px;
+    }
+</style>
+
+<div id="VueBox">
+    <pay-header flag="{$HeaderFlag}" index_url="{:U('Wap0/Index1/index')}" menu_url="{:U('Wap0/Index/menu')}"></pay-header>
+    <div id="qrcode"></div>
+    <div style="text-align: center;">
+        请使用微信扫一扫<br>扫描二维码支付<br>
+        <span style="font-size: 22px;color: #1aad19;word-break: break-all;">¥{$PayAmount}</span>
+    </div>
+    <div style="margin: 30px auto 20px;padding: 5px 0;width: 150px;color: #fff;background-color: #1aad19;text-align: center;border-radius: 5px;cursor: pointer;" @click="Done()">已完成支付</div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            qrcode: null
+        },
+        methods: {
+            Done: function () {
+                if('{$CusPoNo}'.indexOf(',') === -1){
+                    window.location.href = '{:U(\'Order/detail\')}?CusPoNo={$CusPoNo}';
+                }else{
+                    window.location.href = '{:U(\'Wap0/Weborder/lists\')}';
+                }
+            }
+        },
+        mounted: function () {
+            this.qrcode = new QRCode('qrcode');
+            this.qrcode.makeCode('{$code_url}');
+        }
+    });
+</script>

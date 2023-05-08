@@ -1,0 +1,176 @@
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-filter-box">
+        <div class="tab">
+            <div @click="changeTab('all')" :class="{'active':State === 'all'}" style="flex: 0 0 25%;">
+                <i class="iconfont icon-quanbu1"></i>&nbsp;全部
+            </div>
+            <div @click="changeTab('1')" :class="{'active-red':State === '1'}" style="flex: 0 0 50%;">
+                <i class="iconfont icon-diyu"></i>&nbsp;小于安全库存的
+            </div>
+            <div @click="changeTab('2')" :class="{'active':State === '2'}" style="flex: 0 0 50%;">
+                <i class="iconfont icon-gaoyu"></i>&nbsp;大于上限库存的
+            </div>
+            <div @click="changeTab('3')" :class="{'active':State === '3'}" style="flex: 0 0 50%;">
+                <i class="iconfont icon-weibiaoti-"></i>&nbsp;仅显示有库存的
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="filter" @click="OpenSlider()">
+            <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+        </div>
+    </div>
+    <el-table :data="lists" border stripe style="margin-top: 80px;" :row-class-name="tableRowClassName" :height="$(document).height() - 80">
+        <el-table-column prop="PaperCode" label="原纸代码" width="80" fixed></el-table-column>
+        <el-table-column prop="PaperWidth" label="门幅" width="80" fixed></el-table-column>
+        <el-table-column prop="PCount" label="库存件数"></el-table-column>
+        <el-table-column prop="SafeCount" label="安全库存"></el-table-column>
+        <el-table-column prop="MaxCount" label="上限库存"></el-table-column>
+        <el-table-column prop="PaperType" label="纸种类型"></el-table-column>
+        <el-table-column prop="PaperName" label="纸种名称" width="100"></el-table-column>
+        <el-table-column prop="SRemark" label="生产备注" width="150"></el-table-column>
+    </el-table>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row2">
+                    <div class="title">纸种类型</div>
+                    <label :class="{'checked':form.PaperType === ''}">
+                        全部<input type="radio" value="" v-model="form.PaperType" hidden>
+                    </label>
+                    <label :class="{'checked':form.PaperType === '0'}">
+                        无<input type="radio" value="0" v-model="form.PaperType" hidden>
+                    </label>
+                    <label :class="{'checked':form.PaperType === '1'}">
+                        牛皮挂面<input type="radio" value="1" v-model="form.PaperType" hidden>
+                    </label>
+                    <label :class="{'checked':form.PaperType === '2'}">
+                        涂布白板<input type="radio" value="2" v-model="form.PaperType" hidden>
+                    </label>
+                    <label :class="{'checked':form.PaperType === '3'}">
+                        瓦纸<input type="radio" value="3" v-model="form.PaperType" hidden>
+                    </label>
+                </div>
+                <div class="row1">
+                    <div class="title">原纸代码</div>
+                    <input v-model="form.PaperCode" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">门幅</div>
+                    <input type="number" v-model="form.PaperWidth" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">纸种名称</div>
+                    <input v-model="form.PaperName" class="input" placeholder="模糊查询">
+                </div>
+                <div class="row1">
+                    <div class="title">生产备注</div>
+                    <input v-model="form.SRemark" class="input" placeholder="模糊查询">
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            State: '{$rememberTab}'?'{$rememberTab}':'all',
+            form: {
+                PaperType: '',
+                PaperCode: '',
+                PaperWidth: '',
+                PaperName: '',
+                SRemark: '',
+                rememberForm: 'no'
+            },
+            //打开侧边栏前的form对象
+            BeforeOpenSliderForm: {},
+            BarVisible: false,
+            tempTop: 0,
+            lists: [],
+        },
+        methods: {
+            GetSafeStockQ: function () {
+                var _this = this;
+                _this.lists = [];
+                $.ajax({
+                    url: '{:U(\'GetSafeStockQ_api\')}',
+                    type: 'get',
+                    data: {
+                        State: _this.State,
+                        form: _this.form
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.lists = eval('(' + respon + ')');
+                    },
+                });
+            },
+            tableRowClassName: function ({row,rowIndex}) {
+                if(row.PCount < row.SafeCount){
+                    return 'warning-row';
+                }else{
+                    return '';
+                }
+            },
+            changeTab: function (value) {
+                if(this.State !== value){
+                    this.State = value;
+                    this.GetSafeStockQ();
+                }
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm
+                    //&& !checkObjectIsEqual(this.form,this.BeforeOpenSliderForm)
+                ){
+                    this.GetSafeStockQ();
+                }else{
+                    this.ResetForm();
+                }
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form,eval('(' + '{$rememberForm}' + ')'));
+            this.GetSafeStockQ();
+        },
+    });
+</script>

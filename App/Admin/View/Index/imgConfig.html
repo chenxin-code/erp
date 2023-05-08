@@ -1,0 +1,205 @@
+<style>
+    .el-tabs__item.is-active {
+        color: #1a991d;
+    }
+    .el-tabs__item:hover {
+        color: #1a991d;
+    }
+    .el-tabs__active-bar {
+        background-color: #1a991d;
+    }
+    /***********************************/
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        font-size: 28px;
+        color: #8c939d;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>
+
+<div id="VueBox">
+    <el-tabs v-model="module">
+        <el-tab-pane label="厂商logo" name="厂商logo">
+            <form>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>厂商logo</td>
+                        <td>
+                            <el-upload class="avatar-uploader" action="{:U('setFactoryLogo_api')}" name="pic" :on-success="OnSuccessFactoryLogo" :show-file-list="false">
+                                <img class="avatar" :src="FactoryLogoSrc" v-if="FactoryLogoSrc">
+                                <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+                            </el-upload>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </el-tab-pane>
+        <el-tab-pane label="首页图片" name="首页图片">
+            <form>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>广告</td>
+                        <td>
+                            <el-upload action="{:U('addAdverPic_api')}" name="pic" :on-preview="OnPreview" :on-remove="OnRemove" list-type="picture-card" :file-list="AdverPic">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-dialog :visible.sync="elDialogVisible">
+                                <img :src="elDialogImgSrc" width="100%">
+                            </el-dialog>
+                        </td>
+                    </tr>
+                    <tr v-if="UseBoardGroup">
+                        <td>纸板团购</td>
+                        <td>
+                            <el-upload class="avatar-uploader" action="{:U('setBoardGroupPic_api')}" name="pic" :on-success="OnSuccessBoardGroupPic" :show-file-list="false">
+                                <img class="avatar" :src="BoardGroupPicSrc" v-if="BoardGroupPicSrc">
+                                <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+                            </el-upload>
+                        </td>
+                    </tr>
+                    <tr v-if="UseBoardGroup">
+                        <td>纸板团购（{$config['BoardFlag']}）</td>
+                        <td>
+                            <el-upload class="avatar-uploader" action="{:U('setFlagBoardGroupPic_api')}" name="pic" :on-success="OnSuccessFlagBoardGroupPic" :show-file-list="false">
+                                <img class="avatar" :src="FlagBoardGroupPicSrc" v-if="FlagBoardGroupPicSrc">
+                                <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+                            </el-upload>
+                        </td>
+                    </tr>
+                    <tr v-if="UseBoxGroup">
+                        <td>淘宝箱团购</td>
+                        <td>
+                            <el-upload class="avatar-uploader" action="{:U('setBoxGroupPic_api')}" name="pic" :on-success="OnSuccessBoxGroupPic" :show-file-list="false">
+                                <img class="avatar" :src="BoxGroupPicSrc" v-if="BoxGroupPicSrc">
+                                <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+                            </el-upload>
+                        </td>
+                    </tr>
+                    <tr v-if="UseBoxGroup">
+                        <td>淘宝箱团购（{$config['BoxFlag']}）</td>
+                        <td>
+                            <el-upload class="avatar-uploader" action="{:U('setFlagBoxGroupPic_api')}" name="pic" :on-success="OnSuccessFlagBoxGroupPic" :show-file-list="false">
+                                <img class="avatar" :src="FlagBoxGroupPicSrc" v-if="FlagBoxGroupPicSrc">
+                                <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+                            </el-upload>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </el-tab-pane>
+    </el-tabs>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            module: '厂商logo',
+            FactoryLogoSrc: null,
+            AdverPic: [],
+            elDialogVisible: false,
+            elDialogImgSrc: null,
+            BoardGroupPicSrc: null,
+            FlagBoardGroupPicSrc: null,
+            BoxGroupPicSrc: null,
+            FlagBoxGroupPicSrc: null,
+            UseBoardGroup: Number('{$config[\'UseBoardGroup\']}'),
+            UseBoxGroup: Number('{$config[\'UseBoxGroup\']}')
+        },
+        methods: {
+            OnSuccessFactoryLogo: function (res,file) {
+                this.FactoryLogoSrc = URL.createObjectURL(file.raw);
+            },
+            OnPreview: function (file) {
+                this.elDialogImgSrc = file.url;
+                this.elDialogVisible = true;
+            },
+            OnRemove: function (file) {
+                $.ajax({
+                    url: '{:U(\'delAdverPic_api\')}',
+                    type: 'get',
+                    data: {Pic: file.name}
+                });
+            },
+            OnSuccessBoardGroupPic: function (res,file) {
+                this.BoardGroupPicSrc = URL.createObjectURL(file.raw);
+            },
+            OnSuccessFlagBoardGroupPic: function (res,file) {
+                this.FlagBoardGroupPicSrc = URL.createObjectURL(file.raw);
+            },
+            OnSuccessBoxGroupPic: function (res,file) {
+                this.BoxGroupPicSrc = URL.createObjectURL(file.raw);
+            },
+            OnSuccessFlagBoxGroupPic: function (res,file) {
+                this.FlagBoxGroupPicSrc = URL.createObjectURL(file.raw);
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            $.ajax({
+                url: '{:U(\'showFactoryLogo_api\')}',
+                success: function (respon) {
+                    _this.FactoryLogoSrc = '__RES__/' + eval('(' + respon + ')');
+                }
+            });
+            $.ajax({
+                url: '{:U(\'showAdverPic_api\')}',
+                success: function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    $.each(respon,function (k,v) {
+                        _this.AdverPic.push({name: v,url: '__RES__/' + v});
+                    });
+                }
+            });
+            if(_this.UseBoardGroup){
+                $.ajax({
+                    url: '{:U(\'showBoardGroupPic_api\')}',
+                    success: function (respon) {
+                        _this.BoardGroupPicSrc = '__RES__/' + eval('(' + respon + ')');
+                    }
+                });
+                $.ajax({
+                    url: '{:U(\'showFlagBoardGroupPic_api\')}',
+                    success: function (respon) {
+                        _this.FlagBoardGroupPicSrc = '__RES__/' + eval('(' + respon + ')');
+                    }
+                });
+            }
+            if(_this.UseBoxGroup){
+                $.ajax({
+                    url: '{:U(\'showBoxGroupPic_api\')}',
+                    success: function (respon) {
+                        _this.BoxGroupPicSrc = '__RES__/' + eval('(' + respon + ')');
+                    }
+                });
+                $.ajax({
+                    url: '{:U(\'showFlagBoxGroupPic_api\')}',
+                    success: function (respon) {
+                        _this.FlagBoxGroupPicSrc = '__RES__/' + eval('(' + respon + ')');
+                    }
+                });
+            }
+        }
+    });
+</script>

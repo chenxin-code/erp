@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+{__NOLAYOUT__}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes">
+    <link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+    <title>图表单独显示</title>
+    <script src="__RES__/vue.js"></script>
+    <!-- jQuery -->
+    <script src="__RES__/jquery.min.js"></script>
+    <!-- jQuery WeUI -->
+    <link rel="stylesheet" href="__RES__/jqweui/css/weui.min.css">
+    <link rel="stylesheet" href="__RES__/jqweui/css/jquery-weui.min.css">
+    <script src="__RES__/jqweui/js/jquery-weui.min.js"></script>
+    <!-- 引入highcharts插件 -->
+    <script src="__RES__/highcharts/highcharts.js"></script>
+    <script src="__RES__/highcharts/highcharts-3d.js"></script>
+    <script src="__RES__/highcharts/exporting.js"></script>
+    <script src="__RES__/highcharts/highcharts-zh_CN.js"></script>
+    <script src="__RES__/highcharts/offline-exporting.js"></script>
+    <script src="__RES__/highcharts_diy_func.js?time={:time()}"></script>
+
+    <style>
+        a {
+            display: block;
+            width: 150px;
+            height: 40px;
+            line-height: 40px;
+            margin: 25px auto;
+            text-align: center;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 5px;
+            box-shadow: inset 0 0.3rem 0.2rem rgba(255, 255, 255, 0.2), inset 0 -0.3rem 0.2rem rgba(0, 0, 0, 0.2), 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="VueBox">
+        <div id="pie_3d" v-show="pie_3d"></div>
+        <div id="pie_basic" v-show="pie_basic"></div>
+        <div id="pie_donut_3d" v-show="pie_donut_3d"></div>
+        <div id="column_rotated_labels" v-show="column_rotated_labels"></div>
+        <div id="line_basic" v-show="line_basic"></div>
+        <div id="line_time_series" v-show="line_time_series"></div>
+
+        <a @click="GetSchSum()" v-show="button" style="background-color: #1aad19;">刷新图表</a>
+        <a href='{:U("GetSchSum")}?Params={$_GET["Params"]}' v-show="button" style="background-color: orangered;">返回原图表</a>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#VueBox',
+            data: {
+                Params: eval('(' + '{$_GET[\'Params\']}' + ')'),
+                highcharts: {
+                    title: '',
+                    mark: '',
+                    data: []
+                },
+                pie_3d: false, pie_basic: false, pie_donut_3d: false, column_rotated_labels: false, line_basic: false, line_time_series: false,
+                button: false
+            },
+            methods: {
+                BuildApiParams: function () {
+                    return {
+                        State: this.Params.State.value,
+                        form: this.Params.form,
+                    };
+                },
+                GetSchSum: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: '{:U(\'GetSchSum_api\')}',
+                        type: 'get',
+                        data: _this.BuildApiParams(),
+                        success: function (respon) {
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret !== '{:C(\'succ_ret\')}'){
+                                $.toast(respon.msg,'forbidden');return;
+                            }
+                            switch (_this.Params.prop.value) {
+                                case 'sumOrdArea': _this.highcharts.mark = '总订单面积';break;
+                                case 'sumLength': _this.highcharts.mark = '总长度';break;
+                                case 'AvgTrim': _this.highcharts.mark = '平均修边';break;
+                                case 'AvgPW': _this.highcharts.mark = '平均门幅';break;
+                                case 'sumCount': _this.highcharts.mark = '总款数';break;
+                            }
+                            if(_this.Params.State.value === ''){
+                                _this.highcharts.title = '汇总';
+                                //汇总其实只有1条数据，为了严谨还是按遍历的写法来构建图表数据
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = ['汇总',Number(v[_this.Params.prop.value])];
+                                });
+                            }else if(_this.Params.State.value === '1'){
+                                _this.highcharts.title = '生产线分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.LineId,Number(v[_this.Params.prop.value])];
+                                });
+                            }else if(_this.Params.State.value === '2'){
+                                _this.highcharts.title = '门幅分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.SPaperWidth,Number(v[_this.Params.prop.value])];
+                                });
+                            }else if(_this.Params.State.value === '3'){
+                                _this.highcharts.title = '坑型分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.Flutes,Number(v[_this.Params.prop.value])];
+                                });
+                            }
+                            if(_this.Params.type.value === 'pie_3d'){
+                                //3D饼状图
+                                _this.pie_3d = true;
+                                var obj = pie_3d(_this.highcharts);
+                                $('#pie_3d').highcharts(obj);
+                            }else if(_this.Params.type.value === 'pie_basic'){
+                                //饼状图
+                                _this.pie_basic = true;
+                                var obj = pie_basic(_this.highcharts);
+                                $('#pie_basic').highcharts(obj);
+                            }else if(_this.Params.type.value === 'pie_donut_3d'){
+                                //3D环形图
+                                _this.pie_donut_3d = true;
+                                var obj = pie_donut_3d(_this.highcharts);
+                                $('#pie_donut_3d').highcharts(obj);
+                            }else if(_this.Params.type.value === 'column_rotated_labels'){
+                                //柱状图
+                                _this.column_rotated_labels = true;
+                                var obj = column_rotated_labels(_this.highcharts);
+                                $('#column_rotated_labels').highcharts(obj);
+                            }else if(_this.Params.type.value === 'line_basic'){
+                                //直线图
+                                _this.line_basic = true;
+                                var obj = line_basic(_this.highcharts);
+                                $('#line_basic').highcharts(obj);
+                            }else if(_this.Params.type.value === 'line_time_series'){
+                                //走势图
+                                _this.line_time_series = true;
+                                var obj = line_time_series(_this.highcharts);
+                                $('#line_time_series').highcharts(obj);
+                            }
+                            _this.button = true;
+                        }
+                    });
+                }
+            },
+            mounted: function () {
+                this.GetSchSum();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <el-table :data="lists" border stripe style="margin-top: 40px;" :height="$(document).height() - 40">
+        <el-table-column prop="SAreaCode" label="库区" width="60"></el-table-column>
+        <el-table-column prop="MaxSArea" label="库区面积"></el-table-column>
+        <el-table-column prop="CurSArea" label="已用面积"></el-table-column>
+        <el-table-column prop="LeftArea" label="剩余面积"></el-table-column>
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            lists: [],
+        },
+        mounted: function () {
+            var _this = this;
+            $.ajax({
+                url: '{:U(\'deliveryArea_api\')}',
+                beforeSend: function () {
+                    _this.$indicator.open();
+                },
+                success: function (respon) {
+                    _this.$indicator.close();
+                    _this.lists = eval('(' + respon + ')');
+                },
+            });
+        },
+    });
+</script>

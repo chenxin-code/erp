@@ -1,0 +1,193 @@
+<div id="VueBox">
+    <form>
+        <table>
+            <tr>
+                <td>货品编号</td>
+                <td>
+                    <el-select placeholder="输入关键字查找" filterable v-model="MatNo">
+                        <el-option :value="v.MatNo" v-for="v in BOrdCardSelect"></el-option>
+                    </el-select>
+                </td>
+            </tr>
+            <tr>
+                <td>标题</td>
+                <td>
+                    <input style="width: 300px;" placeholder="可省略" v-model="Title">
+                </td>
+            </tr>
+            <tr>
+                <td>区间价</td>
+                <td>
+                    <input type="checkbox" true-value="1" false-value="0" v-model="IsRangePrice">
+                </td>
+            </tr>
+            <tr>
+                <td>价格</td>
+                <td v-if="Number(IsRangePrice)">
+                    <input type="number" style="width: 100px;" v-model="BuildMin">&nbsp;&nbsp;个
+                    &nbsp;~&nbsp;
+                    <input type="number" style="width: 100px;" v-model="FirstTo">&nbsp;&nbsp;个
+                    &nbsp;=&nbsp;
+                    <input type="number" style="width: 100px;" v-model="FirstPrice">&nbsp;&nbsp;元/个
+                    &nbsp;&nbsp;
+                    <span class="btn" @click="RangePrice.splice(0,0,{From: null,To: null,Price: null})">+</span>
+                    <span v-for="(v,k) in RangePrice">
+                        <br><br>
+                        <input type="number" style="width: 100px;" v-model="v.From">&nbsp;&nbsp;个
+                        &nbsp;~&nbsp;
+                        <input type="number" style="width: 100px;" v-model="v.To">&nbsp;&nbsp;个
+                        &nbsp;=&nbsp;
+                        <input type="number" style="width: 100px;" v-model="v.Price">&nbsp;&nbsp;元/个
+                        &nbsp;&nbsp;
+                        <span class="btn" @click="RangePrice.splice(k + 1,0,{From: null,To: null,Price: null})">+</span>
+                        <span class="btn" @click="RangePrice.splice(k,1)">-</span>
+                    </span>
+                    <br><br>
+                    <input type="number" style="width: 100px;" v-model="LastFrom">&nbsp;&nbsp;个
+                    &nbsp;~&nbsp;
+                    <input type="number" style="width: 100px;" v-model="BuildMax">&nbsp;&nbsp;个
+                    &nbsp;=&nbsp;
+                    <input type="number" style="width: 100px;" v-model="LastPrice">&nbsp;&nbsp;元/个
+                </td>
+                <td v-else>
+                    <input type="number" style="width: 100px;" v-model="Price">&nbsp;&nbsp;元/个
+                </td>
+            </tr>
+            <tr>
+                <td>市场价</td>
+                <td>
+                    <input type="number" style="width: 100px;" v-model="MarketPrice">&nbsp;&nbsp;元/个
+                </td>
+            </tr>
+            <tr>
+                <td>下单范围</td>
+                <td>
+                    <input type="number" style="width: 100px;" v-model="BuildMin">&nbsp;&nbsp;个
+                    &nbsp;~&nbsp;
+                    <input type="number" style="width: 100px;" v-model="BuildMax">&nbsp;&nbsp;个
+                </td>
+            </tr>
+            <tr>
+                <td>单客户限量</td>
+                <td>
+                    <input type="number" style="width: 100px;" v-model="CusMax">&nbsp;&nbsp;个
+                </td>
+            </tr>
+            <tr>
+                <td>总客户限量</td>
+                <td>
+                    <input type="number" style="width: 100px;" v-model="Total">&nbsp;&nbsp;个
+                </td>
+            </tr>
+            <tr>
+                <td>团购时间</td>
+                <td>
+                    <el-date-picker
+                            type="datetimerange"
+                            start-placeholder="开始时间"
+                            end-placeholder="结束时间"
+                            range-separator="~"
+                            v-model="DateTime">
+                    </el-date-picker>
+                </td>
+            </tr>
+            <tr>
+                <td>默认图片</td>
+                <td>
+                    <input type="checkbox" true-value="1" false-value="0" v-model="DefaultPic">
+                </td>
+            </tr>
+            <tr>
+                <td>“{$config['BoxFlag']}”</td>
+                <td>
+                    <input type="checkbox" true-value="1" false-value="0" v-model="IsFlag">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <input type="submit" class="btn" value="添加" style="margin: 20px 10px 0 0;" @click="add()">
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            MatNo: null,
+            BOrdCardSelect: eval('(' + '{$BOrdCardSelect}' + ')'),
+            Title: null,
+            IsRangePrice: 0,
+            RangePrice: [],
+            FirstTo: null,
+            FirstPrice: null,
+            LastFrom: null,
+            LastPrice: null,
+            Price: null,
+            MarketPrice: null,
+            BuildMin: null,
+            BuildMax: null,
+            CusMax: null,
+            Total: null,
+            DateTime: [],
+            DefaultPic: 1,
+            IsFlag: 0
+        },
+        methods: {
+            add: function () {
+                var _this = this;
+                if(!_this.MatNo){swal({type: 'error', title: '请选择货品编号'});return;}
+                if(Number(_this.IsRangePrice)){
+                    if(!_this.FirstTo || !_this.FirstPrice || !_this.LastFrom || !_this.LastPrice){
+                        swal({type: 'error', title: '区间价信息不完整'});return;
+                    }
+                    $.each(_this.RangePrice,function (k,v) {
+                        if(!v.From || !v.To || !v.Price){
+                            swal({type: 'error', title: '区间价信息不完整'});return false;
+                        }
+                    });
+                }else{
+                    if(!_this.Price){swal({type: 'error', title: '请输入价格'});return;}
+                }
+                if(!_this.MarketPrice){swal({type: 'error', title: '请输入市场价'});return;}
+                if(!_this.BuildMin || !_this.BuildMax){swal({type: 'error', title: '请输入下单范围'});return;}
+                if(!_this.CusMax){swal({type: 'error', title: '请输入单客户限量'});return;}
+                if(!_this.Total){swal({type: 'error', title: '请输入总客户限量'});return;}
+                if(!_this.DateTime){swal({type: 'error', title: '请输入团购时间'});return;}
+                $.ajax({
+                    url: '{:U(\'add_api\')}',
+                    type: 'get',
+                    data: {
+                        MatNo: _this.MatNo,
+                        Title: _this.Title,
+                        IsRangePrice: _this.IsRangePrice,
+                        RangePrice: _this.RangePrice,
+                        FirstTo: _this.FirstTo,
+                        FirstPrice: _this.FirstPrice,
+                        LastFrom: _this.LastFrom,
+                        LastPrice: _this.LastPrice,
+                        Price: _this.Price,
+                        MarketPrice: _this.MarketPrice,
+                        BuildMin: _this.BuildMin,
+                        BuildMax: _this.BuildMax,
+                        CusMax: _this.CusMax,
+                        Total: _this.Total,
+                        BeginTime: datetimeFormat(_this.DateTime[0],'yyyy-MM-dd hh:mm:ss'),
+                        EndTime: datetimeFormat(_this.DateTime[1],'yyyy-MM-dd hh:mm:ss'),
+                        DefaultPic: _this.DefaultPic,
+                        IsFlag: _this.IsFlag
+                    },
+                    //beforeSend: function () {},
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            swal({type: 'success', title: respon.msg}).then(function () {
+                                window.location.href = '{:U(\'lists\')}';
+                            });
+                        }else{
+                            swal({type: 'error', title: respon.msg});
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>

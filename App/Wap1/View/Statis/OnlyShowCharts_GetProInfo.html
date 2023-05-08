@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{__NOLAYOUT__}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes">
+    <link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+    <title>图表单独显示</title>
+    <script src="__RES__/vue.js"></script>
+    <!-- jQuery -->
+    <script src="__RES__/jquery.min.js"></script>
+    <!-- jQuery WeUI -->
+    <link rel="stylesheet" href="__RES__/jqweui/css/weui.min.css">
+    <link rel="stylesheet" href="__RES__/jqweui/css/jquery-weui.min.css">
+    <script src="__RES__/jqweui/js/jquery-weui.min.js"></script>
+    <!-- 引入highcharts插件 -->
+    <script src="__RES__/highcharts/highcharts.js"></script>
+    <script src="__RES__/highcharts/highcharts-3d.js"></script>
+    <script src="__RES__/highcharts/exporting.js"></script>
+    <script src="__RES__/highcharts/highcharts-zh_CN.js"></script>
+    <script src="__RES__/highcharts/offline-exporting.js"></script>
+
+    <style>
+        a {
+            display: block;
+            width: 150px;
+            height: 40px;
+            line-height: 40px;
+            margin: 25px auto;
+            text-align: center;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 5px;
+            box-shadow: inset 0 0.3rem 0.2rem rgba(255, 255, 255, 0.2), inset 0 -0.3rem 0.2rem rgba(0, 0, 0, 0.2), 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="VueBox">
+        <div id="column_negative" v-show="column_negative"></div>
+
+        <a @click="GetProInfo()" v-show="button" style="background-color: #1aad19;">刷新图表</a>
+        <a href='{:U("GetProInfo")}?Params={$_GET["Params"]}' v-show="button" style="background-color: orangered;">返回原图表</a>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#VueBox',
+            data: {
+                Params: eval('(' + '{$_GET[\'Params\']}' + ')'),
+                highcharts: {
+                    CateName: [],
+                    sumOrdArea: [],
+                    sumAmt: []
+                },
+                column_negative: false,
+                button: false
+            },
+            methods: {
+                BuildApiParams: function () {
+                    return {
+                        form: this.Params.form,
+                    };
+                },
+                GetProInfo: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: '{:U(\'GetProInfo_api\')}',
+                        type: 'get',
+                        data: _this.BuildApiParams(),
+                        success: function (respon) {
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret !== '{:C(\'succ_ret\')}'){
+                                $.toast(respon.msg,'forbidden');return;
+                            }
+                            _this.column_negative = true;
+                            $(respon.data).each(function(k,v){
+                                _this.highcharts.CateName[k] = v.CateName;
+                                _this.highcharts.sumOrdArea[k] = Number(v.sumOrdArea);
+                                _this.highcharts.sumAmt[k] = Number(v.sumAmt);
+                            });
+                            $('#column_negative').highcharts({
+                                chart: {
+                                    type: 'column',
+                                    zoomType: 'xy',
+                                    panning: true,
+                                    panKey: 'shift'
+                                },
+                                title: {text: ''},
+                                xAxis: {categories: _this.highcharts.CateName},
+                                yAxis: {title: {text: ''}},
+                                credits: {enabled: false},
+                                series: [{
+                                    name: '总订单面积(㎡)',
+                                    data: _this.highcharts.sumOrdArea
+                                },{
+                                    name: '总金额(元)',
+                                    data: _this.highcharts.sumAmt
+                                }]
+                            });
+                            _this.button = true;
+                        }
+                    });
+                }
+            },
+            mounted: function () {
+                this.GetProInfo();
+            }
+        });
+    </script>
+</body>
+</html>

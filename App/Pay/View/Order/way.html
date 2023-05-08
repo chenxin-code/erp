@@ -1,0 +1,103 @@
+<style>
+    body {
+        background-color: #f2f2f2;
+    }
+    .way-item {
+        padding: 7px 10px 7px 14px;
+        height: 50px;
+        background-color: #fff;
+        cursor: pointer;
+        position: relative;
+    }
+    .way-item::before {
+        content: '';
+        display: inline-block;
+        margin-top: -6px;
+        height: 8px;
+        width: 8px;
+        border-width: 1.5px 1.5px 0 0;
+        border-color: #c8c8cd;
+        border-style: solid;
+        transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+        position: absolute;
+        top: 50%;
+        right: 15px;
+    }
+    .way-item::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        bottom: 0;
+        left: 5px;
+        right: 0;
+    }
+    .way-item:last-child::after {
+        left: 0;
+    }
+    .way-item img {
+        margin: 5px 15px 5px 0;
+        width: 40px;
+        height: 40px;
+        vertical-align: middle;
+    }
+    .way-item span {
+        line-height: 50px;
+        font-size: 16px;
+    }
+</style>
+
+<div id="VueBox">
+    <pay-header flag="{$HeaderFlag}" index_url="{:U('Wap0/Index1/index')}" menu_url="{:U('Wap0/Index/menu')}"></pay-header>
+    <div style="margin: 40px 0 12px;padding: 25px 0 15px 0;background-color: #fff;position: relative;">
+        <div style="padding: 0 10px;font-size: 14px;color: #696969;text-align: center;word-break: break-all;">{$orderName}</div>
+        <div style="margin-top: 5px;font-size: 28px;color: #1aad19;text-align: center;">¥{$PayAmount}</div>
+        <vue2-countdown
+                :start-time="{$PayDeadlineTime}"
+                :end-time="{$PayDeadlineTime}"
+                :current-time="'{:time()}'"
+                :tip-text="'有效时间剩余'"
+                :end-text="'已超出有效时间'"
+                v-on:end_callback="valid = false"
+                style="margin-top: 10px;font-size: 15px;text-align: center;">
+        </vue2-countdown>
+        <div style="padding: 0 3px;font-size: 12px;color: #fff;background-color: #4b0;position: absolute;top: 0;right: 0;" v-if="Number('{$OneCentPay}')">1分钱支付</div>
+    </div>
+    <div class="way-item" @click="pay('wx')" v-if="Number('{$config[\'UseWxPay\']}')">
+        <img src="__RES__/wx.png">
+        <span>微信支付</span>
+    </div>
+    <div class="way-item" @click="pay('ali')" v-if="Number('{$config[\'UseAliPay\']}')">
+        <img src="__RES__/ali.png">
+        <span>支付宝支付</span>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            valid: true
+        },
+        methods: {
+            pay: function (way) {
+                if(this.valid){
+                    if(way === 'wx'){
+                        if(navigator.userAgent.toLowerCase().indexOf('micromessenger') === -1){
+                            //非微信浏览器
+                            window.location.href = '{:U(\'Wx/native\')}?CusId={$CusId}&CusPoNo={$CusPoNo}&secret={$secret}';
+                        }else{
+                            //微信浏览器
+                            window.location.href = '{:U(\'Wx/jsapi\')}?CusId={$CusId}&CusPoNo={$CusPoNo}&secret={$secret}';
+                        }
+                    }else if(way === 'ali'){
+                        window.location.href = '{:U(\'Ali/build\')}?CusId={$CusId}&CusPoNo={$CusPoNo}&secret={$secret}';
+                    }
+                }else{
+                    $.alert('已超出有效时间','');
+                }
+            }
+        }
+    });
+</script>

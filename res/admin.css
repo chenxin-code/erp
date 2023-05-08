@@ -1,0 +1,310 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+body.admin-login {
+	background-color: #222;
+}
+body.admin-login .container {
+	padding: 158px 0 50px 0;
+	width: 100%;
+	text-align: center;
+}
+body.admin-login .container .content {
+	margin: 0 auto;
+	width: 420px;
+	text-align: left;
+}
+body.admin-login .container .content label {
+	padding: 0;
+	width: 50px;
+	color: #fff;
+	font-weight: normal;
+	font-size: 14px;
+}
+body.admin-login .container .content input {
+	width: 200px;
+	margin: 0 ;
+	margin-bottom:20px;
+	border: 0;
+	background: #fff;
+}
+body.admin-login .container .content p {
+	padding: 0;
+}
+body.admin-common {
+	line-height: 1;
+	color: #555;
+	font-size: 12px;
+	background: #f0f0f0 url('admin-1.png') top left repeat-y;
+}
+body.admin-common .sidebar {
+	background: url('admin-2.png') top left no-repeat;
+	width: 230px;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	color: #888;
+	font-size: 12px;
+}
+body.admin-common .sidebar a,
+body.admin-common .sidebar a:active {
+	color: #ccc;
+}
+body.admin-common .sidebar a:hover {
+	color:#fff;
+}
+body.admin-common .sidebar .top-container {
+	padding: 0 15px 20px 15px;
+	text-align: right;
+	line-height: 1.5em;
+}
+body.admin-common .sidebar .menu-container {
+	margin: 0 0 0 15px;
+	padding: 0;
+	width: 206px;
+}
+body.admin-common .sidebar .menu-container li {
+	list-style: none;
+	padding-bottom: 10px;
+	text-align: right;
+}
+body.admin-common .sidebar .menu-container li a.nav-top-item {
+	background: transparent url('admin-3.png') right center no-repeat;
+	padding: 10px 15px;
+	color: #fff;
+	font-size: 14px;
+	cursor: pointer;
+	display: block;
+	text-decoration: none;
+}
+body.admin-common .sidebar .menu-container li a.current {
+	background-image: url('admin-4.png') !important;
+	color: #333;
+	font-weight: bold;
+}
+body.admin-common .sidebar .menu-container li a.current:hover {
+	color: #333;
+}
+body.admin-common .sidebar .menu-container ul {
+	font-size: 12px;
+}
+body.admin-common .sidebar .menu-container ul li {
+	padding: 0;
+	list-style: none;
+	text-align: right;
+}
+body.admin-common .sidebar .menu-container ul li a {
+	padding: 8px 15px;
+	display: block;
+	color: #aaa;
+	font-size: 13px;
+	line-height: 1.2em;
+}
+body.admin-common .sidebar .menu-container ul li a:hover,
+body.admin-common .sidebar .menu-container ul li a.current,
+body.admin-common .sidebar .menu-container ul li a.current:hover {
+	color: #fff;
+}
+body.admin-common .sidebar .menu-container ul li a.current {
+	background: transparent url('admin-7.png') right center no-repeat !important;
+}
+body.admin-common .main-content {
+	margin: 0 0 0 260px;
+	padding: 10px 30px 0 0;
+}
+body.admin-common .main-content table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+body.admin-common .main-content table thead th {
+	font-weight: bold;
+	font-size: 15px;
+	border-bottom: 1px solid #ddd;
+}
+body.admin-common .main-content tbody,
+body.admin-common .main-content table {
+	border-bottom: 1px solid #ddd;
+}
+body.admin-common .main-content tbody tr,
+body.admin-common .main-content table tr {
+	background: #fff;
+}
+body.admin-common .main-content tbody tr:nth-of-type(odd),
+body.admin-common .main-content table tr:nth-of-type(odd) {
+	background: #f3f3f3;
+}
+body.admin-common .main-content table td,
+body.admin-common .main-content table th {
+	padding: 10px;
+}
+body.admin-common .main-content form table td:nth-child(1) {
+	width: 150px;
+}
+body.admin-common .main-content table td.bg-font {
+	position: relative;
+}
+body.admin-common .main-content table td.bg-font .font {
+	padding: 0 5px;
+	font-size: 14px;
+	border: 1px solid;
+	border-radius: 5px;
+	transform: translateY(-50%) rotate(-25deg);
+	position: absolute;
+	top: 50%;
+	right: 0;
+}
+body.admin-common .main-content table td p {
+	display: inline;
+	margin-left: 10px;
+	color: #57a000;
+}
+body.admin-common .main-content .top-bar {
+	padding: 10px;
+}
+body.admin-common .main-content .bottom-bar {
+	padding: 10px;
+	text-align: center;
+}
+body.admin-common .main-content .top-bar select,
+body.admin-common .main-content .bottom-bar select {
+	margin: 0 3px;
+	padding: 5px 12px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	cursor: pointer;
+}
+body.admin-common .main-content .top-bar select,
+body.admin-common .main-content .top-bar select option,
+body.admin-common .main-content .bottom-bar select,
+body.admin-common .main-content .bottom-bar select option {
+	color: initial;
+}
+body.admin-common .main-content .bottom-bar span,
+body.admin-common .main-content .bottom-bar a {
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	display: inline-block;
+	padding: 5px 12px;
+}
+body.admin-common .main-content .bottom-bar a {
+	margin: 0 3px;
+	color: #000;
+}
+body.admin-common .main-content .bottom-bar a:hover {
+	color: #1a991d;
+}
+body.admin-common .main-content .bottom-bar label {
+	padding-left: 15px;
+	color: #999;
+}
+body.admin-common .main-content .bottom-bar label b {
+	color: red;
+	font-weight: normal;
+	margin: 0 3px;
+}
+body.admin-common .main-content form label {
+	cursor: pointer;
+}
+body.admin-common .sidebar a,
+body.admin-common .main-content a {
+	color: #57a000;
+	text-decoration: none;
+}
+body.admin-common .sidebar a,
+body.admin-common .main-content a:hover {
+	color: #000;
+}
+body.admin-common .sidebar a,
+body.admin-common .main-content a:active {
+	color: #777;
+}
+body.admin-common .sidebar a,
+body.admin-common .main-content a:focus {
+	outline: 1px;
+}
+body.admin-login .container .btn,
+body.admin-common .main-content .btn {
+	display: inline-block;
+	background: #459300 url('admin-5.png') top left repeat-x !important;
+	border: 1px solid #459300 !important;
+	padding: 4px 7px 4px 7px !important;
+	color: #fff !important;
+	font-size: 14px !important;
+	border-radius: 4px;
+	cursor: pointer;
+}
+body.admin-login .container .btn:active,
+body.admin-common .main-content .btn:active {
+	padding: 5px 7px 3px 7px !important;
+}
+body.admin-login .container form input,
+body.admin-common .main-content form input {
+	padding: 6px;
+	font-size: 13px;
+	background: #fff url('admin-6.png') top left repeat-x;
+	border: 1px solid #d5d5d5;
+	color: #333;
+	border-radius: 4px;
+}
+body.admin-common .main-content form input.el-input__inner {
+	padding: 0 15px;
+	background-color: #fff;
+	border-radius: 4px;
+	border: 1px solid #dcdfe6;
+	color: #606266;
+	font-size: inherit;
+}
+body.admin-common .main-content form input.el-range-input {
+	border: none;
+	padding: 0;
+	font-size: 14px;
+	color: #606266;
+}
+body.admin-common .main-content form input[type="checkbox"],
+body.admin-common .main-content form input[type="radio"] {
+	padding: 0;
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
+body.admin-common .main-content form select {
+	padding: 4px;
+	font-size: 13px;
+	background-color: #fff;
+	border: 1px solid #d5d5d5;
+	color: #333;
+	border-radius: 4px;
+}
+body.admin-common .main-content form textarea {
+	padding: 6px;
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+	background: #fff url('admin-6.png') top left repeat-x;
+	border: 1px solid #d5d5d5;
+	color: #333;
+	border-radius: 4px;
+	width: 97.5% !important;
+}
+body.admin-login .container form input::-webkit-input-placeholder,
+body.admin-common .main-content form input::-webkit-input-placeholder,
+body.admin-common .main-content form textarea::-webkit-input-placeholder {
+	color: #b3b3b3;
+}
+body.admin-login .container form input:-moz-placeholder,
+body.admin-common .main-content form input:-moz-placeholder,
+body.admin-common .main-content form textarea:-moz-placeholder {
+	color: #b3b3b3;
+}
+body.admin-login .container form input::-moz-placeholder,
+body.admin-common .main-content form input::-moz-placeholder,
+body.admin-common .main-content form textarea::-moz-placeholder {
+	color: #b3b3b3;
+}
+body.admin-login .container form input:-ms-input-placeholder,
+body.admin-common .main-content form input:-ms-input-placeholder,
+body.admin-common .main-content form textarea:-ms-input-placeholder {
+	color: #b3b3b3;
+}

@@ -1,0 +1,72 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="diy-search">
+        <div class="container">
+            <i class="iconfont icon-sousuo"></i>
+            <input v-model="Key" placeholder="搜索材质编号">
+            <i class="iconfont icon-qingchu" @click="Key = ''" v-if="Key"></i>
+        </div>
+    </div>
+    <el-table :data="showLists" border stripe style="margin-top: 90px;" :height="$(document).height() - 90">
+        <el-table-column prop="BoardId" label="材质编号"></el-table-column>
+        <el-table-column prop="BoardName" label="材质名称"></el-table-column>
+        <el-table-column prop="UnitPrice" label="平方价"></el-table-column>
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Key: '',
+            realLists: [],
+            showLists: []
+        },
+        methods: {
+            GetQuoPriceByCus: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'GetQuoPriceByCus_api\')}',
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.realLists = _this.showLists = eval('(' + respon + ')');
+                        _this.jsFilter();
+                    }
+                });
+            },
+            jsFilter: function () {
+                var tempLists = [];
+                for (var i = 0; i < this.realLists.length; i++) {
+                    if (this.realLists[i].BoardId.indexOf(this.Key) !== -1
+                     //   || this.realLists[i].BoardName.indexOf(this.Key) !== -1
+                    ) {
+                        tempLists.push(this.realLists[i]);
+                    }
+                }
+                this.showLists = tempLists;
+            }
+        },
+        mounted: function () {
+            this.GetQuoPriceByCus();
+        },
+        watch: {
+            Key: function () {this.jsFilter();}
+        }
+    });
+</script>

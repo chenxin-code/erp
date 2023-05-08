@@ -1,0 +1,281 @@
+<script src="{:C('WXJSSDK_CDN')}"></script>
+
+<div id="VueBox">
+  <wap1-header
+          flag="{$HeaderFlag}"
+          index_url="{:U('Wap0/Index1/index')}"
+          menu_url="{:U('Index/menu')}"
+          logout_url="{:U('Index/logout_api')}"
+          open_80port="{$config['Open80Port']}"
+          use_scan="{$config['UseScan']}"
+          server_name="{$_SERVER['SERVER_NAME']}"
+          frp_80port_domain="{$config['Frp80PortDomain']}"
+          logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+          logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+  </wap1-header>
+  <cell-group style="margin-top: 40px;" mini>
+    <field label="订单号" placeholder="扫码或输入订单号" v-model="StockDetail.strOrderId">
+      <div slot="right-icon" style="margin-left: 10px;cursor: pointer;" @click="scanQRCode()">
+        <i class="iconfont icon-saomiao4" :style="{'color':iconMode?'#1aad19':'#a9a9a9'}"></i>
+      </div>
+    </field>
+    <field label="订单信息" v-model="StockDetail.strOrderInfo" type="textarea" rows="1" disabled autosize></field>
+    <field label="数量" v-model="StockDetail.iQty" disabled></field>
+    <cell title="库区" placeholder="选择库区" v-if="bMStockArea" @click="showStockAreaSelect = true" is-link>
+      <span v-if="StockDetail.strStockArea">{{StockDetail.strStockArea}}</span>
+    </cell>
+    <field label="备注" placeholder="输入备注" type="textarea" rows="1" v-model="StockDetail.strRemark" ref="RemarkInput" autosize></field>
+  </cell-group>
+  <div class="cell-group-btn-box2">
+    <button class="btn1" @click="onSubmit()">修改</button>
+    <button class="btn2" @click="reset2()">重置</button>
+  </div>
+  <transition name="fullpage">
+    <div class="diy-select-fullpage" v-if="showStockAreaSelect">
+      <div class="empty" v-if="$.isEmptyObject(StockAreaSelect)">
+        <img src="__RES__/empty.jpg">
+        <p>没有可选择项</p>
+      </div>
+      <div v-else>
+        <div class="item" :class="{'selected':v.StockArea === StockDetail.strStockArea_}" @click="StockDetail.strStockArea_ = v.StockArea" v-for="v in StockAreaSelect">
+          <div class="content">
+            <span>{{v.StockArea}}</span>
+          </div>
+          <label></label>
+        </div>
+      </div>
+      <div class="confirm-btn" @click="StockDetail.strStockArea = StockDetail.strStockArea_;showStockAreaSelect = false">确定</div>
+    </div>
+  </transition>
+    <el-table :data="lists" border stripe height="500">
+      <el-table-column label="操作" fixed>
+        <template slot-scope="ss">
+          <el-button size="mini" type="primary" @click="handleModify(ss.$index,ss.row)">修改</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="Effecttime" label="生效日期" width="100"></el-table-column>
+      <el-table-column prop="StockArea" label="库区" v-if="bMStockArea"></el-table-column>
+      <el-table-column prop="Qty" label="数量"></el-table-column>
+      <el-table-column label="操作类型">
+        <template slot-scope="ss">
+            <span v-if="ss.row.OpType === 1">完工入库</span>
+            <span v-else-if="ss.row.OpType === 2">分纸入库</span>
+            <span v-else-if="ss.row.OpType === 3">直接入库</span>
+            <span v-else-if="ss.row.OpType === 5">其它分纸</span>
+            <span v-else-if="ss.row.OpType === 8">工单分纸</span>
+            <span v-else>无</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="Remark" label="备注" width="150"></el-table-column>
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            iconMode: true,
+            lists: null,//下面的装货明细
+            StockDetail: {
+                strOrderId: '',//订单号 b1805090001
+                strOrderInfo: '',//订单信息
+                strRemark: '',//备注
+                strStockArea: '',strStockArea_: '',  //库区
+                ikey1: 0,//定位主键相关
+                ikey2: 0,
+                ikey3: 0,
+                iQty: 0,
+                iOpType: 0,
+            },
+            StockAreaSelect: eval('(' + '{$StockAreaSelect}' + ')'),
+            bMStockArea: Number('{$config[\'bMStockArea\']}'),//是否显示库区
+            showStockAreaSelect: false
+        },
+        methods:{
+            GetStockDetail1: function (strOrderId) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'GetStockDetail_api\')}',
+                    type: 'get',
+                    data: {strOrderId: strOrderId},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.lists = eval('(' + respon + ')');
+                        if(_this.lists.length === 0){
+                            $.toast('该订单没有入库记录','forbidden',function () {
+                                _this.reset3();
+                            });
+                        }else if(_this.lists.length === 1){
+                            _this.StockDetail.strStockArea = _this.StockDetail.strStockArea_ = _this.lists[0].StockArea;
+                            _this.StockDetail.strRemark = _this.lists[0].Remark;
+                            _this.StockDetail.ikey1 = _this.lists[0].key1;
+                            _this.StockDetail.ikey2 = _this.lists[0].key2;
+                            _this.StockDetail.ikey3 = _this.lists[0].key3;
+                            _this.StockDetail.iQty = _this.lists[0].Qty;
+                            _this.StockDetail.iOpType = _this.lists[0].OpType;
+                        }else{
+                            _this.reset3();
+                            $.toast('该订单有多条入库记录，请点击明细修改','text');
+                        }
+                    },
+                })
+            },
+            GetStockDetail2: function (strOrderId) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'GetStockDetail_api\')}',
+                    type: 'get',
+                    data: {strOrderId: strOrderId},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.lists = eval('(' + respon + ')');
+                    },
+                })
+            },
+            scanQRCode: function () {
+                var _this = this;
+                if(_this.iconMode){
+                    wx.scanQRCode({
+                        needResult: 1,
+                        success: function (res) {
+                            _this.StockDetail.strOrderId = res.resultStr.split(',')[1];
+                        }
+                    });
+                }else{
+                    $.toast('当前不支持扫码功能','forbidden');
+                }
+            },
+            onSubmit: function () {
+                var _this = this;
+                if(_this.StockDetail.strOrderInfo === ''){$.toast('请输入有效的订单号','text');return;}
+                if(_this.StockDetail.ikey1 === 0){$.toast('请扫描有效的订单号或选择有效记录修改','text');return;}
+                $.ajax({
+                    url: '{$ErpApiPrefix}/WebCommon/MStockDetailR',
+                    type: 'post',
+                    data: {
+                        iOpType: _this.StockDetail.iOpType,
+                        ikey1: _this.StockDetail.ikey1,
+                        ikey2: _this.StockDetail.ikey2,
+                        ikey3: _this.StockDetail.ikey3,
+                        strOrderId: _this.StockDetail.strOrderId,
+                        strRemark: _this.StockDetail.strRemark,
+                        strStockArea: _this.StockDetail.strStockArea,
+                        strFactoryId: '{$config[\'FactoryId\']}',
+                        strUserId: '{$ERPId}',
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.result[1] === false){
+                            $.alert(respon.result[0],'修改出错');
+                        }else{
+                            $.alert('修改成功','',function () {
+                                _this.GetStockDetail2(_this.StockDetail.strOrderId);
+                                _this.reset3();
+                            });
+                        }
+                    },
+                });
+            },
+            reset1: function () {
+                this.StockDetail.strOrderInfo = '';
+                this.lists = null;
+                this.reset3();
+            },
+            reset2: function () {
+                this.StockDetail.strOrderId = '';
+                this.reset1();
+            },
+            reset3: function () {
+                this.StockDetail.strStockArea = this.StockDetail.strStockArea_ = '';
+                this.StockDetail.strRemark = '';
+                this.StockDetail.ikey1 = 0;
+                this.StockDetail.ikey2 = 0;
+                this.StockDetail.ikey3 = 0;
+                this.StockDetail.iQty = 0;
+                this.StockDetail.iOpType = 0;
+            },
+            handleModify: function (index,row) {
+                this.StockDetail.strStockArea = this.StockDetail.strStockArea_ = row.StockArea;
+                this.StockDetail.strRemark = row.Remark;
+                this.StockDetail.ikey1 = row.key1;
+                this.StockDetail.ikey2 = row.key2;
+                this.StockDetail.ikey3 = row.key3;
+                this.StockDetail.iQty = row.Qty;
+                this.StockDetail.iOpType = row.OpType;
+                if(this.bMStockArea){
+                    this.showStockAreaSelect = true;
+                }else{
+                    this.$refs.RemarkInput.focus();
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            wx.config({
+                debug: false,
+                appId: '{$signPackage.appId}',
+                timestamp: '{$signPackage.timestamp}',
+                nonceStr: '{$signPackage.nonceStr}',
+                signature: '{$signPackage.signature}',
+                jsApiList: ['scanQRCode'],
+            });
+            wx.error(function (res) {
+                //$.toast(res.errMsg,'forbidden');
+                _this.iconMode = false;
+            });
+        },
+        watch: {
+            'StockDetail.strOrderId': function () {
+                var _this = this;
+                if (_this.StockDetail.strOrderId.length === 11) {
+                    $.ajax({
+                        url: '{:U(\'Stow/GetOrdPackInfo_api\')}',
+                        type: 'get',
+                        data: {strOrderId: _this.StockDetail.strOrderId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.StockDetail.strOrderInfo = '订单客户:'+respon.data.CusId+' '+respon.data.CusShortName+' 材质编号:'+respon.data.BoardId+' 长宽:'+respon.data.Length+'x'+respon.data.Width;
+                                if (respon.data.BoxL > 0){
+                                    _this.StockDetail.strOrderInfo += '长宽高:'+respon.data.BoxL+'x'+respon.data.BoxW+'x'+respon.data.BoxH;
+                                }
+                                _this.StockDetail.strOrderInfo += ' 订单数:'+respon.data.OrdQty;
+                                _this.AreaQty = respon.data.StockQty;
+                                if (respon.data.DNHint !== ''){
+                                    _this.StockDetail.strOrderInfo += ' 客户备注:'+respon.data.DNHint;
+                                }
+                                if ((respon.data.MatName !== '') && (respon.data.OrderType === 'x')){
+                                    _this.StockDetail.strOrderInfo += ' 货品名称:'+respon.data.MatName;
+                                }
+                                _this.GetStockDetail1(_this.StockDetail.strOrderId);
+                                if(_this.bMStockArea){
+                                    _this.showStockAreaSelect = true;
+                                }else{
+                                    _this.$refs.RemarkInput.focus();
+                                }
+                            }else{
+                                $.toast(respon.msg,'forbidden',function () {
+                                    _this.reset1();
+                                });
+                            }
+                        }
+                    });
+                }
+            },
+        }
+    });
+</script>

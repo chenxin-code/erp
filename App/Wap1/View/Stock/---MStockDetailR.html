@@ -1,0 +1,291 @@
+<script src="{:C('WXJSSDK_CDN')}"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="//unpkg.com/element-ui@2.3.3/lib/index.js"></script>
+<style>
+  .el-form {
+    margin-top: 40px;
+    padding: 5px 15px;
+  }
+    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+        margin-bottom: 3px;
+    }
+    .el-form-item {
+        margin-bottom: 3px;
+    }
+</style>
+
+<div id="VueBox">
+  <wap1-header
+          flag="{$HeaderFlag}"
+          index_url="{:U('Wap0/Index1/index')}"
+          menu_url="{:U('Index/menu')}"
+          logout_url="{:U('Index/logout_api')}"
+          open_80port="{$config['Open80Port']}"
+          use_scan="{$config['UseScan']}"
+          server_name="{$_SERVER['SERVER_NAME']}"
+          frp_80port_domain="{$config['Frp80PortDomain']}"
+          logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+          logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+  </wap1-header>
+
+<el-form ref="form" :model="StockDetail" label-width="70px" size="mini">
+  <el-form-item label="订单号">
+    <el-col :span="16">
+      <el-input v-model="StockDetail.strOrderId" :readonly="false"></el-input>
+    </el-col>
+    <el-col :span="6">
+      <el-button style="float:right;" type="primary" size="small" @click="scanQRCode()">扫描</el-button>
+    </el-col>
+  </el-form-item>
+  <el-form-item label="订单信息">
+    <el-input type="textarea" :rows="4" :readonly="true" placeholder="" v-model="StockDetail.strOrderInfo"></el-input>
+  </el-form-item>
+  <el-form-item label="数量">
+    <el-col :span="10">
+      <el-input v-model="StockDetail.iQty" :readonly="true"></el-input>
+    </el-col>
+    <div v-if="bMStockArea">
+      <el-col :span="10">
+        <el-select v-model="StockDetail.strStockArea"  value-key="StockArea" placeholder="库区" ref='StockAreaInput'>
+          <el-option v-for="v in StockAreaSelect" :label="v.StockArea" :key="v.StockArea"  :value="v.StockArea"></el-option>
+        </el-select>
+      </el-col>
+    </div>
+  </el-form-item>
+  <el-form-item label="备注">
+    <el-input placeholder="" v-model="StockDetail.strRemark" ref="RemarkInput"></el-input>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" plain @click="onSubmit()">修改</el-button>
+    <el-button type="primary" plain @click="clearInfo2()">重置</el-button>
+  </el-form-item>
+</el-form>
+
+    <el-table :data="lists" border stripe height="400">
+      <el-table-column label="操作" width="80">
+        <template slot-scope="ss">
+          <el-button size="mini" type="danger" @click="handleModify(ss.$index,ss.row)">修改</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="Effecttime" label="生效日期" width="90">
+      </el-table-column>
+      <el-table-column v-if="bMStockArea" prop="StockArea" label="库区" width="45">
+      </el-table-column>
+      <el-table-column prop="Qty" label="数量" width="60">
+      </el-table-column>
+      <el-table-column prop="Remark" label="备注" width="150">
+      </el-table-column>
+      <el-table-column label="操作类型" width="70">
+        <template slot-scope="ss">
+            <span v-if="ss.row.OpType===1">完工入库</span>
+            <span v-else-if="ss.row.OpType===2">分纸入库</span>
+            <span v-else-if="ss.row.OpType===3">直接入库</span>
+            <span v-else-if="ss.row.OpType===5">其它分纸</span>
+            <span v-else-if="ss.row.OpType===8">工单分纸</span>
+        </template>
+      </el-table-column>
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            lists: null,//下面的装货明细
+            StockDetail: {
+                strOrderId: '',//订单号 b1805090001
+                strOrderInfo: '',//订单信息
+                strRemark: '',//备注
+                strStockArea: '',  //库区
+                ikey1: 0,//定位主键相关
+                ikey2: 0,
+                ikey3: 0,
+                iQty: 0,
+                iOpType: 0,
+            },
+            StockAreaSelect: eval('(' + '{$StockAreaSelect}' + ')'),
+            bMStockArea: Number('{$config[\'bMStockArea\']}'),//是否显示库区
+        },
+        methods:{
+            GetStockDetail1: function (strOrderId) {
+                var _this = this;
+                //查询库区
+                $.ajax({
+                    url: '{:U(\'GetStockDetail_api\')}',
+                    type: 'get',
+                    data: {strOrderId: strOrderId},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.lists = respon.data;
+                            _this.StockDetail.strStockArea = _this.lists.StockArea;
+                            _this.StockDetail.strRemark = _this.lists.Remark;
+                            _this.StockDetail.iQty = _this.lists.Qty;
+                            _this.StockDetail.iOpType = _this.lists.OpType;
+                            _this.StockDetail.ikey1 = _this.lists.key1;
+                            _this.StockDetail.ikey2 = _this.lists.key2;
+                            _this.StockDetail.ikey3 = _this.lists.key3;
+                        }else{
+                            _this.clearInfo3();
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    },
+                })
+            },
+            GetStockDetail2: function (strOrderId) {
+                var _this = this;
+                //查询库区
+                $.ajax({
+                    url: '{:U(\'GetStockDetail_api\')}',
+                    type: 'get',
+                    data: {strOrderId: strOrderId},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.lists = respon.data;
+                        }
+                    },
+                })
+            },
+            scanQRCode: function () {
+                var _this = this;
+                wx.scanQRCode({
+                    needResult: 1,
+                    success: function (res) {
+                        // alert(JSON.stringify(res));
+                        _this.DNDetail.strOrderId = res.resultStr.split(',')[1];
+                    }
+                })
+            },
+            onSubmit: function () {
+                var _this = this;
+                if(_this.StockDetail.strOrderInfo === ''){$.toast('请输入有效的订单号','forbidden');return;}
+                if(_this.StockDetail.ikey1 === 0){$.toast('请扫描有效的订单号或选择有效记录修改','forbidden');return;}
+                $.ajax({
+                    url: '{$ErpApiPrefix}/WebCommon/MStockDetailR',
+                    type: 'POST',
+                    dataType: 'JSON', //'JSONP'用不了，datasnap返回不了callback
+                    data: {
+                        iOpType: _this.StockDetail.iOpType,
+                        ikey1: _this.StockDetail.ikey1,
+                        ikey2: _this.StockDetail.ikey2,
+                        ikey3: _this.StockDetail.ikey3,
+                        strOrderId: _this.StockDetail.strOrderId,
+                        strRemark: _this.StockDetail.strRemark,
+                        strStockArea: _this.StockDetail.strStockArea,
+                        strFactoryId: '{$config[\'FactoryId\']}',
+                        strUserId: '{$ERPId}',
+                    },
+                    success: function (res) {
+                        //console.log(res);
+                        if(res.result[1] === false){
+                            $.toast('修改出错:'+res.result[0],'forbidden');
+                        }else{
+                            $.toast('修改成功!','forbidden');
+                            _this.GetStockDetail2(_this.StockDetail.strOrderId);
+                            _this.clearInfo3();
+                        }
+                    },
+                });
+            },
+            clearInfo: function () {
+                this.StockDetail.strOrderInfo='';
+                this.lists = null;
+                this.clearInfo3();
+            },
+            clearInfo2: function () {
+                this.StockDetail.strOrderId='';
+                this.clearInfo();
+            },
+            clearInfo3: function () {
+                this.StockDetail.strStockArea='';
+                this.StockDetail.strRemark='';
+                this.StockDetail.ikey1 = 0;
+                this.StockDetail.ikey2 = 0;
+                this.StockDetail.ikey3 = 0;
+                this.StockDetail.iQty = 0;
+                this.StockDetail.iOpType = 0;
+            },
+            handleModify: function (index,row) {
+                var _this = this;
+                this.StockDetail.strStockArea=row.StockArea;
+                this.StockDetail.strRemark=row.Remark;
+                this.StockDetail.ikey1 = row.key1;
+                this.StockDetail.ikey2 = row.key2;
+                this.StockDetail.ikey3 = row.key3;
+                this.StockDetail.iQty = row.Qty;
+                this.StockDetail.iOpType = row.OpType;
+                if (_this.bMStockArea){
+                    _this.$refs['StockAreaInput'].focus();
+                } else {
+                    _this.$refs['RemarkInput'].focus();
+                }
+            },
+        },
+        mounted: function () {
+            wx.config({
+                debug: false,
+                appId: '{$signPackage.appId}',
+                timestamp: '{$signPackage.timestamp}',
+                nonceStr: '{$signPackage.nonceStr}',
+                signature: '{$signPackage.signature}',
+                jsApiList: ['scanQRCode'],
+            });
+            wx.error(function (res) {
+                //alert(res.errMsg);
+                //alert('当前不支持扫码功能');
+            });
+        },
+        watch: {
+            'StockDetail.strOrderId': function () {
+                var _this = this;
+                if (_this.StockDetail.strOrderId.length === 11) {
+                    $.ajax({
+                        url: '{:U(\'Stow/GetOrdPackInfo_api\')}',
+                        type: 'get',
+                        data: {strOrderId: _this.StockDetail.strOrderId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            //console.log(respon);
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.StockDetail.strOrderInfo = '订单客户:'+respon.data.CusId+' '+respon.data.CusShortName+' 材质编号:'+respon.data.BoardId+' 长宽:'+respon.data.Length+'x'+respon.data.Width;
+                                if (respon.data.BoxL > 0){
+                                    _this.StockDetail.strOrderInfo += '长宽高:'+respon.data.BoxL+'x'+respon.data.BoxW+'x'+respon.data.BoxH;
+                                }
+                                _this.StockDetail.strOrderInfo += ' 订单数:'+respon.data.OrdQty;
+                                _this.AreaQty = respon.data.StockQty;
+                                if (respon.data.DNHint!==''){
+                                    _this.StockDetail.strOrderInfo += ' 客户备注:'+respon.data.DNHint;
+                                }
+                                if ((respon.data.MatName!=='') && (respon.data.OrderType==='x')){
+                                    _this.StockDetail.strOrderInfo += ' 货品名称:'+respon.data.MatName;
+                                }
+                                _this.GetStockDetail1(_this.StockDetail.strOrderId);
+                                if (_this.bMStockArea){
+                                    _this.$refs['StockAreaInput'].focus();
+                                } else {
+                                    _this.$refs['RemarkInput'].focus();
+                                }
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                                _this.clearInfo();
+                            }
+                        },
+                    });
+                }
+            },
+        }
+    });
+</script>

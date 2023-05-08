@@ -1,0 +1,394 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link href="/erp/res/<?php echo ($config['FactoryLogo']); ?>" rel="shortcut icon">
+    <title><?php echo ($LayoutTitle); ?></title>
+    <script src="/erp/res/vue.js"></script>
+    <!-- jQuery -->
+    <script src="/erp/res/jquery.min.js"></script>
+    <!-- jQuery WeUI -->
+    <link rel="stylesheet" href="/erp/res/jqweui/css/weui.min.css">
+    <link rel="stylesheet" href="/erp/res/jqweui/css/jquery-weui.min.css">
+    <script src="/erp/res/jqweui/js/jquery-weui.min.js"></script>
+    <!-- mint-ui -->
+    <link rel="stylesheet" href="/erp/res/mint-ui/style.css">
+    <script src="/erp/res/mint-ui/index.js"></script>
+    <!-- 阿里图标cdn -->
+    <link rel="stylesheet" href="<?php echo C('ali_iconfont_cdn');?>">
+    <!-- common 样式 -->
+    <link rel="stylesheet" href="/erp/res/common.css?time=<?php echo time();?>">
+    <!-- 自定义组件 -->
+    <script src="/erp/res/component.js?time=<?php echo time();?>"></script>
+    <!-- 函数库 -->
+    <script src="/erp/res/function.js?time=<?php echo time();?>"></script>
+</head>
+<body>
+<!-- 引入 mescroll 插件 -->
+<script src="/erp/res/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="/erp/res/mescroll/mescroll.min.css">
+
+<style>
+    .mescroll {
+        height: auto;
+        position: fixed;
+        bottom: 0;
+    }
+    /*****************************************************/
+    .group-tab-filter-box {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid #e7e7e7;
+        background-color: #fff;
+        display: flex;
+        position: fixed;
+        top: 40px;
+        z-index: 1;
+    }
+    .group-tab-filter-box .tab {
+        flex: 4;
+        height: 50px;
+        line-height: 50px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+    }
+    .group-tab-filter-box .tab > div {
+        flex: 1;
+        font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    .group-tab-filter-box .tab > div.active {
+        color: #e6454a;
+        border-bottom: 2px solid #e6454a;
+    }
+    .group-tab-filter-box .tab > div .iconfont {
+        font-size: 14px;
+    }
+    .group-tab-filter-box .filter {
+        margin: 3px 8px;
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+        color: #e01835;
+        font-size: 16px;
+        text-align: center;
+        border: 1px solid #e01835;
+        border-radius: 50%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    .group-tab-filter-box .filter.on {
+        color: #fff;
+        background-color: #e01835;
+    }
+    /*****************************************************/
+    .filter-bar {
+        width: 100%;
+        position: fixed;
+        top: 90px;
+        z-index: 1;
+    }
+    .filter-bar::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.5);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .filter-bar .sub-box {
+        margin: 0 10px;
+        display: -webkit-box;
+        overflow-x: auto;
+    }
+    .filter-bar .sub-box > div {
+        margin: 10px 5px 10px 0;
+        width: 39px;
+        height: 39px;
+        line-height: 39px;
+        text-align: center;
+        font-size: 14px;
+        color: #e01835;
+        background-color: #fff;
+        border: 1px solid #e01835;
+        border-radius: 50%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    .filter-bar .sub-box > div.on {
+        color: #fff;
+        background-color: #e01835;
+    }
+    /*****************************************************/
+    .p-item {
+        cursor: pointer;
+        position: relative;
+    }
+    .p-item::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.5);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .p-item:first-child::before {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .p-item .box {
+        padding: 5px 8px;
+        display: flex;
+    }
+    .p-item .box .l {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+    .p-item .box .l img {
+        width: 100%;
+        border-radius: 2px;
+    }
+    .p-item .box .l .pic-num {
+        width: 45px;
+        line-height: 15px;
+        font-size: 12px;
+        text-align: center;
+        background-color: rgba(0,0,0,0.15);
+        color: #fff;
+        transform: rotate(-45deg);
+        position: absolute;
+        top: 0;
+        left: -15px;
+    }
+    .p-item .box .r {
+        flex: 2;
+        margin: 0 15px;
+    }
+    .p-item .box .r .title {
+        font-size: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+    }
+    .p-item .box .r .progress-bar {
+        width: 50%;
+        height: 18px;
+        background-color: #fff;
+        border: 1px solid #fc91b1;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+    }
+    .p-item .box .r .progress-bar .liquid {
+        height: 100%;
+        background-color: #fedee8;
+        border-radius: 15px;
+    }
+    .p-item .box .r .progress-bar .descr {
+        width: 100%;
+        line-height: 18px;
+        color: #e60044;
+        font-size: 13px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        position: absolute;
+        top: 0;
+    }
+    .p-item .icons-group {
+        color: #fff;
+        line-height: 16px;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .p-item .icons-group > div {
+        font-size: 12px;
+        padding: 0 3px;
+        float: right;
+    }
+</style>
+
+<div id="VueBox">
+    <group-header flag="<?php echo ($HeaderFlag); ?>" index_url="<?php echo U('Wap0/Index1/index');?>" menu_url="<?php echo U('Wap0/Index/menu');?>"></group-header>
+    <div class="group-tab-filter-box">
+        <div class="tab">
+            <div @click="changeTab('ing')" :class="{'active':State === 'ing'}">
+                <i class="iconfont icon-huore"></i>&nbsp;正在抢购
+            </div>
+            <div @click="changeTab('tobe')" :class="{'active':State === 'tobe'}">
+                <i class="iconfont icon-jijiang"></i>&nbsp;即将开抢
+            </div>
+            <div @click="changeTab('ed')" :class="{'active':State === 'ed'}" v-if="Number('<?php echo ($config['ShowEdBoard']); ?>')">
+                <i class="iconfont icon-jieshu1"></i>&nbsp;已结束
+            </div>
+        </div>
+        <div class="filter" :class="{'on':showFilterBar}" @click="showFilterBar = !showFilterBar">筛选</div>
+    </div>
+    <div class="filter-bar" v-if="showFilterBar">
+        <div class="sub-box">
+            <div :class="{'on':v === Filter}" @click="changeFilter(v)" v-for="v in FilterSelect">{{v}}</div>
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll" :style="{'top':showFilterBar?'150px':'90px'}">
+        <div id="lists">
+            <div class="p-item" v-for="(v,k) in lists">
+                <div class="box" @click="window.location.href = '<?php echo U('detail');?>?Id=' + v.Id">
+                    <div class="l">
+                        <img v-if="v.Pic[0]" :src="'/erp/res/' + v.Pic[0]">
+                        <span class="pic-num" v-if="v.Pic.length > 1">{{v.Pic.length}}</span>
+                    </div>
+                    <div class="r">
+                        <div class="title">
+                            <span style="color: #e01835;">{{v.BoardId}}</span><span v-if="v.Title">,{{v.Title}}</span>
+                        </div>
+                        <vue2-countdown
+                                :start-time="v.BeginTime"
+                                :end-time="v.EndTime"
+                                :current-time="v.CurTime"
+                                :tip-text="'距团购开始'"
+                                :tip-text-end="'距团购结束'"
+                                :end-text="'团购已结束'"
+                                style="font-size: 14px;">
+                        </vue2-countdown>
+                        <span style="font-size: 19px;color: #de1935;">¥{{v.Price}}/㎡</span>
+                        <span style="font-size: 14px;color: #cacaca;text-decoration: line-through;">¥{{v.MarketPrice}}/㎡</span>
+                        <div class="progress-bar">
+                            <div class="liquid" :style="'width: ' + v.SalePercent + '%;'"></div>
+                            <div class="descr">已抢{{v.SalePercent}}%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="icons-group">
+                    <div style="background-color: #d51938;" v-if="v.IsFlag === '1'"><?php echo ($config['BoardFlag']); ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            State: '<?php echo ($rememberTab); ?>'?'<?php echo ($rememberTab); ?>':'ing',
+            showFilterBar: false,
+            FilterSelect: null,
+            Filter: null,
+            mescroll: null,
+            lists: []
+        },
+        methods: {
+            upCallback: function(page) {
+                var _this = this;
+                _this.search(page.num, page.size, function (respon) {
+                    //如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
+                    if(page.num === 1){
+                        _this.lists = [];
+                    }
+                    _this.lists = _this.lists.concat(respon.data);
+                    //_this.mescroll.endSuccess(respon.data.length);
+                    _this.mescroll.endBySize(respon.data.length, respon.count);
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            search: function (CurPage,PageSize,successCallback,errorCallback) {
+                var _this = this;
+                $.ajax({
+                    url: '<?php echo U('lists_api');?>',
+                    type: 'get',
+                    data: {
+                        State: _this.State,
+                        Filter: _this.Filter,
+                        CurPage: CurPage,
+                        PageSize: PageSize
+                    },
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        successCallback && successCallback(respon);
+                    },
+                    error: errorCallback
+                });
+            },
+            ResetLists: function () {
+                this.lists = [];
+                this.mescroll.resetUpScroll();
+                this.mescroll.hideTopBtn();
+            },
+            changeTab: function (value) {
+                if(this.State !== value){
+                    this.State = value;
+                    this.getFilterSelect();
+                }
+            },
+            changeFilter: function (value) {
+                if(this.Filter !== value){
+                    this.Filter = value;
+                    this.ResetLists();
+                }
+            },
+            getFilterSelect: function () {
+                var _this = this;
+                $.ajax({
+                    url: '<?php echo U('getFilterSelect_api');?>',
+                    type: 'get',
+                    data: {State: _this.State},
+                    success: function (respon) {
+                        _this.FilterSelect = eval('(' + respon + ')');
+                        _this.Filter = eval('(' + respon + ')')[0];
+                        _this.ResetLists();
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.mescroll = new MeScroll('mescroll',{
+                up: {
+                    callback: _this.upCallback, //上拉回调
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    page: {size: 7},
+                    toTop: {src: '/erp/res/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多产品了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '/erp/res/empty.jpg',
+                        tip: '没有找到相关产品'
+                    }
+                }
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+            _this.getFilterSelect();
+        }
+    });
+</script>
+
+</body>
+</html>

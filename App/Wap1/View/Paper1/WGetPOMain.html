@@ -1,0 +1,313 @@
+<style>
+    .mint-indicator-wrapper {
+        z-index: 2;
+    }
+</style>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-filter-box">
+        <div class="tab">
+            <div @click="ByDate = '0'" :class="{'active':ByDate === '0'}">
+                <i class="iconfont icon-quanbu1"></i>&nbsp;全部
+            </div>
+            <div @click="ByDate = '1'" :class="{'active':ByDate === '1'}">
+                <i class="iconfont icon-rili1"></i>&nbsp;按日期
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="filter" @click="OpenSlider()">
+            <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+        </div>
+    </div>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row1">
+                    <div class="title">开始日期</div>
+                    <div class="input" @click="$refs.BeginDate.open()">{{datetimeFormat(form.BeginDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row1">
+                    <div class="title">结束日期</div>
+                    <div class="input" @click="$refs.EndDate.open()">{{datetimeFormat(form.EndDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.BeginDate" ref="BeginDate"></mt-datetime-picker>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.EndDate" ref="EndDate"></mt-datetime-picker>
+    <div class="prev-next-select" style="border-top: 1px solid #ddd;top: 80px;" v-if="ByDate === '1'">
+        <div class="prev" @click="change('prev')">
+            <div class="content" v-if="PODateSelect[index - 1]">
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">{{PODateSelect[index - 1]}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">到顶了</span>
+            </div>
+        </div>
+        <div class="cur" @click="document.body.classList.add('body-lock');showSelect = true">
+            <div class="content" v-if="PODateSelect[index]">
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">{{PODateSelect[index]}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">未选择</span>
+            </div>
+        </div>
+        <div class="next" @click="change('next')">
+            <div class="content" v-if="PODateSelect[index + 1]">
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">{{PODateSelect[index + 1]}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">到底了</span>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage1">
+        <div class="diy-select-fullpage" v-if="showSelect">
+            <div class="empty" v-if="$.isEmptyObject(PODateSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':k === index_}" @click="index_ = k" v-for="(v,k) in PODateSelect">
+                    <div class="content">
+                        <span>{{v}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="document.body.classList.remove('body-lock');showSelect = false;index = index_;lists1 = POMain[index];">确定</div>
+        </div>
+    </transition>
+    <div class="dongheng-lists-box" style="top: 140px;" v-if="ByDate === '1'">
+        <div class="empty" v-if="$.isEmptyObject(lists1)">
+            <img src="__RES__/empty.jpg">
+            <p>没有原纸采购信息</p>
+        </div>
+        <div v-else>
+            <div class="line-item" @click="WGetPODetail(v.PONo,v.ShortName)" v-for="(v,k) in lists1">
+                <span style="flex: 1;">{{v.PONo}}</span>
+                <span style="flex: 3;text-align: center;">{{v.ShortName}}</span>
+                <span style="flex: 3;text-align: center;">{{v.SumPaper}}</span>
+                <span style="flex: 2;text-align: right;">{{v.InQty}}/{{v.POQty}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="dongheng-lists-box" style="top: 80px;" v-else>
+        <div class="empty" v-if="$.isEmptyObject(POMain)">
+            <img src="__RES__/empty.jpg">
+            <p>没有原纸采购信息</p>
+        </div>
+        <div v-else>
+            <div v-for="(v1,k1) in POMain">
+                <div class="title">
+                    <i class="iconfont icon-rili1"></i>&nbsp;&nbsp;{{PODateSelect[k1]}}
+                </div>
+                <div class="line-item" @click="WGetPODetail(v2.PONo,v2.ShortName)" v-for="(v2,k2) in v1">
+                    <span style="flex: 1;">{{v2.PONo}}</span>
+                    <span style="flex: 3;text-align: center;">{{v2.ShortName}}</span>
+                    <span style="flex: 3;text-align: center;">{{v2.SumPaper}}</span>
+                    <span style="flex: 2;text-align: right;">{{v2.InQty}}/{{v2.POQty}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage">
+        <div class="dongheng-line-info-fullpage" v-if="showLists2">
+            <div>
+                <div class="item span2">
+                    <span>采购日期</span>
+                    <span>{{PODateSelect[index]}}</span>
+                </div>
+                <div class="item span2">
+                    <span>采购单号</span>
+                    <span>{{PONo}}</span>
+                </div>
+                <div class="item span2">
+                    <span>供应商</span>
+                    <span>{{ShortName}}</span>
+                </div>
+                <div class="item" style="color: #0a0;">
+                    <span style="flex: 0.7;">纸类</span>
+                    <span style="flex: 1;text-align: center;">门幅</span>
+                    <span style="flex: 1;text-align: center;">克重</span>
+                    <span style="flex: 1.1;text-align: center;">重量(kg)</span>
+                    <span style="flex: 1;text-align: center;">单价</span>
+                    <span style="flex: 1.2;text-align: right;">收货/采购</span>
+                </div>
+                <div class="item" v-for="v in lists2">
+                    <span style="flex: 0.7;">{{v.PaperCode}}</span>
+                    <span style="flex: 1;text-align: center;">{{v.PaperWidth}}</span>
+                    <span style="flex: 1;text-align: center;">{{v.ActWeight}}</span>
+                    <span style="flex: 1.1;text-align: center;">{{v.SumWeight}}</span>
+                    <span style="flex: 1;text-align: center;">{{v.PoPrice}}</span>
+                    <span style="flex: 1.2;text-align: right;">{{v.InQty}}/{{v.Qty}}</span>
+                </div>
+                <div class="item">
+                    <span style="flex: 0.7;"></span>
+                    <span style="flex: 1;text-align: center;">合计</span>
+                    <span style="flex: 1;"></span>
+                    <span style="flex: 1.1;text-align: center;">{{SumSumWeight}}</span>
+                    <span style="flex: 1;"></span>
+                    <span style="flex: 1.2;text-align: right;">{{SumInQty}}/{{SumQty}}</span>
+                </div>
+            </div>
+            <div class="close-btn" @click="showLists2 = false">关闭</div>
+        </div>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            ByDate: '0',
+            form: {
+                BeginDate: '{:date(\'Y-m-d\',strtotime($config[\'WGetPOMainBeginDate\']))}',
+                EndDate: '{:date(\'Y-m-d\',strtotime($config[\'WGetPOMainEndDate\']))}',
+                rememberForm: 'no'
+            },
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'WGetPOMainMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'WGetPOMainMaxDate\']))}'),
+            //打开侧边栏前的form对象
+            BeforeOpenSliderForm: {},
+            BarVisible: false,
+            tempTop: 0,
+            PODateSelect: null,
+            index: null,
+            index_: null,
+            showSelect: false,
+            POMain: null,
+            lists1: null,
+            showLists2: false,
+            PONo: null,//采购单号
+            ShortName: null,//供应商
+            lists2: null,
+            SumSumWeight: null, SumInQty: null, SumQty: null
+        },
+        methods: {
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm){
+                    this.WGetPOMain();
+                }else{
+                    this.ResetForm();
+                }
+            },
+            WGetPOMain: function () {
+                var _this = this;
+                _this.form.BeginDate = datetimeFormat(_this.form.BeginDate,'yyyy-MM-dd');
+                _this.form.EndDate = datetimeFormat(_this.form.EndDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'WGetPOMain_api\')}',
+                    type: 'get',
+                    data: {form: _this.form},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.PODateSelect = respon.PODateSelect;
+                            _this.POMain = respon.POMain;
+                            _this.index = _this.index_ = 0;
+                            _this.lists1 = _this.POMain[_this.index];
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            change: function (p) {
+                var _this = this;
+                $.each(_this.PODateSelect,function (k,v) {
+                    if(v === _this.PODateSelect[_this.index]){
+                        var temp;
+                        if(p === 'prev'){
+                            temp = k - 1;
+                        }else if(p === 'next'){
+                            temp = k + 1;
+                        }
+                        if(_this.PODateSelect[temp]){
+                            _this.index = _this.index_ = temp;
+                            _this.lists1 = _this.POMain[_this.index];
+                        }else{
+                            //$.toast('无效操作','text');
+                        }
+                        return false;
+                    }
+                });
+            },
+            WGetPODetail: function (PONo,ShortName) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'WGetPODetail_api\')}',
+                    type: 'get',
+                    data: {PONo: PONo},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.showLists2 = true;
+                            _this.PONo = PONo;
+                            _this.ShortName = ShortName;
+                            _this.lists2 = respon.data;
+                            _this.SumSumWeight = respon.SumSumWeight;
+                            _this.SumInQty = respon.SumInQty;
+                            _this.SumQty = respon.SumQty;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form,eval('(' + '{$rememberForm}' + ')'));
+            this.WGetPOMain();
+        }
+    });
+</script>

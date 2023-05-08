@@ -1,0 +1,486 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <cell-group style="margin-top: 40px;margin-bottom: 40px;">
+        <field label="客订单号" placeholder="未填写则系统自动生成" v-model="form.CusPoNo"></field>
+        <cell title="材质" placeholder="选择材质" @click="showBoardCodeSelect = true" is-link>
+            <span v-if="form.BoardId">{{form.BoardId}}</span>
+        </cell>
+        <cell title="箱型" placeholder="选择箱型" @click="showBoxCodeSelect = true" is-link>
+            <span v-if="form.BoxId">{{form.BoxId}}</span>
+        </cell>
+        <cell title="纸箱规格(mm)" @icon-click="$.alert('箱长范围：' + MinBoxL + 'mm&nbsp;~&nbsp;' + MaxBoxL + 'mm<br>箱宽范围：' + MinBoxW + 'mm&nbsp;~&nbsp;' + MaxBoxW + 'mm<br>箱高范围：' + MinBoxH + 'mm&nbsp;~&nbsp;' + MaxBoxH + 'mm','')" help>
+            <div class="slot">
+                <input type="number" placeholder="箱长(L)" v-model="form.BoxL" @focus="disBtn = true" @blur="calc_BdLW()">
+                x
+                <input type="number" placeholder="箱宽(W)" v-model="form.BoxW" @focus="disBtn = true" @blur="calc_BdLW()">
+                x
+                <input type="number" placeholder="箱高(H)" v-model="form.BoxH" @focus="disBtn = true" @blur="calc_BdLW()">
+            </div>
+        </cell>
+        <cell title="箱舌(T)" placeholder="选择箱舌" @click="showTonLenSelect = true" is-link>
+            <span v-if="form.TonLen">{{form.TonLen}}</span>
+        </cell>
+        <cell title="封箱调整(U)" placeholder="选择封箱调整" @click="showULenSelect = true" is-link>
+            <span v-if="form.ULen">{{form.ULen}}</span>
+        </cell>
+        <cell title="横向公式">
+            <span v-html="form.LengthF_show" v-if="form.LengthF_show"></span>
+            <span style="color: #999;" v-else>待选择箱型</span>
+        </cell>
+        <cell title="纵向公式">
+            <span v-html="form.WidthF_show" v-if="form.WidthF_show"></span>
+            <span style="color: #999;" v-else>待选择箱型</span>
+        </cell>
+        <cell title="纸板规格(mm)">
+            <div class="slot">
+                <input type="number" placeholder="板长" v-model="form.Length" disabled>
+                x
+                <input type="number" placeholder="板宽" v-model="form.Width" disabled>
+            </div>
+        </cell>
+        <cell title="压线信息" placeholder="由ERP系统自动计算"></cell>
+        <cell title="张数" @icon-click="$.alert('正数：几个纸板&nbsp;=>&nbsp;1个纸箱<br>负数：1个纸板&nbsp;=>&nbsp;几个纸箱','')" help>
+            <span v-if="form.BdMultiple">{{form.BdMultiple}}</span>
+            <span style="color: #999;" v-else>待选择箱型</span>
+        </cell>
+        <field label="订单数" type="number" placeholder="输入订单数" v-model="form.OrdQty" @focus="disBtn = true" @blur="calc_BdQty()"></field>
+        <cell title="纸板数">
+            <span v-if="form.BdQty">{{form.BdQty}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="下单面积(㎡)" placeholder="待计算" @icon-click="$.alert('下单面积范围：' + MinArea + '㎡&nbsp;~&nbsp;' + MaxArea + '㎡','')" help>
+            <span v-if="Area">{{Area}}</span>
+        </cell>
+        <cell title="送货公司" placeholder="选择送货公司" @click="showCustomerDNSelect = true" is-link>
+            <span v-if="form.CusSubNo">{{form.CusSubNo}}</span>
+        </cell>
+        <cell title="交货日期" placeholder="选择交货日期" @click="$refs.DeliveryDate.open()" is-link>
+            {{datetimeFormat(form.DeliveryDate,'yyyy-MM-dd')}}
+        </cell>
+        <field label="送货备注" placeholder="填写送货备注" rows="1" type="textarea" v-model="form.DNRemark" autosize></field>
+        <field label="生产备注" placeholder="填写生产备注" rows="1" type="textarea" v-model="form.ProRemark" autosize></field>
+    </cell-group>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.DeliveryDate" ref="DeliveryDate"></mt-datetime-picker>
+    <div class="cell-group-btn" @click="bcheck()">下单</div>
+    <transition name="fullpage">
+        <div class="diy-select-fullpage" v-if="showBoardCodeSelect">
+            <div class="empty" v-if="$.isEmptyObject(BoardCodeSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.BoardId === form.BoardId_,'used':v.IsUsedBoard === '1'}" @click="form.BoardId_ = v.BoardId" v-for="v in BoardCodeSelect">
+                    <div class="content">
+                        <span>{{v.BoardId}}</span>
+                        <span v-if="v.BoardName">材质名称：{{v.BoardName}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.BoardId = form.BoardId_;AutoGetTonLenAndULen(form.BoardId_);showBoardCodeSelect = false">确定</div>
+        </div>
+        <div class="diy-select-fullpage" v-if="showBoxCodeSelect">
+            <div class="empty" v-if="$.isEmptyObject(BoxCodeSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.BoxId === form.BoxId_}" @click="form.BoxId_ = v.BoxId" v-for="v in BoxCodeSelect">
+                    <div class="content">
+                        <span>{{v.BoxId}}</span>
+                        <span v-if="v.BoxName">箱型名称：{{v.BoxName}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.BoxId = form.BoxId_;getFormula();showBoxCodeSelect = false">确定</div>
+        </div>
+        <div class="diy-select-fullpage" v-if="showTonLenSelect">
+            <div class="empty" v-if="$.isEmptyObject(TonLenSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v === form.TonLen_}" @click="form.TonLen_ = v" v-for="v in TonLenSelect">
+                    <div class="content">
+                        <span>{{v}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.TonLen = form.TonLen_;calc_BdLW();showTonLenSelect = false">确定</div>
+        </div>
+        <div class="diy-select-fullpage" v-if="showULenSelect">
+            <div class="empty" v-if="$.isEmptyObject(ULenSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v === form.ULen_}" @click="form.ULen_ = v" v-for="v in ULenSelect">
+                    <div class="content">
+                        <span>{{v}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.ULen = form.ULen_;calc_BdLW();showULenSelect = false">确定</div>
+        </div>
+        <div class="diy-select-fullpage" v-if="showCustomerDNSelect">
+            <div class="empty" v-if="$.isEmptyObject(CustomerDNSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.CusSubNo === form.CusSubNo_}" @click="form.CusSubNo_ = v.CusSubNo" v-for="v in CustomerDNSelect">
+                    <div class="content">
+                        <span>{{v.CusSubNo}}</span>
+                        <span v-if="v.SubDNAddress">送货地址：{{v.SubDNAddress}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.CusSubNo = form.CusSubNo_;showCustomerDNSelect = false">确定</div>
+        </div>
+    </transition>
+    <confirm-build-info
+            build_type="c"
+            :form="form"
+            :Area="Area"
+            :show-confirm-build-info.sync="showConfirmBuildInfo"
+            @build="build()">
+    </confirm-build-info>
+    <transition name="fullpage">
+        <build-result-fullpage
+                :result="result"
+                :msg="msg"
+                weborder_url="{:U('Weborder/lists')}"
+                :show-build-result.sync="showBuildResult"
+                v-if="showBuildResult">
+        </build-result-fullpage>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            //存放初始化数据
+            form_ini: {
+                CusPoNo: null,
+                BoardId: null,
+                BoardId_: null,
+                Length: null,
+                Width: null,
+                OrdQty: null, BdQty: null,//watch
+                BdMultiple: null,
+                CusSubNo: '{$ERPId}',
+                CusSubNo_: '{$ERPId}',
+                DeliveryDate: '{:date(\'Y-m-d\',strtotime($config[\'BuildDeliveryDate\']))}',
+                DNRemark: null,
+                ProRemark: null,
+                BoxId: null, BoxId_: null, BoxL: null, BoxW: null, BoxH: null, TonLen: null, TonLen_: null, ULen: null, ULen_: null,//watch
+                LengthF_calc: '', WidthF_calc: '',//用于暗中计算
+                LengthF_show: null, WidthF_show: null//用于显示给用户看的实时计算公式
+            },
+            //实际数据
+            form: {},
+            disBtn: false,//禁用下单按钮
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMaxDate\']))}'),
+            MinBoxL: Number('{$config[\'BuildMinBoxL\']}'),
+            MaxBoxL: Number('{$config[\'BuildMaxBoxL\']}'),
+            MinBoxW: Number('{$config[\'BuildMinBoxW\']}'),
+            MaxBoxW: Number('{$config[\'BuildMaxBoxW\']}'),
+            MinBoxH: Number('{$config[\'BuildMinBoxH\']}'),
+            MaxBoxH: Number('{$config[\'BuildMaxBoxH\']}'),
+            MinArea: Number('{$config[\'BuildMinArea\']}'),
+            MaxArea: Number('{$config[\'BuildMaxArea\']}'),
+            BoardCodeSelect: eval('(' + '{$BoardCodeSelect}' + ')'),
+            BoxCodeSelect: eval('(' + '{$BoxCodeSelect}' + ')'),
+            TonLenSelect: eval('(' + '{$TonLenSelect}' + ')'),
+            ULenSelect: eval('(' + '{$ULenSelect}' + ')'),
+            CustomerDNSelect: eval('(' + '{$CustomerDNSelect}' + ')'),
+            showBoardCodeSelect: false,
+            showBoxCodeSelect: false,
+            showTonLenSelect: false,
+            showULenSelect: false,
+            showCustomerDNSelect: false,
+            Area: null,
+            //确认下单信息
+            showConfirmBuildInfo: false,
+            //下单结果
+            result: Boolean,
+            msg: String,
+            showBuildResult: false
+        },
+        methods: {
+            bcheck: function () {
+                var _this = this;
+                if(_this.disBtn){return;}
+                if(!_this.form.BoardId){$.toast('请选择材质','text');return;}
+                if(typeof(_this.form.Length) !== 'number'){$.toast('请填写相关信息获取板长','text');return;}
+                if(typeof(_this.form.Width) !== 'number'){$.toast('请填写相关信息获取板宽','text');return;}
+                if(_this.form.BoxL && (_this.form.BoxL < _this.MinBoxL || _this.form.BoxL > _this.MaxBoxL)){
+                    $.toast('箱长范围：' + _this.MinBoxL + 'mm&nbsp;~&nbsp;' + _this.MaxBoxL + 'mm','text');return;
+                }
+                if(_this.form.BoxW && (_this.form.BoxW < _this.MinBoxW || _this.form.BoxW > _this.MaxBoxW)){
+                    $.toast('箱宽范围：' + _this.MinBoxW + 'mm&nbsp;~&nbsp;' + _this.MaxBoxW + 'mm','text');return;
+                }
+                if(_this.form.BoxH && (_this.form.BoxH < _this.MinBoxH || _this.form.BoxH > _this.MaxBoxH)){
+                    $.toast('箱高范围：' + _this.MinBoxH + 'mm&nbsp;~&nbsp;' + _this.MaxBoxH + 'mm','text');return;
+                }
+                if(typeof(_this.form.BdQty) !== 'number'){$.toast('请填写相关信息获取纸板数','text');return;}
+                if(_this.Area && (_this.Area < _this.MinArea || _this.Area > _this.MaxArea)){
+                    $.toast('下单面积范围：' + _this.MinArea + '㎡&nbsp;~&nbsp;' + _this.MaxArea + '㎡','text');return;
+                }
+                if(!_this.form.CusSubNo){$.toast('请选择送货公司','text');return;}
+                if(!_this.form.DeliveryDate){$.toast('请填写交货日期','text');return;}
+                _this.form.DeliveryDate = datetimeFormat(_this.form.DeliveryDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'bcheck_c_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            document.body.classList.add('body-lock');
+                            _this.showConfirmBuildInfo = true;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            build: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'c_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        _this.result = (respon.ret === '{:C(\'succ_ret\')}');
+                        if(_this.result){
+                            _this.form = Object.assign({},_this.form_ini,{BoardId: _this.form.BoardId,BoardId_: _this.form.BoardId,CusSubNo: _this.form.CusSubNo,CusSubNo_: _this.form.CusSubNo});
+                            _this.Area = null;
+                        }
+                        _this.msg = respon.msg;
+                        _this.showBuildResult = true;
+                    }
+                });
+            },
+            AutoGetTonLenAndULen: function (BoardId) {
+                var _this = this;
+                if(BoardId && Number('{$config[\'BuildAutoGetTonLenAndULen\']}')){
+                    $.ajax({
+                        url: '{:U(\'AutoGetTonLenAndULen_api\')}',
+                        type: 'get',
+                        data: {BoardId: BoardId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            var string = '';
+                            if(respon.TonLen === null){
+                                if(_this.form.TonLen !== null){
+                                    string += '箱舌(T) => 不选择';
+                                }
+                                _this.form.TonLen = _this.form.TonLen_ = null;
+                            }else{
+                                if(_this.form.TonLen !== respon.TonLen){
+                                    string += '箱舌(T) => ' + respon.TonLen;
+                                }
+                                _this.form.TonLen = _this.form.TonLen_ = respon.TonLen;
+                            }
+                            if(respon.ULen === null){
+                                if(_this.form.ULen !== null){
+                                    if(string === ''){
+                                        string += '';
+                                    }else{
+                                        string += '&nbsp;&nbsp;&nbsp;';
+                                    }
+                                    string += '封箱调整(U) => 不选择';
+                                }
+                                _this.form.ULen = _this.form.ULen_ = null;
+                            }else{
+                                if(_this.form.ULen !== respon.ULen){
+                                    if(string === ''){
+                                        string += '';
+                                    }else{
+                                        string += '&nbsp;&nbsp;&nbsp;';
+                                    }
+                                    string += '封箱调整(U) => ' + respon.ULen;
+                                }
+                                _this.form.ULen = _this.form.ULen_ = respon.ULen;
+                            }
+                            if(string !== ''){
+                                $.toast(string,'text');
+                            }
+                            _this.calc_BdLW();
+                        }
+                    });
+                }
+            },
+            getFormula: function () {
+                var _this = this;
+                if(_this.form.BoxId){
+                    $.ajax({
+                        url: '{:U(\'getFormula_api\')}',
+                        type: 'get',
+                        data: {BoxId: _this.form.BoxId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            _this.form.LengthF_calc = _this.form.LengthF_show = respon.LengthF;
+                            _this.form.WidthF_calc = _this.form.WidthF_show = respon.WidthF;
+                            _this.form.BdMultiple = Number(respon.Multiple);
+                            _this.calc_BdLW();
+                            _this.calc_BdQty();
+                        }
+                    });
+                }
+            },
+            //计算纸板长宽
+            calc_BdLW: function () {
+                if(this.form.BoxL && (this.form.BoxL < this.MinBoxL || this.form.BoxL > this.MaxBoxL)){
+                    this.form.BoxL = null;$.toast('箱长范围：' + this.MinBoxL + 'mm&nbsp;~&nbsp;' + this.MaxBoxL + 'mm','text');
+                }
+                if(this.form.BoxW && (this.form.BoxW < this.MinBoxW || this.form.BoxW > this.MaxBoxW)){
+                    this.form.BoxW = null;$.toast('箱宽范围：' + this.MinBoxW + 'mm&nbsp;~&nbsp;' + this.MaxBoxW + 'mm','text');
+                }
+                if(this.form.BoxH && (this.form.BoxH < this.MinBoxH || this.form.BoxH > this.MaxBoxH)){
+                    this.form.BoxH = null;$.toast('箱高范围：' + this.MinBoxH + 'mm&nbsp;~&nbsp;' + this.MaxBoxH + 'mm','text');
+                }
+                var LengthF_exp = this.form.LengthF_calc;
+                var WidthF_exp = this.form.WidthF_calc;
+                if(this.form.BoxL){
+                    LengthF_exp = LengthF_exp.replace(/L/g,'<span style="color: #1a991d;">' + this.form.BoxL + '</span>');
+                    WidthF_exp = WidthF_exp.replace(/L/g,'<span style="color: #1a991d;">' + this.form.BoxL + '</span>');
+                }
+                if(this.form.BoxW){
+                    LengthF_exp = LengthF_exp.replace(/W/g,'<span style="color: #1a991d;">' + this.form.BoxW + '</span>');
+                    WidthF_exp = WidthF_exp.replace(/W/g,'<span style="color: #1a991d;">' + this.form.BoxW + '</span>');
+                }
+                if(this.form.BoxH){
+                    LengthF_exp = LengthF_exp.replace(/H/g,'<span style="color: #1a991d;">' + this.form.BoxH + '</span>');
+                    WidthF_exp = WidthF_exp.replace(/H/g,'<span style="color: #1a991d;">' + this.form.BoxH + '</span>');
+                }
+                if(this.form.TonLen){
+                    LengthF_exp = LengthF_exp.replace(/T/g,'<span style="color: #1a991d;">' + this.form.TonLen + '</span>');
+                    WidthF_exp = WidthF_exp.replace(/T/g,'<span style="color: #1a991d;">' + this.form.TonLen + '</span>');
+                }
+                if(this.form.ULen){
+                    LengthF_exp = LengthF_exp.replace(/U/g,'<span style="color: #1a991d;">' + this.form.ULen + '</span>');
+                    WidthF_exp = WidthF_exp.replace(/U/g,'<span style="color: #1a991d;">' + this.form.ULen + '</span>');
+                }
+                this.form.LengthF_show = LengthF_exp;
+                this.form.WidthF_show = WidthF_exp;
+                if(LengthF_exp && LengthF_exp.indexOf('L') === -1 && LengthF_exp.indexOf('W') === -1 && LengthF_exp.indexOf('H') === -1 && LengthF_exp.indexOf('T') === -1 && LengthF_exp.indexOf('U') === -1){
+                    this.form.Length = Math.round(eval(LengthF_exp.replace(/<\/?.+?>/g,'')));
+                }else{
+                    this.form.Length = '';
+                }
+                if(WidthF_exp && WidthF_exp.indexOf('L') === -1 && WidthF_exp.indexOf('W') === -1 && WidthF_exp.indexOf('H') === -1 && WidthF_exp.indexOf('T') === -1 && WidthF_exp.indexOf('U') === -1){
+                    this.form.Width = Math.round(eval(WidthF_exp.replace(/<\/?.+?>/g,'')));
+                }else{
+                    this.form.Width = '';
+                }
+                this.calcArea();
+            },
+            //计算纸板数
+            calc_BdQty: function () {
+                if(typeof(this.form.BdMultiple) === 'number' && this.form.OrdQty){
+                    if(this.form.BdMultiple > 0){
+                        this.form.BdQty = this.form.OrdQty * this.form.BdMultiple;
+                    }else if(this.form.BdMultiple < 0){
+                        this.form.BdQty = this.form.OrdQty / this.form.BdMultiple * -1;
+                    }else{
+                        this.form.BdQty = null;
+                    }
+                }else{
+                    this.form.BdQty = null;
+                }
+                this.calcArea();
+            },
+            calcArea: function () {
+                var _this = this;
+                _this.Area = null;
+                if(_this.form.OrdQty && !(/(^[1-9]\d*$)/.test(_this.form.OrdQty))){
+                    $.toast('订单数错误','text',function () {
+                        _this.form.OrdQty = _this.form.BdQty = null;
+                        _this.disBtn = false;
+                    });return;
+                }
+                if(_this.form.BdQty && !(/(^[1-9]\d*$)/.test(_this.form.BdQty))){
+                    $.toast('纸板数错误','text',function () {
+                        _this.form.OrdQty = _this.form.BdQty = null;
+                        _this.disBtn = false;
+                    });return;
+                }
+                if(typeof(_this.form.Length) === 'number' && typeof(_this.form.Width) === 'number' && _this.form.BdQty){
+                    $.ajax({
+                        url: '{:U(\'calcArea_api\')}',
+                        type: 'get',
+                        data: {
+                            Length: _this.form.Length,
+                            Width: _this.form.Width,
+                            BdQty: _this.form.BdQty
+                        },
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            _this.Area = respon.Area;
+                            if(!Number(respon.validArea)){
+                                $.toast('下单面积范围：' + _this.MinArea + '㎡&nbsp;~&nbsp;' + _this.MaxArea + '㎡','text',function () {
+                                    _this.form.OrdQty = _this.form.BdQty = null;
+                                    _this.Area = null;
+                                });
+                            }
+                            _this.disBtn = false;
+                        }
+                    });
+                }else{
+                    _this.disBtn = false;
+                }
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form_ini,eval('(' + '{$FastBuildInfo}' + ')'));
+            this.getFormula();
+            if($.isEmptyObject(this.BoardCodeSelect)){
+                $.confirm('没有可选择的材质，请先选择常用材质','',function () {
+                    window.location.href = '{:U(\'Usedboard/lists\')}';
+                });
+            }
+        }
+    });
+</script>

@@ -1,0 +1,250 @@
+<style>
+    .mint-indicator-wrapper {
+        z-index: 2;
+    }
+</style>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="top-2btn-box">
+        <div class="btn" @click="showUserOrder = true">
+            <i class="iconfont icon-denglu6"></i>&nbsp;员工信息
+        </div>
+        <div class="separator"></div>
+        <div class="btn" @click="OpenSlider()">
+            <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+        </div>
+    </div>
+    <transition name="fullpage2">
+        <div class="dongheng-line-info-fullpage" v-if="showUserOrder">
+            <div>
+                <div class="item span2">
+                    <span>员工</span>
+                    <span>{$HeaderFlag}</span>
+                </div>
+                <div class="item span2">
+                    <span>欠款合计</span>
+                    <span style="color: #0a0;">{{RealAmt}}</span>
+                </div>
+                <div class="item span2">
+                    <span>查询时间</span>
+                    <span>{{QueryTime}}</span>
+                </div>
+            </div>
+            <div class="close-btn" @click="showUserOrder = false">关闭</div>
+        </div>
+    </transition>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row1">
+                    <div class="title">客户</div>
+                    <div class="input" @click="OpenCusPicker()">{{form.CusId}}</div>
+                </div>
+                <div class="row2">
+                    <div class="title">是否停单</div>
+                    <label :class="{'checked':form.Stopped === ''}">
+                        全部<input type="radio" value="" v-model="form.Stopped" hidden>
+                    </label>
+                    <label :class="{'checked':form.Stopped === '1'}">
+                        是<input type="radio" value="1" v-model="form.Stopped" hidden>
+                    </label>
+                    <label :class="{'checked':form.Stopped === '0'}">
+                        否<input type="radio" value="0" v-model="form.Stopped" hidden>
+                    </label>
+                </div>
+                <div class="row2">
+                    <div class="title">是否月结</div>
+                    <label :class="{'checked':form.SettleDay === ''}">
+                        全部<input type="radio" value="" v-model="form.SettleDay" hidden>
+                    </label>
+                    <label :class="{'checked':form.SettleDay === '1'}">
+                        是<input type="radio" value="1" v-model="form.SettleDay" hidden>
+                    </label>
+                    <label :class="{'checked':form.SettleDay === '0'}">
+                        否<input type="radio" value="0" v-model="form.SettleDay" hidden>
+                    </label>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <master-picker :show.sync="CusPickMode"
+                   :select-data="CusPickData"
+                   :no-data="CusNoData"
+                   :loading="CusLoading"
+                   @clear="clearCusPicker"
+                   @confirm="confirmCusPicker"
+                   @close="closeCusPicker"
+                   connection>
+        <input class="keyword" placeholder="请输入关键词" v-model="CusKeyword">
+    </master-picker>
+    <div class="dongheng-lists-box" style="top: 80px;">
+        <div class="empty" v-if="$.isEmptyObject(lists)">
+            <img src="__RES__/empty.jpg">
+            <p>没有找到相关客户</p>
+        </div>
+        <div v-else>
+            <div class="line-item" @click="window.location.href = '{:U(\'WGetCusAmt_\')}?CusId=' + v.CusId" v-for="(v,k) in lists">
+                <span style="flex: 1;">{{v.CusShortName}}（{{v.CusId}}）</span>
+                <span style="flex: 1;text-align: right;">{{v.LeftMinAmtCond}}/{{v.MinAmtCond}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            //员工信息
+            showUserOrder: false,
+            RealAmt: null,QueryTime: null,
+            form: {
+                CusId: '',
+                Stopped: '',
+                SettleDay: '',
+                rememberForm: 'no'
+            },
+            //打开侧边栏前的form对象
+            BeforeOpenSliderForm: {},
+            BarVisible: false,
+            tempTop: 0,
+            lists: null,
+            //客户Picker
+            CusKeyword: '',
+            CusPickMode: false,
+            CusPickData: {
+                columns: 1,
+                default: [],
+                pData1: [],
+            },
+            CusLoading: true,
+            CusNoData: true,
+            CusLastPicked: {}
+        },
+        methods: {
+            WGetCusAmt: function () {
+                var _this = this;
+                _this.lists = null;
+                $.ajax({
+                    url: '{:U(\'WGetCusAmt_api\')}',
+                    type: 'get',
+                    data: {form: _this.form},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.lists = respon.data;
+                            _this.RealAmt = respon.RealAmt;
+                            _this.QueryTime = respon.QueryTime;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm){
+                    this.WGetCusAmt();
+                }else{
+                    this.ResetForm();
+                }
+            },
+            //客户Picker
+            OpenCusPicker: function () {
+                this.CusPickMode = true;
+                if(this.CusPickData.pData1.length === 0){
+                    this.SearchCus();
+                }else{
+                    this.CusPickData.default[0] = this.CusLastPicked;
+                }
+            },
+            SearchCus: function () {
+                var _this = this;
+                _this.CusPickData.default[0] = {};
+                _this.CusPickData.pData1 = [];
+                _this.CusLoading = true;
+                _this.CusNoData = false;
+                $.ajax({
+                    url: '{:U(\'CusPicker_api\')}',
+                    type: 'get',
+                    data: {CusKeyword: _this.CusKeyword},
+                }).then(function (respon) {
+                    _this.CusLoading = false;
+                    var respon = eval('(' + respon + ')');
+                    var data = [];
+                    respon.forEach(function (item,index) {
+                        data.push({text: respon[index].CusName,value: respon[index].CusId});
+                    });
+                    _this.CusPickData.default[0] = data[0];
+                    _this.CusPickData.pData1 = data;
+                    if (!data[0]) {
+                        _this.CusNoData = true;
+                    }
+                });
+            },
+            clearCusPicker: function () {
+                this.CusPickMode = false;
+                this.form.CusId = '';
+            },
+            confirmCusPicker: function (val) {
+                this.CusPickMode = false;
+                if(val.select1){
+                    this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                    this.form.CusId = val.select1.value;
+                }
+            },
+            closeCusPicker: function (val) {
+                if(val.select1){
+                    this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                }
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form,eval('(' + '{$rememberForm}' + ')'));
+            this.WGetCusAmt();
+        },
+        watch: {
+            CusKeyword: function () {
+                this.SearchCus();
+            }
+        }
+    });
+</script>

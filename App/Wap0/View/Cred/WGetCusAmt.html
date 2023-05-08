@@ -1,0 +1,116 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="dongheng-line-info-box">
+        <div class="item">
+            <span>客户</span>
+            <span>{{Cus}}</span>
+        </div>
+        <div class="item">
+            <span>业务员</span>
+            <span>{{Task}}</span>
+        </div>
+        <div class="item">
+            <span>是否停单</span>
+            <span v-if="Stopped === '1'">是</span>
+            <span v-else-if="Stopped === '0'">否</span>
+            <span v-else></span>
+        </div>
+        <div class="item">
+            <span>是否为月结客户</span>
+            <span v-if="SettleDay && SettleDay === '0'">否</span>
+            <span v-else-if="SettleDay && SettleDay !== '0'">是</span>
+            <span v-else></span>
+        </div>
+        <div class="item">
+            <span>下单未送金额</span>
+            <span>{{OrdNeedAmt}}</span>
+        </div>
+        <div class="item">
+            <span>信用额</span>
+            <span>{{MinAmtCond}}</span>
+        </div>
+        <div class="item">
+            <span>当前欠款</span>
+            <span>{{CurAmt}}</span>
+        </div>
+        <div class="item">
+            <span>信用余额</span>
+            <span>{{LeftMinAmtCond}}</span>
+        </div>
+        <div class="item">
+            <span>查询时间</span>
+            <span>{{QueryTime}}</span>
+        </div>
+    </div>
+    <div class="dhlib-btn" @click="WGetCusAmt()">刷新</div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Cus: null,
+            Task: null,
+            Stopped: null,
+            SettleDay: null,
+            OrdNeedAmt: null,
+            MinAmtCond: null,
+            CurAmt: null,
+            LeftMinAmtCond: null,
+            QueryTime: null
+        },
+        methods: {
+            WGetCusAmt: function () {
+                var _this = this;
+                _this.Cus = null;
+                _this.Task = null;
+                _this.Stopped = null;
+                _this.SettleDay = null;
+                _this.OrdNeedAmt = null;
+                _this.MinAmtCond = null;
+                _this.CurAmt = null;
+                _this.LeftMinAmtCond = null;
+                _this.QueryTime = null;
+                $.ajax({
+                    url: '{:U(\'WGetCusAmt_api\')}',
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.Cus = respon.data.Cus;
+                            _this.Task = respon.data.Task;
+                            _this.Stopped = respon.data.Stopped;
+                            _this.SettleDay = respon.data.SettleDay;
+                            _this.OrdNeedAmt = respon.data.OrdNeedAmt;
+                            _this.MinAmtCond = respon.data.MinAmtCond;
+                            _this.CurAmt = respon.data.CurAmt;
+                            _this.LeftMinAmtCond = respon.data.LeftMinAmtCond;
+                            _this.QueryTime = respon.data.QueryTime;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.WGetCusAmt();
+        }
+    });
+</script>

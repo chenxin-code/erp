@@ -1,0 +1,166 @@
+<div id="VueBox">
+    <div class="top-bar">
+        排序
+        <select v-model="form.XU">
+            <option value="desc">降序</option>
+            <option value="asc">升序</option>
+        </select>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td><span style="color: #e01835;">材质</span>,标题</td>
+                <td>图片</td>
+                <td>价格(元/㎡)</td>
+                <td>团购时间</td>
+                <td>下单范围(㎡)</td>
+                <td>单客户限量(㎡)</td>
+                <td>售出/总客户限量(㎡)</td>
+                <td>删除时间</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="v in lists">
+                <td>{{v.Id}}</td>
+                <td><span style="color: #e01835;">{{v.BoardId}}</span><span v-if="v.Title">,{{v.Title}}</span></td>
+                <td>
+                    <img style="width: 60px;" :src="'__RES__/' + v.Pic[0]" v-if="v.Pic[0]">
+                    <span v-if="v.Pic.length > 1">等{{v.Pic.length}}张</span>
+                </td>
+                <td>
+                    <span style="color: #e01835;">{{v.Price}}</span>
+                    <br><br>
+                    <span style="text-decoration: line-through;">{{v.MarketPrice}}</span>
+                </td>
+                <td>
+                    {{v.BeginTime}}
+                    <br><br>
+                    {{v.EndTime}}
+                </td>
+                <td>{{v.BuildMin}}&nbsp;~&nbsp;{{v.BuildMax}}</td>
+                <td>{{v.CusMax}}</td>
+                <td>{{v.Sale}}&nbsp;/&nbsp;{{v.Total}}</td>
+                <td>{{v.DelTime}}</td>
+                <td>
+                    <a @click="undel(v.Id)" title="还原">
+                        <i class="iconfont icon-huanyuan1" style="color: #e01835;cursor: pointer;"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <td colspan="50" style="text-align: center;">
+                    第&nbsp;<span style="color: #1a991d;">{{form.CurPage}}</span>&nbsp;页
+                    /
+                    共&nbsp;<span style="color: #1a991d;">{{MaxPage}}</span>&nbsp;页
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    共&nbsp;<span style="color: #1a991d;">{{count}}</span>&nbsp;条记录
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <div class="bottom-bar">
+        <a href="javascript:void(0);" @click="form.CurPage = 1">首页</a>
+        <a href="javascript:void(0);" @click="prevPage()">上一页</a>
+        <a href="javascript:void(0);" @click="nextPage()">下一页</a>
+        <a href="javascript:void(0);" @click="form.CurPage = MaxPage">尾页</a>
+        <select v-model="form.CurPage">
+            <option :value="p" v-for="p in MaxPage">第{{p}}页</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            form: {
+                XU: 'desc',
+                State: '',
+                IsFlag: '',
+                CurPage: 1,
+                PageSize: 10
+            },
+            lists: [],
+            count: 0,
+            MaxPage: 1
+        },
+        methods: {
+            search: function () {
+                var _this = this;
+                _this.lists = [];
+                $.ajax({
+                    url: '{:U(\'delLists_api\')}',
+                    type: 'get',
+                    data: _this.form,
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        _this.lists = respon.data?respon.data:[];
+                        _this.count = respon.count;
+                        _this.MaxPage = respon.MaxPage;
+                    }
+                });
+            },
+            prevPage: function () {
+                if(this.form.CurPage > 1){
+                    this.form.CurPage --;
+                }else{
+                    this.form.CurPage = 1;
+                }
+            },
+            nextPage: function () {
+                if(this.form.CurPage < this.MaxPage){
+                    this.form.CurPage ++;
+                }else{
+                    this.form.CurPage = this.MaxPage;
+                }
+            },
+            undel: function (Id) {
+                var _this = this;
+                swal({type: 'warning', title: '确定还原吗？', showCancelButton: true}).then(function () {
+                    $.ajax({
+                        url: '{:U(\'undel_api\')}',
+                        type: 'get',
+                        data: {Id: Id},
+                        success: function (respon) {
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                swal({type: 'success', title: respon.msg}).then(function () {
+                                    _this.search();
+                                });
+                            }else{
+                                swal({type: 'error', title: respon.msg});
+                            }
+                        }
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            if(/(^[1-9]\d*$)/.test('{$_GET[\'lastCurPage\']}')){
+                //console.log('是正整数');
+                this.form.CurPage = '{$_GET[\'lastCurPage\']}';
+            }else{
+                this.form.CurPage = 1;
+            }
+            this.search();
+        },
+        watch: {
+            'form.XU': function () {
+                this.search();
+            },
+            'form.State': function () {
+                this.search();
+            },
+            'form.IsFlag': function () {
+                this.search();
+            },
+            'form.CurPage': function () {
+                this.search();
+            }
+        }
+    });
+</script>

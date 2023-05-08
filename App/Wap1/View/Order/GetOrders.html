@@ -1,0 +1,389 @@
+<!-- 引入 mescroll 插件 -->
+<script src="__RES__/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="__RES__/mescroll/mescroll.min.css">
+
+<style>
+    .mescroll {
+        height: auto;
+        position: fixed;
+        top: 80px;
+        bottom: 0;
+    }
+    .mescroll-totop {
+        bottom: 10px;
+        z-index: 1;
+    }
+    /*****************************************************/
+    .mint-indicator-wrapper {
+        z-index: 2;
+    }
+</style>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-filter-box">
+        <div class="tab">
+            <div @click="changeTab('all')" :class="{'active':State === 'all'}" style="flex: 0 0 25%;">
+                <i class="iconfont icon-quanbu1"></i>&nbsp;全部
+            </div>
+            <div @click="changeTab('1')" :class="{'active':State === '1'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-daishenhe"></i>&nbsp;未审核
+            </div>
+            <div @click="changeTab('2')" :class="{'active':State === '2'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-shenhetongguo1"></i>&nbsp;已审核
+            </div>
+            <div @click="changeTab('3')" :class="{'active':State === '3'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-chuandan"></i>&nbsp;已传单
+            </div>
+            <div @click="changeTab('4')" :class="{'active':State === '4'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-ruku2"></i>&nbsp;已入库
+            </div>
+            <div @click="changeTab('5')" :class="{'active':State === '5'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-songhuo1"></i>&nbsp;已送货
+            </div>
+            <div @click="changeTab('6')" :class="{'active':State === '6'}" style="flex: 0 0 30%;">
+                <i class="iconfont icon-tuihuo1"></i>&nbsp;有退货
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="filter" @click="OpenSlider()">
+            <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll">
+        <div id="lists">
+            <div :class="'common-item ' + (k%2?'bgc1':'bgc2')" v-for="(v,k) in lists">
+                <div class="info-box">
+                    <div class="flex-box">
+                        <div>货品名称：<span>{{v.MatName}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单编号：<span>{{v.strOrderId}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>客订单号：<span>{{v.CusPoNo}}</span></div>
+                        <div>材质：<span>{{v.BoardId}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>客户：<span>{{v.CusId}}</span></div>
+                        <div>客户简称：<span>{{v.CusShortName}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>规格：<span>{{v.GuiGe}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>压线：<span>{{v.ScoreInfo}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单数：<span>{{v.OrdQty}}</span></div>
+                        <div>送货数：<span>{{v.DeliQty}}</span></div>
+                        <div>退货数：<span>{{v.ReturnQty}}</span></div>
+                    </div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn s1" @click="detail(v.OrderType,v.OrderId)">详情</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage">
+        <wap01-order-detail-fullpage
+                ajax_url="{:U('detail_api')}"
+                :ajax_data_order_type="OrderType"
+                :ajax_data_order_id="OrderId"
+                :show-detail.sync="showDetail"
+                v-if="showDetail">
+        </wap01-order-detail-fullpage>
+    </transition>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row1">
+                    <div class="title">订单编号</div>
+                    <input v-model="form.OrderId" class="input" placeholder="模糊查询">
+                </div>
+                <div class="row1">
+                    <div class="title">板长</div>
+                    <input type="number" v-model="form.Length" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">板宽</div>
+                    <input type="number" v-model="form.Width" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">箱长</div>
+                    <input type="number" v-model="form.BoxL" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">箱宽</div>
+                    <input type="number" v-model="form.BoxW" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">箱高</div>
+                    <input type="number" v-model="form.BoxH" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">订单数</div>
+                    <input type="number" v-model="form.OrdQty" class="input" placeholder="精确查询">
+                </div>
+                <div class="row1">
+                    <div class="title">客户</div>
+                    <div class="input" @click="OpenCusPicker()">{{form.CusId}}</div>
+                </div>
+                <div class="row2">
+                    <div class="title">日期类型</div>
+                    <label :class="{'checked':form.DateType === 'OrderDate'}">
+                        订单日期<input type="radio" value="OrderDate" v-model="form.DateType" hidden>
+                    </label>
+                    <label :class="{'checked':form.DateType === 'DeliveryDate'}">
+                        交货日期<input type="radio" value="DeliveryDate" v-model="form.DateType" hidden>
+                    </label>
+                </div>
+                <div class="row1">
+                    <div class="title">开始日期</div>
+                    <div class="input" @click="$refs.BeginDate.open()">{{datetimeFormat(form.BeginDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row1">
+                    <div class="title">结束日期</div>
+                    <div class="input" @click="$refs.EndDate.open()">{{datetimeFormat(form.EndDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+                <!--<div style="height:1500px;background-color:#1aad19;border:5px solid #ff5000;"></div>-->
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.BeginDate" ref="BeginDate"></mt-datetime-picker>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.EndDate" ref="EndDate"></mt-datetime-picker>
+    <master-picker :show.sync="CusPickMode"
+                :select-data="CusPickData"
+                :no-data="CusNoData"
+                :loading="CusLoading"
+                @clear="clearCusPicker"
+                @confirm="confirmCusPicker"
+                @close="closeCusPicker"
+                connection>
+        <input class="keyword" placeholder="请输入关键词" v-model="CusKeyword">
+    </master-picker>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            State: '{$rememberTab}'?'{$rememberTab}':'all',
+            form: {
+                OrderId: '',
+                Length: '',
+                Width: '',
+                BoxL: '',
+                BoxW: '',
+                BoxH: '',
+                OrdQty: '',
+                CusId: '',
+                DateType: 'OrderDate',
+                BeginDate: '{:date(\'Y-m-d\',strtotime($config[\'Wap1GetOrdersBeginDate\']))}',
+                EndDate: '{:date(\'Y-m-d\',strtotime($config[\'Wap1GetOrdersEndDate\']))}',
+                rememberForm: 'no'
+            },
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'Wap1GetOrdersMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'Wap1GetOrdersMaxDate\']))}'),
+            //打开侧边栏前的form对象
+            BeforeOpenSliderForm: {},
+            BarVisible: false,
+            tempTop: 0,
+            mescroll: null,
+            lists: [],
+            //详情
+            showDetail: false,
+            OrderType: '',
+            OrderId: '',
+            //客户Picker
+            CusKeyword: '',
+            CusPickMode: false,
+            CusPickData: {
+                columns: 1,
+                default: [],
+                pData1: [],
+            },
+            CusLoading: true,
+            CusNoData: true,
+            CusLastPicked: {}
+        },
+        methods: {
+            upCallback: function (page) {
+                var _this = this;
+                _this.search(page.num, page.size, function (respon) {
+                    //如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
+                    if(page.num === 1){
+                        _this.lists = [];
+                    }
+                    _this.lists = _this.lists.concat(respon.data);
+                    _this.mescroll.endSuccess(respon.data.length);//存储过程不返回总数和最大页数，只能用不推荐的方法
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            search: function (CurPage,PageSize,successCallback,errorCallback) {
+                var _this = this;
+                _this.form.BeginDate = datetimeFormat(_this.form.BeginDate,'yyyy-MM-dd');
+                _this.form.EndDate = datetimeFormat(_this.form.EndDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'GetOrders_api\')}',
+                    type: 'get',
+                    data: {
+                        CurPage: CurPage,
+                        PageSize: PageSize,
+                        State: _this.State,
+                        form: _this.form
+                    },
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            successCallback && successCallback(respon);
+                        }else{
+                            _this.lists = [];
+                            $.toast(respon.msg,'forbidden');
+                            errorCallback();
+                        }
+                    },
+                    error: errorCallback
+                });
+            },
+            ResetLists: function () {
+                this.lists = [];
+                this.mescroll.resetUpScroll();
+                this.mescroll.hideTopBtn();
+            },
+            detail: function (OrderType,OrderId) {
+                this.OrderType = OrderType;
+                this.OrderId = OrderId;
+                this.showDetail = true;
+            },
+            changeTab: function (value) {
+                if(this.State !== value){
+                    this.State = value;
+                    this.ResetLists();
+                }
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm
+                    //&& !checkObjectIsEqual(this.form,this.BeforeOpenSliderForm)
+                ){
+                    this.ResetLists();
+                }else{
+                    this.ResetForm();
+                }
+            },
+            //客户Picker
+            OpenCusPicker: function () {
+                this.CusPickMode = true;
+                if(this.CusPickData.pData1.length === 0){
+                    this.SearchCus();
+                }else{
+                    this.CusPickData.default[0] = this.CusLastPicked;
+                }
+            },
+            SearchCus: function () {
+                var _this = this;
+                _this.CusPickData.default[0] = {};
+                _this.CusPickData.pData1 = [];
+                _this.CusLoading = true;
+                _this.CusNoData = false;
+                $.ajax({
+                    url: '{:U(\'CusPicker_api\')}',
+                    type: 'get',
+                    data: {CusKeyword: _this.CusKeyword},
+                }).then(function (respon) {
+                    _this.CusLoading = false;
+                    var respon = eval('(' + respon + ')');
+                    var data = [];
+                    respon.forEach(function (item,index) {
+                        data.push({text: respon[index].CusName,value: respon[index].CusId});
+                    });
+                    _this.CusPickData.default[0] = data[0];
+                    _this.CusPickData.pData1 = data;
+                    if (!data[0]) {
+                        _this.CusNoData = true;
+                    }
+                });
+            },
+            clearCusPicker: function () {
+                this.CusPickMode = false;
+                this.form.CusId = '';
+            },
+            confirmCusPicker: function (val) {
+                this.CusPickMode = false;
+                if(val.select1){
+                    this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                    this.form.CusId = val.select1.value;
+                }
+            },
+            closeCusPicker: function (val) {
+                if(val.select1){
+                    this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.form = Object.assign({},_this.form,eval('(' + '{$rememberForm}' + ')'));
+            _this.mescroll = new MeScroll('mescroll',{
+                up: {
+                    callback: _this.upCallback, //上拉回调
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    page: {size: 6},
+                    toTop: {src: '__RES__/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多订单了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '__RES__/empty.jpg',
+                        tip: '没有找到相关订单'
+                    }
+                }
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+        },
+        watch: {
+            CusKeyword: function () {
+                this.SearchCus();
+            },
+        },
+    });
+</script>

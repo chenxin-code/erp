@@ -1,0 +1,223 @@
+<div id="VueBox">
+	<wap1-header flag="{$HeaderFlag}" index_url="{:U('Wap0/Index1/index')}"></wap1-header>
+	<img src="__RES__/{$config['FactoryLogo']}" style="margin: 60px auto 10px;width: 60px;display: block;">
+	<p style="padding: 2px 30px;font-size: 17px;text-align: center;word-break: break-all;">{$config['FactoryName']}</p>
+	<!--<p style="padding: 2px 30px;font-size: 15px;text-align: center;word-break: break-all;">{$config['FactoryAdver']}</p>-->
+	<div class="login-container">
+		<div class="input-box" v-if="NormalState">
+			<i class="iconfont icon-denglu3"></i>
+			<input placeholder="账号" v-model="UserName">
+		</div>
+		<div class="input-box" v-if="NormalState">
+			<i class="iconfont icon-iconfontmima"></i>
+			<input type="password" placeholder="密码" v-model="PassWord">
+		</div>
+		<div class="input-box" style="margin-bottom: 25px;" v-if="NormalState">
+			<i class="iconfont icon-ecurityCode"></i>
+			<input type="number" placeholder="验证码" v-model="code">
+			<img id="code_img" src="{:U('make_code')}" @click="change_code_img()">
+		</div>
+		<!--<nav1 v-if="NormalState">
+			<a href="{:U('Wap0/Index/menu')}" v-if="'{:session(\'ERP_Wap0_User.UserName\')}'">
+				<i class="iconfont icon-denglu"></i>&nbsp;外部已登录
+			</a>
+			<a href="{:U('Wap0/Login/login')}" v-else>外部用户</a>
+			<a href="{:U('Index/menu')}" v-if="'{:session(\'ERP_Wap1_User.UserName\')}'">
+				<i class="iconfont icon-denglu"></i>&nbsp;内部已登录
+			</a>
+			<a href="javascript:;" v-else>内部用户</a>
+		</nav1>-->
+		<div class="check-btn" @click="window.location.href = '{:U(\'Index/menu\')}'" v-if="'{:session(\'ERP_Wap1_User.UserName\')}'">
+			<i class="iconfont icon-denglu"></i>&nbsp;&nbsp;账号&nbsp;{:session('ERP_Wap1_User.UserName')}&nbsp;已登录
+		</div>
+		<div class="sub" @click="$.actions({title: '选择分厂',actions: sf})" v-if="sf">
+			<i class="iconfont icon-gongchang1"></i>&nbsp;
+			<span style="color: #0a0;">{{ssn}}</span>
+			<i class="iconfont icon-xialajiantou"></i>
+		</div>
+		<div class="login-btn" @click="login()" v-if="NormalState">内部登录</div>
+		<div class="login-btn" @click="autoLogin()" v-else>内部自动登录</div>
+	</div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+		data: {
+			UserName: null,
+			PassWord: null,
+			code: null,
+            sf: eval('(' + '{$sf}' + ')'),
+            sfi: null,
+            ssn: null,
+			NormalState: true
+		},
+        methods: {
+            login: function () {
+                var _this = this;
+                if(!_this.UserName){$.toast('请输入账号','cancel');return;}
+                if(!_this.PassWord){$.toast('请输入密码','cancel');return;}
+                if(!_this.code){$.toast('请输入验证码','cancel');return;}
+                $.ajax({
+                    url: '{:U(\'login_api\')}',
+                    type: 'get',
+                    data: Object.assign({UserName: _this.UserName,PassWord: _this.PassWord,code: _this.code},_this.sf?{SubFacId: _this.sfi}:{}),
+					beforeSend: function () {
+						_this.$indicator.open('登录中...');
+					},
+                    success: function (respon) {
+						_this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            if(!Number('{$config[\'Open80Port\']}') && Number('{$config[\'UseScan\']}')){
+                                if('{$_SERVER[\'SERVER_NAME\']}' === '{$config[\'Frp80PortDomain\']}'){
+                                    $.ajax({
+                                        url: '{:str_replace($config[\'OriDomain\'],$config[\'OriDomain\'].\':\'.$config[\'OriPort\'],U(\'login_api@\'.$config[\'OriDomain\']))}',
+                                        type: 'get',
+                                        data: Object.assign({UserName: _this.UserName,PassWord: _this.PassWord,code: '{:C(\'UnivCode\')}'},_this.sf?{SubFacId: _this.sfi}:{}),
+                                        dataType: 'jsonp',
+                                        success: function () {
+                                            window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+                                        }
+                                    });
+                                }else{
+                                    $.ajax({
+                                        url: '{:U(\'login_api@\'.$config[\'Frp80PortDomain\'])}',
+                                        type: 'get',
+                                        data: Object.assign({UserName: _this.UserName,PassWord: _this.PassWord,code: '{:C(\'UnivCode\')}'},_this.sf?{SubFacId: _this.sfi}:{}),
+                                        dataType: 'jsonp',
+                                        success: function () {
+                                            window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+                                        }
+                                    });
+                                }
+                            }else{
+                                window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+                            }
+                        }else{
+                            $.toast(respon.msg,'cancel');
+                            _this.change_code_img();
+                        }
+                    }
+                });
+			},
+			autoLogin: function () {
+				//先选择分厂，然后点击自动登录按钮即可快速登录
+				var _this = this;
+				$.ajax({
+					url: '{:U(\'autoLogin_api\')}',
+					type: 'get',
+					data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}',SubFacId: _this.sfi},
+					beforeSend: function () {
+						_this.$indicator.open('自动登录中...');
+					},
+					success: function (respon) {
+						_this.$indicator.close();
+						var respon = eval('(' + respon + ')');
+						if(respon.ret === '{:C(\'succ_ret\')}'){
+							if(!Number('{$config[\'Open80Port\']}') && Number('{$config[\'UseScan\']}')){
+								if('{$_SERVER[\'SERVER_NAME\']}' === '{$config[\'Frp80PortDomain\']}'){
+									$.ajax({
+										url: '{:str_replace($config[\'OriDomain\'],$config[\'OriDomain\'].\':\'.$config[\'OriPort\'],U(\'autoLogin_api@\'.$config[\'OriDomain\']))}',
+										type: 'get',
+										data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}',SubFacId: _this.sfi},
+										dataType: 'jsonp',
+										success: function () {
+											window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+										}
+									});
+								}else{
+									$.ajax({
+										url: '{:U(\'autoLogin_api@\'.$config[\'Frp80PortDomain\'])}',
+										type: 'get',
+										data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}',SubFacId: _this.sfi},
+										dataType: 'jsonp',
+										success: function () {
+											window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+										}
+									});
+								}
+							}else{
+								window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+							}
+						}else{
+							$.toast(respon.msg,'cancel');
+							_this.change_code_img();
+						}
+					}
+				});
+			},
+            change_code_img: function () {
+                $('#code_img').attr('src','{:U(\'make_code\')}?' + Math.random());
+				this.code = null;
+			}
+        },
+        mounted: function () {
+            var _this = this;
+            if(_this.sf){
+            	//已开启分厂功能
+                _this.sfi = _this.sf[Number('{$index}')].SubFacId;
+                _this.ssn = _this.sf[Number('{$index}')].SShortName;
+                $.each(_this.sf,function (k,v){
+                    v.text = v.SShortName;
+                    v.className = 'color-primary';
+                    v.onClick = function () {
+                        _this.sfi = _this.sf[k].SubFacId;
+                        _this.ssn = _this.sf[k].SShortName;
+					}
+                });
+				if('{:I(\'get.UserName\')}' && '{:I(\'get.secret\')}'){
+					_this.NormalState = false;
+					//$.toast('确定选择好分厂后点击按钮即可自动登录','text');
+				}
+			}else{
+				//未开启分厂功能
+				if('{:I(\'get.UserName\')}' && '{:I(\'get.secret\')}'){
+					//可以实现无操作自动登录
+					$.ajax({
+						url: '{:U(\'autoLogin_api\')}',
+						type: 'get',
+						data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}'},
+						beforeSend: function () {
+							_this.$indicator.open('自动登录中...');
+						},
+						success: function (respon) {
+							_this.$indicator.close();
+							var respon = eval('(' + respon + ')');
+							if(respon.ret === '{:C(\'succ_ret\')}'){
+								if(!Number('{$config[\'Open80Port\']}') && Number('{$config[\'UseScan\']}')){
+									if('{$_SERVER[\'SERVER_NAME\']}' === '{$config[\'Frp80PortDomain\']}'){
+										$.ajax({
+											url: '{:str_replace($config[\'OriDomain\'],$config[\'OriDomain\'].\':\'.$config[\'OriPort\'],U(\'autoLogin_api@\'.$config[\'OriDomain\']))}',
+											type: 'get',
+											data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}'},
+											dataType: 'jsonp',
+											success: function () {
+												window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+											}
+										});
+									}else{
+										$.ajax({
+											url: '{:U(\'autoLogin_api@\'.$config[\'Frp80PortDomain\'])}',
+											type: 'get',
+											data: {UserName: '{:I(\'get.UserName\')}',secret: '{:I(\'get.secret\')}'},
+											dataType: 'jsonp',
+											success: function () {
+												window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+											}
+										});
+									}
+								}else{
+									window.location.href = (respon.ERP_Wap1_ReturnUrl)?respon.ERP_Wap1_ReturnUrl:'{:U(\'Index/menu\')}';
+								}
+							}else{
+								$.toast(respon.msg,'cancel');
+								_this.change_code_img();
+							}
+						}
+					});
+				}
+			}
+        }
+    });
+</script>

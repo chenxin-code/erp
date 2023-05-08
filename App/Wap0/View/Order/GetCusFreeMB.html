@@ -1,0 +1,235 @@
+<!-- 引入 mescroll 插件 -->
+<script src="__RES__/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="__RES__/mescroll/mescroll.min.css">
+
+<style>
+    .mescroll {
+        height: auto;
+        position: fixed;
+        top: 80px;
+        bottom: 0;
+    }
+    .mescroll-totop {
+        bottom: 10px;
+        z-index: 1;
+    }
+</style>
+
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="tab-filter-box">
+        <div class="tab">
+            <div @click="changeTab('GetCusFreeMBDN')" :class="{'active':Type === 'GetCusFreeMBDN'}">
+                <i class="iconfont icon-songhuo1"></i>&nbsp;送货
+            </div>
+            <div @click="changeTab('GetCusFreeMBDNRe')" :class="{'active':Type === 'GetCusFreeMBDNRe'}">
+                <i class="iconfont icon-tuihuo1"></i>&nbsp;退货
+            </div>
+            <div @click="changeTab('GetCusFreeMBDis')" :class="{'active':Type === 'GetCusFreeMBDis'}">
+                <i class="iconfont icon-neibutiaozhang"></i>&nbsp;调账折扣
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="filter" @click="OpenSlider()">
+            <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll">
+        <div id="lists">
+            <div :class="'common-item ' + (k%2?'bgc1':'bgc2')" v-for="(v,k) in lists">
+                <div class="info-box">
+                    <div class="flex-box">
+                        <div>生效日期：<span>{{v.IssueDate}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>类型：<span>{{v.CTypeName}}</span></div>
+                        <div>单号：<span>{{v.DNStr}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单编号：<span>{{v.strOrderId}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>客订单号：<span>{{v.CusPoNo}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>送货数：<span>{{v.DeliQty}}</span></div>
+                        <div>金额：<span>{{v.Amount}}</span></div>
+                    </div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn s1" @click="detail(v.OrderType,v.OrderId)">详情</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage">
+        <wap01-order-detail-fullpage
+                ajax_url="{:U('detail_api')}"
+                :ajax_data_order_type="OrderType"
+                :ajax_data_order_id="OrderId"
+                :show-detail.sync="showDetail"
+                v-if="showDetail">
+        </wap01-order-detail-fullpage>
+    </transition>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row1">
+                    <div class="title">开始日期</div>
+                    <div class="input" @click="$refs.BeginDate.open()">{{datetimeFormat(form.BeginDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row1">
+                    <div class="title">结束日期</div>
+                    <div class="input" @click="$refs.EndDate.open()">{{datetimeFormat(form.EndDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+                <!--<div style="height:1500px;background-color:#1aad19;border:5px solid #ff5000;"></div>-->
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.BeginDate" ref="BeginDate"></mt-datetime-picker>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.EndDate" ref="EndDate"></mt-datetime-picker>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Type: '{$rememberTab}'?'{$rememberTab}':'GetCusFreeMBDN',
+            form: {
+                BeginDate: '{:date(\'Y-m-d\',strtotime($config[\'GetCusFreeMBBeginDate\']))}',
+                EndDate: '{:date(\'Y-m-d\',strtotime($config[\'GetCusFreeMBEndDate\']))}',
+                rememberForm: 'no'
+            },
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetCusFreeMBMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetCusFreeMBMaxDate\']))}'),
+            //打开侧边栏前的form对象
+            BeforeOpenSliderForm: {},
+            BarVisible: false,
+            tempTop: 0,
+            mescroll: null,
+            lists: [],
+            //详情
+            showDetail: false,
+            OrderType: '',
+            OrderId: ''
+        },
+        methods: {
+            upCallback: function () {
+                var _this = this;
+                _this.search(function (respon) {
+                    _this.lists = respon.data;
+                    _this.mescroll.endSuccess(respon.data.length,false);//如果不涉及到分页取数据，直接给个false
+                }, function () {
+                    _this.mescroll.endErr();
+                });
+            },
+            search: function (successCallback,errorCallback) {
+                var _this = this;
+                _this.form.BeginDate = datetimeFormat(_this.form.BeginDate,'yyyy-MM-dd');
+                _this.form.EndDate = datetimeFormat(_this.form.EndDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'GetCusFreeMB_api\')}',
+                    type: 'get',
+                    data: {
+                        Type: _this.Type,
+                        form: _this.form
+                    },
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            successCallback && successCallback(respon);
+                        }else{
+                            _this.lists = [];
+                            $.toast(respon.msg,'forbidden');
+                            errorCallback();
+                        }
+                    },
+                    error: errorCallback
+                });
+            },
+            ResetLists: function () {
+                this.lists = [];
+                this.mescroll.resetUpScroll();
+                this.mescroll.hideTopBtn();
+            },
+            detail: function (OrderType,OrderId) {
+                this.OrderType = OrderType;
+                this.OrderId = OrderId;
+                this.showDetail = true;
+            },
+            changeTab: function (value) {
+                if(this.Type !== value){
+                    this.Type = value;
+                    this.ResetLists();
+                }
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm
+                    //&& !checkObjectIsEqual(this.form,this.BeforeOpenSliderForm)
+                ){
+                    this.ResetLists();
+                }else{
+                    this.ResetForm();
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.form = Object.assign({},_this.form,eval('(' + '{$rememberForm}' + ')'));
+            _this.mescroll = new MeScroll('mescroll',{
+                up: {
+                    callback: _this.upCallback, //上拉回调
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    toTop: {src: '__RES__/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多订单了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '__RES__/empty.jpg',
+                        tip: '没有找到相关订单'
+                    }
+                }
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+        }
+    });
+</script>

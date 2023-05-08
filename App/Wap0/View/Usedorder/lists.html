@@ -1,0 +1,195 @@
+<!-- 引入 mescroll 插件 -->
+<script src="__RES__/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="__RES__/mescroll/mescroll.min.css">
+
+<style>
+    .mescroll {
+        height: auto;
+        position: fixed;
+        top: 80px;
+        bottom: 0;
+    }
+    .mescroll-totop {
+        bottom: 10px;
+        z-index: 1;
+    }
+</style>
+
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="tab-box">
+        <div @click="changeTab('s')" :class="{'active':CType === 's'}">
+            <i class="iconfont icon-mobancaidan"></i>&nbsp;简单纸板
+        </div>
+        <div @click="changeTab('c')" :class="{'active':CType === 'c'}">
+            <i class="iconfont icon-zhixiang"></i>&nbsp;纸箱纸板
+        </div>
+        <div @click="changeTab('x')" :class="{'active':CType === 'x'}">
+            <i class="iconfont icon-zhixiang1"></i>&nbsp;纸箱
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll">
+        <div id="lists">
+            <div :class="'common-item ' + (k%2?'bgc1':'bgc2')" v-for="(v,k) in lists">
+                <div class="pane-box">
+                    <div class="pane" style="color: #1aad19;border-color: #1aad19;">标识：{{v.CardFlag}}</div>
+                </div>
+                <div class="info-box">
+                    <div class="flex-box">
+                        <div>客订单号：<span>{{v.CusPoNo}}</span></div>
+                        <div v-if="v.CType === 's' || v.CType === 'c'">材质：<span>{{v.BoardId}}</span></div>
+                    </div>
+                    <div class="flex-box" v-if="v.CType === 'c'">
+                        <div>箱型：<span>{{v.BoxName}}</span></div>
+                    </div>
+                    <div class="flex-box" v-if="v.CType === 'c'">
+                        <div>纸箱规格：<span>{{v.BoxL}}&nbsp;x&nbsp;{{v.BoxW}}&nbsp;x&nbsp;{{v.BoxH}}</span></div>
+                    </div>
+                    <div class="flex-box" v-if="v.CType === 's' || v.CType === 'c'">
+                        <div>纸板规格：<span>{{v.Length}}&nbsp;x&nbsp;{{v.Width}}</span></div>
+                    </div>
+                    <div class="flex-box" v-if="v.CType === 'x'">
+                        <div>套件：<span>{{v.ProductName}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单数：<span>{{v.OrdQty}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>送货地址：<span>{{v.SubDNAddress}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>下单日期：<span>{{v.BuildDate}}</span></div>
+                        <div>交货日期：<span>{{v.DeliveryDate}}</span></div>
+                    </div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn s2" @click="FastBuild(v.CusPoNo,v.CType)">快速下单</div>
+                    <div class="btn s4" @click="cancel(v.CusPoNo)">取消常用</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            CType: '{$rememberTab}'?'{$rememberTab}':'s',
+            mescroll: null,
+            lists: []
+        },
+        methods: {
+            upCallback: function(page) {
+                var _this = this;
+                _this.search(page.num, page.size, function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    //如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
+                    if(page.num === 1){
+                        _this.lists = [];
+                    }
+                    _this.lists = _this.lists.concat(respon.data);
+                    //_this.mescroll.endSuccess(respon.data.length);
+                    _this.mescroll.endBySize(respon.data.length, respon.count);
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            search: function (CurPage,PageSize,successCallback,errorCallback) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'lists_api\')}',
+                    type: 'get',
+                    data: {
+                        CType: _this.CType,
+                        CurPage: CurPage,
+                        PageSize: PageSize
+                    },
+                    success: function (respon) {
+                        successCallback && successCallback(respon);
+                    },
+                    error: errorCallback
+                });
+            },
+            ResetLists: function () {
+                this.lists = [];
+                this.mescroll.resetUpScroll();
+                this.mescroll.hideTopBtn();
+            },
+            changeTab: function (value) {
+                if(this.CType !== value){
+                    this.CType = value;
+                    this.ResetLists();
+                }
+            },
+            cancel: function (CusPoNo) {
+                var _this = this;
+                $.confirm('确认取消？','',function () {
+                    $.ajax({
+                        url: '{:U(\'cancel_api\')}',
+                        type: 'get',
+                        data: {CusPoNo: CusPoNo},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                $.alert(respon.msg,'',function () {
+                                    _this.ResetLists();
+                                });
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                });
+            },
+            FastBuild: function (CusPoNo,CType) {
+                if(CType === 's'){
+                    window.location.href = '{:U(\'Build/s\')}?CusPoNo=' + CusPoNo;
+                }else if(CType === 'c'){
+                    window.location.href = '{:U(\'Build/c\')}?CusPoNo=' + CusPoNo;
+                }else if(CType === 'x'){
+                    window.location.href = '{:U(\'Build/x\')}?CusPoNo=' + CusPoNo;
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.mescroll = new MeScroll('mescroll',{
+                up: {
+                    callback: _this.upCallback, //上拉回调
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    page: {size: 5},
+                    toTop: {src: '__RES__/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多订单了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '__RES__/empty.jpg',
+                        tip: '没有找到相关订单'
+                    }
+                }
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+        }
+    });
+</script>

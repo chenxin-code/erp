@@ -1,0 +1,214 @@
+<div id="VueBox">
+    <div class="top-bar">
+        排序
+        <select v-model="form.XU">
+            <option value="desc">降序</option>
+            <option value="asc">升序</option>
+        </select>
+        团购状态
+        <select v-model="form.State">
+            <option value="">全部</option>
+            <option value="ing">正在抢购</option>
+            <option value="tobe">即将开抢</option>
+            <option value="ed">已结束</option>
+        </select>
+        “{$config['BoardFlag']}”
+        <select v-model="form.IsFlag">
+            <option value="">全部</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+        </select>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td><span style="color: #e01835;">材质</span>,标题</td>
+                <td>图片(<span style="color: #e01835;">点击编辑</span>)</td>
+                <td>价格(元/㎡)</td>
+                <td>团购时间</td>
+                <td>下单范围(㎡)</td>
+                <td>单客户限量(㎡)</td>
+                <td>售出/总客户限量(㎡)</td>
+                <td>添加时间</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="v in lists">
+                <td>{{v.Id}}</td>
+                <td><span style="color: #e01835;">{{v.BoardId}}</span><span v-if="v.Title">,{{v.Title}}</span></td>
+                <td title="编辑图片" style="cursor: pointer;" @click="window.location.href = '{:U(\'Pic\')}?Id=' + v.Id + '&lastCurPage=' + form.CurPage">
+                    <img style="width: 60px;" :src="'__RES__/' + v.Pic[0]" v-if="v.Pic[0]">
+                    <span v-if="v.Pic.length > 1">等{{v.Pic.length}}张</span>
+                </td>
+                <td>
+                    <span style="color: #e01835;">{{v.Price}}</span>
+                    <br><br>
+                    <span style="text-decoration: line-through;">{{v.MarketPrice}}</span>
+                </td>
+                <td class="bg-font">
+                    {{v.BeginTime}}
+                    <br><br>
+                    {{v.EndTime}}
+                    <span class="font" style="color: #e01835;border-color: #e01835;" v-if="v.State === 'ing'">正在抢购</span>
+                    <span class="font" style="color: #ffa500;border-color: #ffa500;" v-else-if="v.State === 'tobe'">即将开抢</span>
+                    <span class="font" style="color: #778899;border-color: #778899;" v-else-if="v.State === 'ed'">已结束</span>
+                </td>
+                <td>{{v.BuildMin}}&nbsp;~&nbsp;{{v.BuildMax}}</td>
+                <td>{{v.CusMax}}</td>
+                <td>{{v.Sale}}&nbsp;/&nbsp;{{v.Total}}</td>
+                <td>{{v.AddTime}}</td>
+                <td>
+                    <a :href="'{:U(\'edit\')}?Id=' + v.Id + '&lastCurPage=' + form.CurPage" title="修改">
+                        <i class="iconfont icon-chanpinxinxi" style="color: #9370db;"></i>
+                    </a>
+                    <a :href="'{:U(\'Descr\')}?Id=' + v.Id + '&lastCurPage=' + form.CurPage" title="描述">
+                        <i class="iconfont icon-miaoshu2" style="color: #0a9c4d;"></i>
+                    </a>
+                    <a @click="changeFlag(v.Id,'设置“{$config[\'BoardFlag\']}”')" title="设置“{$config['BoardFlag']}”" v-if="v.IsFlag === '0'">
+                        <i class="iconfont icon-starmarkhighligh" style="color: grey;cursor: pointer;"></i>
+                    </a>
+                    <a @click="changeFlag(v.Id,'取消“{$config[\'BoardFlag\']}”')" title="取消“{$config['BoardFlag']}”" v-else>
+                        <i class="iconfont icon-starmarkhighligh" style="color: #e01835;cursor: pointer;"></i>
+                    </a>
+                    <a @click="del(v.Id)" title="删除">
+                        <i class="iconfont icon-laji" style="color: red;cursor: pointer;"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <td colspan="50" style="text-align: center;">
+                    第&nbsp;<span style="color: #1a991d;">{{form.CurPage}}</span>&nbsp;页
+                    /
+                    共&nbsp;<span style="color: #1a991d;">{{MaxPage}}</span>&nbsp;页
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    共&nbsp;<span style="color: #1a991d;">{{count}}</span>&nbsp;条记录
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <div class="bottom-bar">
+        <a href="javascript:void(0);" @click="form.CurPage = 1">首页</a>
+        <a href="javascript:void(0);" @click="prevPage()">上一页</a>
+        <a href="javascript:void(0);" @click="nextPage()">下一页</a>
+        <a href="javascript:void(0);" @click="form.CurPage = MaxPage">尾页</a>
+        <select v-model="form.CurPage">
+            <option :value="p" v-for="p in MaxPage">第{{p}}页</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            form: {
+                XU: 'desc',
+                State: '',
+                IsFlag: '',
+                CurPage: 1,
+                PageSize: 10
+            },
+            lists: [],
+            count: 0,
+            MaxPage: 1
+        },
+        methods: {
+            search: function () {
+                var _this = this;
+                _this.lists = [];
+                $.ajax({
+                    url: '{:U(\'lists_api\')}',
+                    type: 'get',
+                    data: _this.form,
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        _this.lists = respon.data?respon.data:[];
+                        _this.count = respon.count;
+                        _this.MaxPage = respon.MaxPage;
+                    }
+                });
+            },
+            prevPage: function () {
+                if(this.form.CurPage > 1){
+                    this.form.CurPage --;
+                }else{
+                    this.form.CurPage = 1;
+                }
+            },
+            nextPage: function () {
+                if(this.form.CurPage < this.MaxPage){
+                    this.form.CurPage ++;
+                }else{
+                    this.form.CurPage = this.MaxPage;
+                }
+            },
+            del: function (Id) {
+                var _this = this;
+                swal({type: 'warning', title: '确定删除吗？', showCancelButton: true}).then(function () {
+                    $.ajax({
+                        url: '{:U(\'del_api\')}',
+                        type: 'get',
+                        data: {Id: Id},
+                        success: function (respon) {
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                swal({type: 'success', title: respon.msg}).then(function () {
+                                    _this.search();
+                                });
+                            }else{
+                                swal({type: 'error', title: respon.msg});
+                            }
+                        }
+                    });
+                });
+            },
+            changeFlag: function (Id,title) {
+                var _this = this;
+                swal({type: 'warning', title: '确定' + title + '吗？', showCancelButton: true}).then(function () {
+                    $.ajax({
+                        url: '{:U(\'changeFlag_api\')}',
+                        type: 'get',
+                        data: {Id: Id},
+                        success: function (respon) {
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                swal({type: 'success', title: respon.msg}).then(function () {
+                                    _this.search();
+                                });
+                            }else{
+                                swal({type: 'error', title: respon.msg});
+                            }
+                        }
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            if(/(^[1-9]\d*$)/.test('{$_GET[\'lastCurPage\']}')){
+                //console.log('是正整数');
+                this.form.CurPage = '{$_GET[\'lastCurPage\']}';
+            }else{
+                this.form.CurPage = 1;
+            }
+            this.search();
+        },
+        watch: {
+            'form.XU': function () {
+                this.search();
+            },
+            'form.State': function () {
+                this.search();
+            },
+            'form.IsFlag': function () {
+                this.search();
+            },
+            'form.CurPage': function () {
+                this.search();
+            }
+        }
+    });
+</script>

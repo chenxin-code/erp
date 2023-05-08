@@ -1,0 +1,44 @@
+<div id="VueBox">
+    <el-upload action="{:U('addDefaultPic_api')}" name="pic" :on-preview="OnPreview" :on-remove="OnRemove" list-type="picture-card" :file-list="Pic">
+        <i class="el-icon-plus"></i>
+    </el-upload>
+    <el-dialog :visible.sync="elDialogVisible">
+        <img :src="elDialogImgSrc" width="100%">
+    </el-dialog>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Pic: [],
+            elDialogVisible: false,
+            elDialogImgSrc: null
+        },
+        methods: {
+            OnPreview: function (file) {
+                this.elDialogImgSrc = file.url;
+                this.elDialogVisible = true;
+            },
+            OnRemove: function (file) {
+                $.ajax({
+                    url: '{:U(\'delDefaultPic_api\')}',
+                    type: 'get',
+                    data: {Pic: file.name}
+                });
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            $.ajax({
+                url: '{:U(\'showDefaultPic_api\')}',
+                success: function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    $.each(respon,function (k,v) {
+                        _this.Pic.push({name: v,url: '__RES__/' + v});
+                    });
+                }
+            });
+        }
+    });
+</script>

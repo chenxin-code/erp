@@ -1,0 +1,519 @@
+<script src="__RES__/qrcode.min.js"></script>
+
+<style>
+    .mint-indicator-wrapper {
+        z-index: 2;
+    }
+    /***********************************/
+    .user-lists-box {
+        width: 100%;
+        background-color: #fff;
+        overflow: auto;
+        position: fixed;
+        top: 80px;
+        bottom: 10px;
+    }
+    .user-lists-box .error,
+    .user-lists-box .empty {
+        margin: 30% 0;
+        text-align: center;
+    }
+    .user-lists-box .error img,
+    .user-lists-box .empty img {
+        width: 45%;
+    }
+    .user-lists-box .error p,
+    .user-lists-box .empty p {
+        margin-top: 6px;
+        font-size: 14px;
+        color: gray;
+    }
+    .user-lists-box .item {
+        margin: 2px 4px 0 4px;
+        border: 1px solid #e7e7e7;
+        border-radius: 5px;
+    }
+    .user-lists-box .item .info-box {
+        margin: 0 10px;
+        padding: 5px 0;
+        position: relative;
+    }
+    .user-lists-box .item .info-box .flex-box {
+        margin: 0 10px;
+        display: flex;
+    }
+    .user-lists-box .item .info-box .flex-box > div {
+        flex: 1;
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .user-lists-box .item .info-box .flex-box > div > span {
+        color: #1da02b;
+    }
+    .user-lists-box .item .btn-box {
+        margin: 0 10px;
+        line-height: 37px;
+        display: flex;
+        position: relative;
+    }
+    .user-lists-box .item .btn-box:before {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .user-lists-box .item .btn-box .btn {
+        flex: 1;
+        padding: 0 10px;
+        color: #696969;
+        font-size: 14px;
+        text-align: center;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+    }
+    .user-lists-box .item .btn-box .btn:active {
+        background-color: #ededf2;
+        color: #3cc51f;
+    }
+    .user-lists-box .item .btn-box .btn:after {
+        content: ' ';
+        border-left: 1px solid #d5d5d6;
+        transform: scaleX(0.5);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .user-lists-box .item .btn-box .btn:first-child:after {
+        display: none;
+    }
+    .user-lists-box .item .btn-box .btn .iconfont {
+        font-size: 14px;
+    }
+    /***********************************/
+    .diy-more-select-fullpage {
+        padding-bottom: 50px;
+        background-color: #fff;
+        overflow-y: auto;
+        transition: transform 0.3s;
+        position: fixed;
+        top: 40px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+    }
+    .diy-more-select-fullpage .top-box {
+        padding: 0 15%;
+        background-color: #f2f1f1;
+        line-height: 40px;
+        font-size: 15px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        position: relative;
+    }
+    .diy-more-select-fullpage .top-box::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .diy-more-select-fullpage .item {
+        padding: 12px 60px 12px 15px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        position: relative;
+    }
+    .diy-more-select-fullpage .item.selected {
+        color: #1a991d;
+    }
+    .diy-more-select-fullpage .item::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        bottom: 0;
+        left: 8px;
+        right: 0;
+    }
+    .diy-more-select-fullpage .item:last-child::after {
+        left: 0;
+    }
+    .diy-more-select-fullpage .item label {
+        width: 16px;
+        height: 16px;
+        border: 1px solid #979797;
+        border-radius: 3px;
+        cursor: pointer;
+        transform: translateY(-50%);
+        position: absolute;
+        top: 50%;
+        right: 13px;
+    }
+    .diy-more-select-fullpage .item.selected label:after {
+        content: '';
+        width: 4px;
+        height: 11px;
+        border: solid #1a991d;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        position: absolute;
+        right: 5px;
+    }
+    .diy-more-select-fullpage .bottom-box {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        font-size: 17px;
+        text-align: center;
+        display: flex;
+        position: fixed;
+        bottom: 0;
+    }
+    .diy-more-select-fullpage .bottom-box::before {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .diy-more-select-fullpage .bottom-box .act {
+        flex: auto;
+        background-color: #fff;
+        cursor: pointer;
+    }
+    .diy-more-select-fullpage .bottom-box .act:nth-child(1) {
+        margin-left: 15px;
+    }
+    .diy-more-select-fullpage .bottom-box .act > label:nth-child(1) {
+        width: 15px;
+        height: 15px;
+        border: 1px solid #979797;
+        border-radius: 3px;
+        cursor: pointer;
+        float: left;
+        position: relative;
+        top: 11px;
+    }
+    .diy-more-select-fullpage .bottom-box .act.checked > label:nth-child(1):after {
+        content: '';
+        width: 4px;
+        height: 10px;
+        border: solid #1a991d;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        position: absolute;
+        right: 4px;
+    }
+    .diy-more-select-fullpage .bottom-box .act > label:nth-child(2) {
+        margin-left: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        float: left;
+    }
+    .diy-more-select-fullpage .bottom-box .act.checked > label:nth-child(2) {
+        color: #1a991d;
+    }
+    .diy-more-select-fullpage .bottom-box .save-btn {
+        width: 35%;
+        font-size: 14px;
+        color: #fff;
+        background-color: #1aad19;
+        cursor: pointer;
+    }
+    .diy-more-select-fullpage .bottom-box .save-btn:active {
+        background-color: #179b16;
+    }
+    .diy-more-select-fullpage .bottom-box .close-btn {
+        width: 35%;
+        font-size: 14px;
+        color: #000;
+        background-color: #f2f1f1;
+        cursor: pointer;
+    }
+    .diy-more-select-fullpage .bottom-box .close-btn:active {
+        background-color: #d3d3d3;
+    }
+</style>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-box">
+        <div :class="{'active':Type === '0'}" @click="Type = '0';getWebUser0()">外部用户</div>
+        <div :class="{'active':Type === '1'}" @click="Type = '1';getWebUser1()">内部用户</div>
+    </div>
+    <div v-if="Type === '0'">
+        <div class="user-lists-box">
+            <div class="error" v-if="error0">
+                <img src="__RES__/empty.jpg">
+                <p>{{msg0}}</p>
+            </div>
+            <div v-else>
+                <div class="empty" v-if="$.isEmptyObject(lists0)">
+                    <img src="__RES__/empty.jpg">
+                    <p>没有外部用户</p>
+                </div>
+                <div v-else>
+                    <div class="item" v-for="v in lists0">
+                        <div class="info-box">
+                            <div class="flex-box">
+                                <div>客户：<span>{{v.CusShortName}}（{{v.CusId}}）</span></div>
+                                <div>账号：<span>{{v.UserName}}</span></div>
+                            </div>
+                        </div>
+                        <div class="btn-box">
+                            <div class="btn" @click="getQrcode(v.UserName)">
+                                <i class="iconfont icon-erweima2"></i>&nbsp;登录二维码
+                            </div>
+                            <div class="btn" @click="getURName(v.UserName)">
+                                <i class="iconfont icon-quanxianguanli2"></i>&nbsp;权限
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-else-if="Type === '1'">
+        <div class="user-lists-box">
+            <div class="error" v-if="error1">
+                <img src="__RES__/empty.jpg">
+                <p>{{msg1}}</p>
+            </div>
+            <div v-else>
+                <div class="empty" v-if="$.isEmptyObject(lists1)">
+                    <img src="__RES__/empty.jpg">
+                    <p>没有内部用户</p>
+                </div>
+                <div v-else>
+                    <div class="item" v-for="v in lists1">
+                        <div class="info-box">
+                            <div class="flex-box">
+                                <div>员工：<span>{{v.UserName_}}（{{v.UserId}}）</span></div>
+                                <div>账号：<span>{{v.UserName}}<span v-if="v.TaskId">（业务员）</span><span v-if="v.UserName === '{:session(\'ERP_Wap1_User.UserName\')}'">（当前账号）</span></span></div>
+                            </div>
+                        </div>
+                        <div class="btn-box">
+                            <div class="btn" @click="getQrcode(v.UserName)">
+                                <i class="iconfont icon-erweima2"></i>&nbsp;登录二维码
+                            </div>
+                            <div class="btn" @click="getURName(v.UserName)">
+                                <i class="iconfont icon-quanxianguanli2"></i>&nbsp;权限
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage2">
+        <div class="qrcode-fullpage" v-show="showQrcode">
+            <div id="qrcode"></div>
+            <p><span v-if="UserName === '{:session(\'ERP_Wap1_User.UserName\')}'">当前</span>账号&nbsp;<span style="color: #3cc51f;">{{UserName}}</span>&nbsp;登录二维码</p>
+            <div class="close-btn" @click="showQrcode = false">关闭</div>
+        </div>
+    </transition>
+    <transition name="fullpage">
+        <div class="diy-more-select-fullpage" v-if="showURName">
+            <div class="top-box"><span v-if="UserName === '{:session(\'ERP_Wap1_User.UserName\')}'">当前</span>账号&nbsp;<span style="color: #3cc51f;">{{UserName}}</span>&nbsp;权限</div>
+            <div>
+                <div class="item" :class="{'selected':URName.indexOf(v) !== -1}" @click="ps(v)" v-for="v in URNameSelect">
+                    {{v}}
+                    <label></label>
+                </div>
+            </div>
+            <div class="bottom-box">
+                <div class="act" :class="{'checked':URNameAllSelect}" @click="URName = URName.sort().toString() === URNameSelect.sort().toString()?[]:[].concat(URNameSelect)">
+                    <label></label>
+                    <label>全选</label>
+                </div>
+                <div class="save-btn" @click="saveURName()">保存</div>
+                <div class="close-btn" @click="showURName = false">关闭</div>
+            </div>
+        </div>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Type: '{$Type}',
+            error0: null,msg0: null,lists0: [],
+            error1: null,msg1: null,lists1: [],
+            UserName: null,
+            showQrcode: false,
+            qrcode: null,
+            showURName: false,
+            URNameSelect: [],
+            URName: [],
+            URNameAllSelect: Boolean
+        },
+        methods: {
+            getWebUser0: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'getWebUser0_api\')}',
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.error0 = false;
+                            _this.msg0 = null;
+                            _this.lists0 = respon.data;
+                        }else{
+                            _this.error0 = true;
+                            _this.msg0 = respon.msg;
+                        }
+                    }
+                });
+            },
+            getWebUser1: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'getWebUser1_api\')}',
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.error1 = false;
+                            _this.msg1 = null;
+                            _this.lists1 = respon.data;
+                        }else{
+                            _this.error1 = true;
+                            _this.msg1 = respon.msg;
+                        }
+                    }
+                });
+            },
+            getQrcode: function (UserName) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'getQrcode_api\')}',
+                    type: 'get',
+                    data: {UserName: UserName},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.showQrcode = true;
+                            _this.UserName = UserName;
+                            _this.qrcode.makeCode(respon.url);
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            getURName: function (UserName) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'getURName_api\')}',
+                    type: 'get',
+                    data: {UserName: UserName},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.showURName = true;
+                            _this.UserName = UserName;
+                            _this.URNameSelect = respon.URNameSelect;
+                            _this.URName = respon.URName;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            ps: function (v) {
+                var index = this.URName.indexOf(v);
+                if(index === -1){
+                    this.URName.push(v);
+                }else{
+                    this.URName.splice(index,1);
+                }
+            },
+            saveURName: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'saveURName_api\')}',
+                    type: 'get',
+                    data: {
+                        UserName: _this.UserName,
+                        URName: _this.URName
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            $.toast(respon.msg,'text');
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            if(Number(this.Type)){
+                this.getWebUser1();
+            }else{
+                this.getWebUser0();
+            }
+            this.qrcode = new QRCode('qrcode');
+        },
+        watch: {
+            URName: function () {
+                this.URNameAllSelect = (this.URName.length === this.URNameSelect.length);
+            }
+        }
+    });
+</script>

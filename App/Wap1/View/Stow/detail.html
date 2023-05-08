@@ -1,0 +1,397 @@
+<script src="{:C('WXJSSDK_CDN')}"></script>
+
+<div id="VueBox">
+  <wap1-header
+          flag="{$HeaderFlag}"
+          index_url="{:U('Wap0/Index1/index')}"
+          menu_url="{:U('Index/menu')}"
+          logout_url="{:U('Index/logout_api')}"
+          open_80port="{$config['Open80Port']}"
+          use_scan="{$config['UseScan']}"
+          server_name="{$_SERVER['SERVER_NAME']}"
+          frp_80port_domain="{$config['Frp80PortDomain']}"
+          logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+          logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+  </wap1-header>
+  <!--<a class="mint-cell" style="margin-top: 40px;">
+    <div class="mint-cell-left"></div>
+    <div class="mint-cell-wrapper">
+      <div class="mint-cell-title">
+        <span class="mint-cell-text" style="font-size: 13px;">编辑模式</span>
+      </div>
+      <div class="mint-cell-value">
+        <mt-switch v-model="bAppend"></mt-switch>
+      </div>
+    </div>
+    <div class="mint-cell-right"></div>
+  </a>-->
+  <div style="height: 40px;"></div>
+  <div v-if="bAppend">
+    <cell-group mini>
+      <field label="订单号" placeholder="扫码或输入订单号" v-model="DNDetail.strOrderId" :disabled="bModDetail">
+        <div slot="right-icon" style="margin-left: 10px;cursor: pointer;" @click="scanQRCode()">
+          <i class="iconfont icon-saomiao4" :style="{'color':iconMode?'#1aad19':'#a9a9a9'}"></i>
+        </div>
+      </field>
+      <cell title="库区" placeholder="选择库区" v-if="bMStockArea" @click="showStockAreaSelect = true" is-link>
+        <span v-if="DNDetail.strStockArea">{{DNDetail.strStockArea}}</span>
+      </cell>
+      <field label="订单信息" type="textarea" rows="1" v-model="DNDetail.strOrderInfo" disabled autosize></field>
+      <div class="cell-flex-rows">
+        <cell title="附加费">
+          <input class="rows-item" type="number" v-model="DNDetail.dOtherFee">
+        </cell>
+        <cell title="库存数">
+          <input class="rows-item" type="number" v-model="AreaQty" disabled>
+        </cell>
+        <cell title="送货数">
+          <input class="rows-item" type="number" v-model="DNDetail.iDeliQty" ref="DeliQtyInput">
+        </cell>
+        <cell title="赠品数">
+          <input class="rows-item" type="number" v-model="DNDetail.iFreeQty">
+        </cell>
+      </div>
+      <cell title="送货公司" placeholder="选择送货公司" @click="showCustomerDNSelect = true" is-link>
+        <span v-if="DNDetail.strCusSubNo">{{DNDetail.strCusSubNo}}</span>
+      </cell>
+      <field label="送货备注" placeholder="输入送货备注" v-model="DNDetail.strDNRemark" type="textarea" rows="1" autosize></field>
+    </cell-group>
+    <div class="cell-group-btn-box2" v-if="bModDetail">
+      <button class="btn1" @click="onSubmit()">修改</button>
+      <button class="btn2" @click="cancelModify()">取消修改</button>
+    </div>
+    <div class="cell-group-btn-box2" v-else>
+      <button class="btn1" @click="onSubmit()">装货</button>
+      <button class="btn2" @click="reset()">重置</button>
+    </div>
+  </div>
+  <transition name="fullpage">
+    <div class="diy-select-fullpage" v-if="showStockAreaSelect">
+      <div class="empty" v-if="$.isEmptyObject(StockAreaSelect)">
+        <img src="__RES__/empty.jpg">
+        <p>没有可选择项</p>
+      </div>
+      <div v-else>
+        <div class="item" :class="{'selected':v.StockArea === DNDetail.strStockArea_}" @click="DNDetail.strStockArea_ = v.StockArea" v-for="v in StockAreaSelect">
+          <div class="content">
+            <span>{{v.StockArea}}</span>
+          </div>
+          <label></label>
+        </div>
+      </div>
+      <div class="confirm-btn" @click="DNDetail.strStockArea = DNDetail.strStockArea_;showStockAreaSelect = false">确定</div>
+    </div>
+    <div class="diy-select-fullpage" v-if="showCustomerDNSelect">
+      <div class="empty" v-if="$.isEmptyObject(CustomerDN)">
+        <img src="__RES__/empty.jpg">
+        <p>没有可选择项</p>
+      </div>
+      <div v-else>
+        <div class="item" :class="{'selected':v.CusSubNo === DNDetail.strCusSubNo_}" @click="DNDetail.strCusSubNo_ = v.CusSubNo" v-for="v in CustomerDN">
+          <div class="content">
+            <span>{{v.CusSubNo}}</span>
+            <span v-if="v.SubDNAddress">送货地址：{{v.SubDNAddress}}</span>
+          </div>
+          <label></label>
+        </div>
+      </div>
+      <div class="confirm-btn" @click="DNDetail.strCusSubNo = DNDetail.strCusSubNo_;showCustomerDNSelect = false">确定</div>
+    </div>
+  </transition>
+  <el-table :data="lists" border stripe height="500">
+      <el-table-column prop="OrderId" label="订单编号" width="100" fixed></el-table-column>
+      <el-table-column prop="CusSubName" label="子公司"></el-table-column>
+      <el-table-column prop="DeliQty" label="送货数"></el-table-column>
+      <el-table-column prop="StockArea" label="库区" v-if="bMStockArea"></el-table-column>
+      <el-table-column prop="Length" label="板长"></el-table-column>
+      <el-table-column prop="Width" label="板宽"></el-table-column>
+      <el-table-column prop="BoardId" label="材质编号" width="100"></el-table-column>
+      <el-table-column label="操作" width="150" v-if="bAppend">
+        <template slot-scope="ss">
+          <el-button size="mini" @click="handleModify(ss.$index,ss.row)">修改</el-button>
+          <el-button size="mini" @click="handleDelete(ss.$index,ss.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+</div>
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            iconMode: true,
+            lists: null,//下面的装货明细
+            DNDetail: {
+                strOrderId: '',//订单号 b1805090001
+                strOrderInfo: '',//订单信息
+                iDeliQty: null,//送货数
+                iFreeQty: 0,//赠品数
+                dOtherFee: 0.0,//附加费
+                strCusSubNo: '',strCusSubNo_: '',//送货子公司
+                strDNRemark: '',//送货备注
+                strStockArea: '',strStockArea_: '',  //库区
+                OrderType: '',//订单类型
+            },
+            OrderType: '{$_GET[\'OrderType\']}',//订单类型
+            PListNo: '{$_GET[\'PListNo\']}',//装货单号
+            bAppend: Number('{$_GET[\'bAppend\']}'),//是否是编辑模式
+            AreaQty: null,//库区库存数，如果不先说库区就是库存数
+            bMStockArea: Number('{$config[\'bMStockArea\']}'),//是否显示库区
+            bPackAddODefSQ: Number('{$config[\'bPackAddODefSQ\']}'),//订单号装货默认带出库存数
+            bModDetail: false,//是否处于修改模式
+            CustomerDN: null,//输入订单的客户送货信息
+            StockAreaSelect: null,//订单存放的库区位置
+            CustomerDNSelect: eval('(' + '{$CustomerDNSelect}' + ')'),
+            showStockAreaSelect: false,
+            showCustomerDNSelect: false
+        },
+        methods: {
+            GetPDNDetail: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'GetPDNDetail_api\')}',
+                    type: 'get',
+                    data: {PListNo: _this.PListNo},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.lists = eval('(' + respon + ')');
+                    },
+                });
+            },
+            GetStockArea: function (strOrderId) {
+                var _this = this;
+                if(_this.bMStockArea){
+                    $.ajax({
+                        url: '{:U(\'GetStockArea_api\')}',
+                        type: 'get',
+                        data: {strOrderId: strOrderId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            _this.StockAreaSelect = eval('(' + respon + ')');
+                            _this.DNDetail.strStockArea = _this.DNDetail.strStockArea_ = _this.StockAreaSelect[0].StockArea;
+                            _this.AreaQty = _this.StockAreaSelect[0].Qty;
+                        },
+                    });
+                }
+            },
+            scanQRCode: function () {
+                var _this = this;
+                if(_this.iconMode){
+                    wx.scanQRCode({
+                        needResult: 1,
+                        success: function (res) {
+                            _this.DNDetail.strOrderId = res.resultStr.split(',')[1];
+                        }
+                    });
+                }else{
+                    $.toast('当前不支持扫码功能','forbidden');
+                }
+            },
+            onSubmit: function () {
+                var _this = this;
+                if(_this.DNDetail.strOrderInfo === ''){$.toast('请输入有效的订单号','text');return;}
+                if(_this.DNDetail.iDeliQty <= 0){$.toast('请输入有效的装货数','text');return;}
+                if(_this.DNDetail.OrderType !== _this.OrderType){$.toast('订单类型非法','text');return;}
+                $.ajax({
+                    url: '{$ErpApiPrefix}/WebAddDNDetail',
+                    type: 'post',
+                    data: {
+                        iDNId: _this.bModDetail?_this.DNDetail.iDNId:0,
+                        iPListNo: _this.PListNo,
+                        iDeliQty: _this.DNDetail.iDeliQty,
+                        iFreeQty: _this.DNDetail.iFreeQty,
+                        iSchPNo: 0,
+                        dDNPriceAdd: 0.0,
+                        dOtherFee: _this.DNDetail.dOtherFee,
+                        strOrderId: _this.DNDetail.strOrderId,
+                        strCusId: '',
+                        strStockArea: _this.DNDetail.strStockArea,
+                        strDNRemark: _this.DNDetail.strDNRemark,
+                        strCusSubNo: _this.DNDetail.strCusSubNo,
+                        OrderType: _this.DNDetail.OrderType,
+                        bModify: _this.bModDetail,
+                        strFactoryId: '{$config[\'FactoryId\']}',
+                        strUserId: '{$ERPId}',
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.result[1] === false){
+                            $.alert(respon.result[0],'装货出错');return;
+                        }
+                        $.alert('装货成功','',function () {
+                            _this.reset();
+                            _this.cancelModify();
+                            _this.GetPDNDetail();
+                        });
+                    },
+                });
+            },
+            reset: function () {
+                this.DNDetail.strOrderId = '';
+                this.DNDetail.strOrderInfo = '';
+                this.DNDetail.iDeliQty = null;
+                this.DNDetail.iFreeQty = 0;
+                this.DNDetail.dOtherFee = 0.0;
+                this.DNDetail.strCusSubNo = this.DNDetail.strCusSubNo_ = '';
+                this.DNDetail.strStockArea = this.DNDetail.strStockArea_ = '';
+                this.DNDetail.strDNRemark = '';
+                this.DNDetail.OrderType = '';
+                this.CustomerDN = null;
+                this.AreaQty = null;
+            },
+            handleDelete: function (index,row) {
+                var _this = this;
+                $.confirm('确定删除订单' + row.strOrderId,'',function () {
+                    $.ajax({
+                        url: '{$ErpApiPrefix}/WebCommon/DelDNDetail',
+                        type: 'post',
+                        data: {
+                            iPListNo: row.PListNo,
+                            iDNId: row.DNId,
+                            strFactoryId: '{$config[\'FactoryId\']}',
+                            strUserId: '{$ERPId}',
+                        },
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if (respon.result[1] === false){
+                                $.alert(respon.result[0],'装货出错');
+                            }else{
+                                for(var i = 0, length1 = _this.lists.length; i < length1; i++){
+                                    if (_this.lists[i].DNId === row.DNId){
+                                        break;
+                                    }
+                                }
+                                _this.lists.splice(i, 1);
+                            }
+                        },
+                    });
+                });
+            },
+            handleModify: function (index,row) {
+                var _this = this;
+                _this.bModDetail = true;
+                _this.DNDetail.OrderType = row.OrderType;
+                _this.DNDetail.strOrderId = row.strOrderId;
+                _this.DNDetail.strFactoryId = '{$config[\'FactoryId\']}';
+                _this.DNDetail.iDNId = row.DNId;
+                _this.DNDetail.strOrderInfo = '订单客户:' + row.CusId + ' ' + row.CusShortName + ' 材质编号:' + row.BoardId + ' 长宽:' + row.Length + 'x' + row.Width;
+                if(row.BoxL > 0){
+                    _this.DNDetail.strOrderInfo += '长宽高:' + row.BoxL + 'x' + row.BoxW + 'x' + row.BoxH;
+                }
+                _this.DNDetail.strOrderInfo += ' 订单数:'+row.OrdQty;
+                _this.AreaQty = row.StockQty;
+                if (row.MatName !== '' && row.OrderType === 'x'){
+                    _this.DNDetail.strOrderInfo += ' 货品名称:' + row.MatName;
+                }
+                _this.CustomerDN = [];
+                for(i in _this.CustomerDNSelect){
+                    if (_this.CustomerDNSelect[i].CusId === row.CusId){
+                        _this.CustomerDN.push(_this.CustomerDNSelect[i]);
+                    }
+                }
+                _this.DNDetail.strStockArea = _this.DNDetail.strStockArea_ = row.StockArea;
+                _this.DNDetail.iDeliQty = row.DeliQty;
+                _this.DNDetail.iFreeQty = row.FreeQty;
+                _this.DNDetail.dOtherFee = row.OtherFee;
+                _this.DNDetail.strCusSubNo = _this.DNDetail.strCusSubNo_ = row.CusSubNo;
+                _this.DNDetail.strDNRemark = row.DNRemark;
+                _this.GetStockArea(_this.DNDetail.strOrderId);
+            },
+            cancelModify: function () {
+                this.bModDetail = false;
+                this.reset();
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.GetPDNDetail();
+            wx.config({
+                debug: false,
+                appId: '{$signPackage.appId}',
+                timestamp: '{$signPackage.timestamp}',
+                nonceStr: '{$signPackage.nonceStr}',
+                signature: '{$signPackage.signature}',
+                jsApiList: ['scanQRCode'],
+            });
+            wx.error(function (res) {
+                //$.toast(res.errMsg,'forbidden');
+                _this.iconMode = false;
+            });
+        },
+        watch: {
+            'DNDetail.strOrderId': function () {
+                var _this = this;
+                if (!_this.bModDetail && _this.DNDetail.strOrderId.length === 11) {
+                    $.ajax({
+                        url: '{:U(\'GetOrdPackInfo_api\')}',
+                        type: 'get',
+                        data: {strOrderId: _this.DNDetail.strOrderId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.DNDetail.OrderType = respon.data.OrderType;
+                                _this.DNDetail.strOrderInfo = '订单客户:'+respon.data.CusId+' '+respon.data.CusShortName+' 材质编号:'+respon.data.BoardId+' 长宽:'+respon.data.Length+'x'+respon.data.Width;
+                                if (respon.data.BoxL > 0){
+                                    _this.DNDetail.strOrderInfo += '长宽高:'+respon.data.BoxL+'x'+respon.data.BoxW+'x'+respon.data.BoxH;
+                                }
+                                _this.DNDetail.strOrderInfo += ' 订单数:'+respon.data.OrdQty;
+                                _this.AreaQty = respon.data.StockQty;
+                                if (respon.data.DNHint !== ''){
+                                    _this.DNDetail.strOrderInfo += ' 客户备注:'+respon.data.DNHint;
+                                }
+                                if (respon.data.MatName !== '' && respon.data.OrderType === 'x'){
+                                    _this.DNDetail.strOrderInfo += ' 货品名称:'+respon.data.MatName;
+                                }
+                                _this.DNDetail.iFreeQty = 0;
+                                _this.DNDetail.strDNRemark = respon.data.DNRemark;
+                                _this.DNDetail.strCusSubNo = _this.DNDetail.strCusSubNo_ = respon.data.CusSubNo;
+                                _this.CustomerDN = [];
+                                for(i in _this.CustomerDNSelect){
+                                    if(_this.CustomerDNSelect[i].CusId === respon.data.CusId){
+                                        _this.CustomerDN.push(_this.CustomerDNSelect[i]);
+                                    }
+                                }
+                                _this.GetStockArea(_this.DNDetail.strOrderId);
+                                _this.$refs.DeliQtyInput.focus();
+                                if(_this.bPackAddODefSQ){
+                                    _this.DNDetail.iDeliQty = _this.AreaQty;
+                                }else{
+                                    _this.DNDetail.iDeliQty = respon.data.OrdQty - respon.data.PackQty;
+                                }
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        },
+                    });
+                }
+            },
+            'DNDetail.strStockArea': function () {
+                var _this = this;
+                if (_this.DNDetail.strStockArea !== ''){
+                    for(i in _this.StockAreaSelect){
+                        if (_this.StockAreaSelect[i].StockArea === _this.DNDetail.strStockArea){
+                            _this.AreaQty = _this.StockAreaSelect[i].Qty;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>

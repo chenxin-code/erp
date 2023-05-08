@@ -1,0 +1,71 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="tab-box">
+        <div @click="changeTab('1')" :class="{'active':IsCom === '1'}">
+            <i class="iconfont icon-gonggonghao"></i>&nbsp;公共规则
+        </div>
+        <div @click="changeTab('0')" :class="{'active':IsCom === '0'}">
+            <i class="iconfont icon-teshu"></i>&nbsp;特别规则
+        </div>
+    </div>
+    <el-table :data="lists" border stripe style="margin-top: 80px;" :height="$(document).height() - 80">
+        <el-table-column prop="Flutes" label="坑型" fixed></el-table-column>
+        <el-table-column prop="LayerCount" label="层数" fixed></el-table-column>
+        <el-table-column prop="DisType" label="折扣方式"></el-table-column>
+        <el-table-column prop="ValueType" label="增减类型"></el-table-column>
+        <el-table-column prop="ValueBegin" label="起始值"></el-table-column>
+        <el-table-column prop="ValueEnd" label="终止值"></el-table-column>
+        <el-table-column prop="Value" label="增减"></el-table-column>
+        <!-- <el-table-column prop="ScoreType" label="纸板类型"></el-table-column> -->
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            IsCom: '{$rememberTab}'?'{$rememberTab}':'1',
+            lists: []
+        },
+        methods: {
+            GetQuoRuleByCus: function () {
+                var _this = this;
+                _this.lists = [];
+                $.ajax({
+                    url: '{:U(\'GetQuoRuleByCus_api\')}',
+                    type: 'get',
+                    data: {IsCom: _this.IsCom},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        _this.lists = eval('(' + respon + ')');
+                    }
+                });
+            },
+            changeTab: function (value) {
+                if(this.IsCom !== value){
+                    this.IsCom = value;
+                    this.GetQuoRuleByCus();
+                }
+            }
+        },
+        mounted: function () {
+            this.GetQuoRuleByCus();
+        }
+    });
+</script>

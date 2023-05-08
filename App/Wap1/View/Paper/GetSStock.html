@@ -1,0 +1,257 @@
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-box">
+        <div @click="Way = 'ByWidth'" :class="{'active':Way === 'ByWidth'}">按门幅汇总</div>
+        <div @click="Way = 'ByCode'" :class="{'active':Way === 'ByCode'}">按纸类汇总</div>
+    </div>
+    <div class="prev-next-select" style="border-top: 1px solid #ddd;top: 80px;" v-if="Way === 'ByWidth'">
+        <div class="prev" @click="changeWidth('prev')">
+            <div class="content" v-if="WidthSelect[WidthIndex - 1]">
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">{{WidthSelect[WidthIndex - 1].PaperWidth}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">到顶了</span>
+            </div>
+        </div>
+        <div class="cur" @click="document.body.classList.add('body-lock');showWidthSelect = true">
+            <div class="content" v-if="WidthSelect[WidthIndex]">
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">{{WidthSelect[WidthIndex].PaperWidth}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">未选择</span>
+            </div>
+        </div>
+        <div class="next" @click="changeWidth('next')">
+            <div class="content" v-if="WidthSelect[WidthIndex + 1]">
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">{{WidthSelect[WidthIndex + 1].PaperWidth}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">到底了</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="prev-next-select" style="border-top: 1px solid #ddd;top: 80px;" v-if="Way === 'ByCode'">
+        <div class="prev" @click="changeCode('prev')">
+            <div class="content" v-if="CodeSelect[CodeIndex - 1]">
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">{{CodeSelect[CodeIndex - 1].PaperCode}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">到顶了</span>
+            </div>
+        </div>
+        <div class="cur" @click="document.body.classList.add('body-lock');showCodeSelect = true">
+            <div class="content" v-if="CodeSelect[CodeIndex]">
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">{{CodeSelect[CodeIndex].PaperCode}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">未选择</span>
+            </div>
+        </div>
+        <div class="next" @click="changeCode('next')">
+            <div class="content" v-if="CodeSelect[CodeIndex + 1]">
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">{{CodeSelect[CodeIndex + 1].PaperCode}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">到底了</span>
+            </div>
+        </div>
+    </div>
+
+
+    <transition name="fullpage1">
+        <div class="diy-select-fullpage" v-if="showWidthSelect">
+            <div class="empty" v-if="$.isEmptyObject(WidthSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':k === WidthIndex_}" @click="WidthIndex_ = k" v-for="(v,k) in WidthSelect">
+                    <div class="content">
+                        <span>门幅：{{v.PaperWidth}}</span>
+                        <span>整卷卷数：{{v.ZJCount}}</span>
+                        <span>残卷卷数：{{v.CJCount}}</span>
+                        <span>重量：{{v.SRWt}}</span>
+                        <!--<span>总长：{{v.TLength}}</span>-->
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="document.body.classList.remove('body-lock');showWidthSelect = false;WidthIndex = WidthIndex_;GetSStock('ByWidth');">确定</div>
+        </div>
+
+
+
+        <div class="diy-select-fullpage" v-if="showCodeSelect">
+            <div class="empty" v-if="$.isEmptyObject(CodeSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':k === CodeIndex_}" @click="CodeIndex_ = k" v-for="(v,k) in CodeSelect">
+                    <div class="content">
+                        <span>
+                            纸类：{{v.PaperCode}}
+                            <span v-if="v.PaperName">（{{v.PaperName}}）</span>
+                        </span>
+                        <span>整卷卷数：{{v.ZJCount}}</span>
+                        <span>残卷卷数：{{v.CJCount}}</span>
+                        <span>重量：{{v.SRWt}}</span>
+                        <!--<span>总长：{{v.TLength}}</span>-->
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="document.body.classList.remove('body-lock');showCodeSelect = false;CodeIndex = CodeIndex_;GetSStock('ByCode');">确定</div>
+        </div>
+    </transition>
+
+
+    <el-table :data="WidthLists" border stripe style="margin-top: 141px;" :height="$(document).height() - 141" v-if="Way === 'ByWidth'">
+        <el-table-column prop="PaperCode" label="纸类" fixed></el-table-column>
+        <el-table-column prop="ZJWt" label="整卷重量"></el-table-column>
+        <el-table-column prop="iZJCount" label="整卷卷数"></el-table-column>
+        <el-table-column prop="RWt" label="残卷重量"></el-table-column>
+        <el-table-column prop="iRCount" label="残卷卷数"></el-table-column>
+    </el-table>
+
+    <el-table :data="CodeLists" border stripe style="margin-top: 141px;" :height="$(document).height() - 141" v-if="Way === 'ByCode'">
+        <el-table-column prop="PaperWidth" label="门幅" fixed></el-table-column>
+        <el-table-column prop="ZJWt" label="整卷重量"></el-table-column>
+        <el-table-column prop="iZJCount" label="整卷卷数"></el-table-column>
+        <el-table-column prop="RWt" label="残卷重量"></el-table-column>
+        <el-table-column prop="iRCount" label="残卷卷数"></el-table-column>
+    </el-table>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Way: 'ByWidth',
+            WidthSelect: eval('(' + '{$WidthSelect}' + ')'),
+            WidthIndex: null,
+            WidthIndex_: null,
+            showWidthSelect: false,
+            WidthLists: null,
+            CodeSelect: eval('(' + '{$CodeSelect}' + ')'),
+            CodeIndex: null,
+            CodeIndex_: null,
+            showCodeSelect: false,
+            CodeLists: null
+        },
+        methods: {
+            GetSStock: function (way) {
+                var _this = this;
+                if(way === 'ByWidth' && _this.WidthSelect[_this.WidthIndex]){
+                    $.ajax({
+                        url: '{:U(\'GetSStock_api\')}',
+                        type: 'get',
+                        data: {PaperWidth: _this.WidthSelect[_this.WidthIndex].PaperWidth},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.WidthLists = respon.data;
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                }
+                if(way === 'ByCode' && _this.CodeSelect[_this.CodeIndex]){
+                    $.ajax({
+                        url: '{:U(\'GetSStock_api\')}',
+                        type: 'get',
+                        data: {PaperCode: _this.CodeSelect[_this.CodeIndex].PaperCode},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.CodeLists = respon.data;
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                }
+            },
+            changeWidth: function (p) {
+                var _this = this;
+                $.each(_this.WidthSelect,function (k,v) {
+                    if(v.PaperWidth === _this.WidthSelect[_this.WidthIndex].PaperWidth){
+                        var temp;
+                        if(p === 'prev'){
+                            temp = k - 1;
+                        }else if(p === 'next'){
+                            temp = k + 1;
+                        }
+                        if(_this.WidthSelect[temp]){
+                            _this.WidthIndex = _this.WidthIndex_ = temp;
+                            _this.GetSStock('ByWidth');
+                        }else{
+                            //$.toast('无效操作','text');
+                        }
+                        return false;
+                    }
+                });
+            },
+            changeCode: function (p) {
+                var _this = this;
+                $.each(_this.CodeSelect,function (k,v) {
+                    if(v.PaperCode === _this.CodeSelect[_this.CodeIndex].PaperCode){
+                        var temp;
+                        if(p === 'prev'){
+                            temp = k - 1;
+                        }else if(p === 'next'){
+                            temp = k + 1;
+                        }
+                        if(_this.CodeSelect[temp]){
+                            _this.CodeIndex = _this.CodeIndex_ = temp;
+                            _this.GetSStock('ByCode');
+                        }else{
+                            //$.toast('无效操作','text');
+                        }
+                        return false;
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.WidthIndex = this.WidthIndex_ = 0;
+            this.GetSStock('ByWidth');
+            this.CodeIndex = this.CodeIndex_ = 0;
+            this.GetSStock('ByCode');
+        }
+    });
+</script>

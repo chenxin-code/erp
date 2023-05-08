@@ -1,0 +1,70 @@
+<style>
+    .contact-info {
+        margin: 40px 0 60px;
+        background-color: #fff;
+    }
+    .contact-info .item {
+        padding: 10px 15px;
+        line-height: 30px;
+        font-size: 15px;
+        display: flex;
+        position: relative;
+    }
+    .contact-info .item::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.35);
+        position: absolute;
+        bottom: 0;
+        left: 5px;
+        right: 5px;
+    }
+    .contact-info .item:last-child::after {
+        left: 0;
+        right: 0;
+    }
+    .contact-info .item > span {
+        overflow: hidden;
+        word-wrap: break-word;
+    }
+    .contact-info .item > span:nth-child(1) {
+        flex: 1;
+    }
+    .contact-info .item > span:nth-child(1) .iconfont {
+        font-size: 25px;
+        color: #c8c7cc;
+    }
+    .contact-info .item > span:nth-child(2) {
+        flex: 1;
+        text-align: right;
+    }
+</style>
+
+<div id="VueBox">
+    <wap0-header flag="{$HeaderFlag}" index_url="{:U('index')}"></wap0-header>
+    <div style="margin: 50% 0;text-align: center;" v-if="$.isEmptyObject(wc)">
+        <img src="__RES__/empty.jpg" style="width: 45%;">
+        <p style="margin-top: 6px;font-size: 15px;color: gray;">没有联系方式</p>
+    </div>
+    <div class="contact-info" v-else>
+        <div class="item" v-for="v in wc">
+            <span>
+                <i class="iconfont" :class="v.Icon"></i>&nbsp;&nbsp;{{v.Name}}
+            </span>
+            <span v-if="v.Icon === 'icon-dianhua'">
+                <a :href="'tel:' + v.Content">{{v.Content}}</a>
+            </span>
+            <span v-else>{{v.Content}}</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            wc: eval('(' + '{$wc}' + ')')
+        }
+    });
+</script>

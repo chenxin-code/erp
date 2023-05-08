@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+    <title>{$LayoutTitle}</title>
+    <script src="__RES__/vue.js"></script>
+    <!-- jQuery -->
+    <script src="__RES__/jquery.min.js"></script>
+    <!-- SweetAlert2 插件 -->
+    <link rel="stylesheet" href="__RES__/SweetAlert2/sweetalert2.min.css">
+    <script src="__RES__/SweetAlert2/sweetalert2.min.js"></script>
+    <!-- ElementUI -->
+    <link rel="stylesheet" href="__RES__/ElementUI/index.css">
+    <script src="__RES__/ElementUI/index.js"></script>
+    <!-- 阿里图标cdn -->
+    <link rel="stylesheet" href="{:C('ali_iconfont_cdn')}">
+    <!-- 函数库 -->
+    <script src="__RES__/function.js?time={:time()}"></script>
+    <!-- 后台样式 -->
+    <link rel="stylesheet" href="__RES__/admin.css?time={:time()}">
+</head>
+<body class="admin-common">
+    <div class="sidebar">
+        <div style="margin: 0 0 0 9px;">
+            <h2 style="padding: 40px 0 10px 0;color: #222;font-size: 26px;font-weight: bold;text-align: center;">
+                <a>后台管理</a>
+            </h2>
+            <div class="top-container">
+                欢迎您，
+                <a>{:session('ERP_Admin_User.UserName')}</a>
+                <br>
+                <a style="cursor: pointer;" @click="clean()">清除缓存</a> |
+                <a href="{:U('Index/logout')}">退出</a>
+            </div>
+            <script>
+                new Vue({
+                    el: '.top-container',
+                    methods: {
+                        clean: function () {
+                            $.ajax({
+                                url: '{:U(\'Index/clean_api\')}',
+                                success: function (respon) {
+                                    var respon = eval('(' + respon + ')');
+                                    if(respon.ret === '{:C(\'succ_ret\')}'){
+                                        swal({type: 'success',title: respon.msg});
+                                    }else{
+                                        swal({type: 'error',title: respon.msg});
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            </script>
+            <ul class="menu-container">
+                <li v-for="v1 in menu1">
+                    <a :href="v1.href1" class="nav-top-item no-submenu" :class="{'current':v1.href1 === CurHref}" v-if="v1.href1">
+                        {{v1.title1}}
+                    </a>
+                    <a class="nav-top-item" :class="{'current':JSON.stringify(v1.menu2).indexOf(CurHref) !== -1}" v-else>
+                        {{v1.title1}}
+                    </a>
+                    <ul v-if="v1.menu2">
+                        <li v-for="v2 in v1.menu2">
+                            <a :href="v2.href2" :class="{'current':v2.href2 === CurHref}">
+                                {{v2.title2}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <script>
+                new Vue({
+                    el: '.menu-container',
+                    data: {
+                        menu1: [
+                            {
+                                title1: '项目配置',
+                                href1: '{:U(\'Index/config\')}'
+                            },
+                            {
+                                title1: '图片配置',
+                                href1: '{:U(\'Index/imgConfig\')}'
+                            },
+                            {
+                                title1: '联系方式管理',
+                                menu2: [
+                                    {
+                                        title2: '联系方式列表',
+                                        href2: '{:U(\'Contact/lists\')}'
+                                    },
+                                    {
+                                        title2: '添加联系方式',
+                                        href2: '{:U(\'Contact/add\')}'
+                                    }
+                                ]
+                            },
+                            {
+                                title1: '后台用户管理',
+                                menu2: [
+                                    {
+                                        title2: '用户列表',
+                                        href2: '{:U(\'User/lists\')}'
+                                    },
+                                    {
+                                        title2: '添加用户',
+                                        href2: '{:U(\'User/add\')}'
+                                    }
+                                ]
+                            }
+                        ].concat(Number('{$config[\'UseBoardGroup\']}')?[
+                            {
+                                title1: '团购纸板管理',
+                                menu2: [
+                                    {
+                                        title2: '纸板列表',
+                                        href2: '{:U(\'Board/lists\')}'
+                                    },
+                                    {
+                                        title2: '添加纸板',
+                                        href2: '{:U(\'Board/add\')}'
+                                    },
+                                    {
+                                        title2: '纸板默认图片',
+                                        href2: '{:U(\'Board/DefaultPic\')}'
+                                    },
+                                    {
+                                        title2: '已删除纸板列表',
+                                        href2: '{:U(\'Board/delLists\')}'
+                                    }
+                                ]
+                            }
+                        ]:[]).concat(Number('{$config[\'UseBoxGroup\']}')?[
+                            {
+                                title1: '团购淘宝箱管理',
+                                menu2: [
+                                    {
+                                        title2: '淘宝箱列表',
+                                        href2: '{:U(\'Box/lists\')}'
+                                    },
+                                    {
+                                        title2: '添加淘宝箱',
+                                        href2: '{:U(\'Box/add\')}'
+                                    },
+                                    {
+                                        title2: '淘宝箱默认图片',
+                                        href2: '{:U(\'Box/DefaultPic\')}'
+                                    },
+                                    {
+                                        title2: '已删除淘宝箱列表',
+                                        href2: '{:U(\'Box/delLists\')}'
+                                    }
+                                ]
+                            }
+                        ]:[]),
+                        CurHref: '{:U()}'
+                    },
+                    mounted: function () {
+                        $('.menu-container li ul').hide();
+                        $('.menu-container li a.current').parent().find('ul').slideToggle('slow');
+                        $('.menu-container li a.nav-top-item').click(
+                            function () {
+                                $(this).parent().siblings().find('ul').slideUp('normal');
+                                $(this).next().slideToggle('normal');
+                                return false;
+                            }
+                        );
+                        $('.menu-container li a.no-submenu').click(
+                            function () {
+                                window.location.href = this.href;
+                                return false;
+                            }
+                        );
+                        $('.menu-container li .nav-top-item').hover(
+                            function () {
+                                $(this).stop().animate({paddingRight: '25px'},200);
+                            },
+                            function () {
+                                $(this).stop().animate({paddingRight: '15px'});
+                            }
+                        );
+                    }
+                });
+            </script>
+        </div>
+    </div>
+    <div class="main-content">
+        {__LAYOUT_CONTENT__}
+    </div>
+</body>
+</html>

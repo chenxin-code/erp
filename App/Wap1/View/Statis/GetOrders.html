@@ -1,0 +1,251 @@
+<!-- 引入 mescroll 插件 -->
+<script src="__RES__/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="__RES__/mescroll/mescroll.min.css">
+
+<style>
+    .header {
+        padding: 5px;
+        width: 100%;
+        border: 1px solid #ddd;
+        background-color: #ededf2;
+        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        z-index: 1;
+    }
+    .header .show-tags {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 0 8px 0 5px;
+    }
+    .header .show-tags .tags {
+        border-radius: 5px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        overflow-scrolling: touch;
+        -webkit-overflow-scrolling: touch;
+        height: 35px;
+        box-sizing: border-box;
+        font-size: 14px;
+        display: -webkit-box;
+    }
+    .header .show-tags .tags:active {
+        opacity: 0.7;
+    }
+    .header .show-tags .tags::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+    }
+    .header .show-tags .tags .tag {
+        display: block;
+        margin: 3px;
+        background-color: #f3f3f3;
+        border-radius: 2px;
+        padding: 0 8px;
+        border: 1px solid #ddd;
+        align-items: center;
+        display: -webkit-flex;
+        display: flex;
+    }
+    .header .show-tags .tags .tag > span {
+        color: #1aad19;
+        font-weight: 600;
+    }
+    /*****************************************************/
+    .mescroll {
+        height: auto;
+        position: fixed;
+        top: 50px;
+        bottom: 0;
+    }
+    .mescroll-totop {
+        bottom: 10px;
+        z-index: 1;
+    }
+    /*****************************************************/
+    .wap01-order-detail-fullpage {
+        top: 0;
+    }
+</style>
+
+<div id="VueBox">
+    <div class="header">
+        <div class="show-tags">
+            <div class="tags" v-html="tagString"></div>
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll">
+        <div id="lists">
+            <div :class="'common-item ' + (k%2?'bgc1':'bgc2')" v-for="(v,k) in lists">
+                <div class="info-box">
+                    <div class="flex-box">
+                        <div>货品名称：<span>{{v.MatName}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单编号：<span>{{v.strOrderId}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>客订单号：<span>{{v.CusPoNo}}</span></div>
+                        <div>材质：<span>{{v.BoardId}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>客户：<span>{{v.CusId}}</span></div>
+                        <div>客户简称：<span>{{v.CusShortName}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>规格：<span>{{v.GuiGe}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>压线：<span>{{v.ScoreInfo}}</span></div>
+                    </div>
+                    <div class="flex-box">
+                        <div>订单数：<span>{{v.OrdQty}}</span></div>
+                        <div>送货数：<span>{{v.DeliQty}}</span></div>
+                        <div v-if="form.SType === 'GetOrderSum' || form.SType === 'GetOrdReturnSum'">退货数：<span>{{v.ReturnQty}}</span></div>
+                        <div v-if="form.SType === 'GetOrdStock'">库存数：<span>{{v.StockQty}}</span></div>
+                    </div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn s1" @click="detail(v.OrderType,v.OrderId)">详情</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage">
+        <wap01-order-detail-fullpage
+                ajax_url="{:U('Order/detail_api')}"
+                :ajax_data_order_type="OrderType"
+                :ajax_data_order_id="OrderId"
+                :show-detail.sync="showDetail"
+                v-if="showDetail">
+        </wap01-order-detail-fullpage>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            form: Object.assign({},{
+                SType: '{$SType}',
+                strWhere2_k: '{$strWhere2_k}',
+                strWhere2_v: '{$strWhere2_v}',
+                DateType: '{$DateType}',
+                BeginDate: '{$BeginDate}',
+                EndDate: '{$EndDate}'
+            },'{$SType}' === 'GetOrdStock'?{
+                RemainDay: '{$RemainDay}',
+                DiffDay: '{$DiffDay}'
+            }:{}),
+            mescroll: null,
+            lists: [],
+            //详情
+            showDetail: false,
+            OrderType: '',
+            OrderId: ''
+        },
+        computed: {
+            tagString: function () {
+                var SType,strWhere2_k,DateType;
+                if(this.form.SType === 'GetOrderSum'){
+                    SType = '订单统计';
+                }else if(this.form.SType === 'GetOrdReturnSum'){
+                    SType = '退货统计';
+                }else if(this.form.SType === 'GetOrdStock'){
+                    SType = '库存统计';
+                }
+                if(this.form.strWhere2_k === ''){
+                    strWhere2_k = '汇总';
+                }else if(this.form.strWhere2_k === 'Flutes'){
+                    strWhere2_k = '坑型';
+                }else if(this.form.strWhere2_k === 'CusId'){
+                    strWhere2_k = '客户';
+                }else if(this.form.strWhere2_k === 'TaskId'){
+                    strWhere2_k = '业务员';
+                }else if(this.form.strWhere2_k === 'ReturnCause'){
+                    strWhere2_k = '退货原因';
+                }
+                if(this.form.DateType === 'OrderDate'){
+                    DateType = '订单日期';
+                }else if(this.form.DateType === 'DeliveryDate'){
+                    DateType = '交货日期';
+                }else if(this.form.DateType === 'ReturnDate'){
+                    DateType = '退货日期';
+                }else if(this.form.DateType === 'IssueDate'){
+                    DateType = '生效日期';
+                }
+                return this.BuildElement('统计类型：',SType)
+                    + this.BuildElement('条件对象：',strWhere2_k)
+                    + this.BuildElement('条件值：',this.form.strWhere2_v)
+                    + this.BuildElement('日期类型：',DateType)
+                    + this.BuildElement('开始日期：',this.form.BeginDate)
+                    + this.BuildElement('结束日期：',this.form.EndDate)
+                    + (this.form.SType === 'GetOrdStock'?this.BuildElement('在库超期天数：',this.form.RemainDay) + this.BuildElement('交货超期天数：',this.form.DiffDay):'');
+            }
+        },
+        methods: {
+            upCallback: function (page) {
+                var _this = this;
+                _this.search(page.num, page.size, function (respon) {
+                    //如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
+                    if(page.num === 1){
+                        _this.lists = [];
+                    }
+                    _this.lists = _this.lists.concat(respon.data);
+                    _this.mescroll.endSuccess(respon.data.length);//存储过程不返回总数和最大页数，只能用不推荐的方法
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            search: function (CurPage,PageSize,successCallback,errorCallback) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'GetOrders_api\')}',
+                    type: 'get',
+                    data: Object.assign({},{CurPage: CurPage, PageSize: PageSize},_this.form),
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            successCallback && successCallback(respon);
+                        }else{
+                            _this.lists = [];
+                            $.toast(respon.msg,'forbidden');
+                            errorCallback();
+                        }
+                    },
+                    error: errorCallback
+                });
+            },
+            BuildElement: function (str1,str2) {
+                return '<span class="tag">' + str1 + '<span>' + str2 + '</span>' + '</span>';
+            },
+            detail: function (OrderType,OrderId) {
+                this.OrderType = OrderType;
+                this.OrderId = OrderId;
+                this.showDetail = true;
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.mescroll = new MeScroll('mescroll',{
+                up: {
+                    callback: _this.upCallback, //上拉回调
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    page: {size: 6},
+                    toTop: {src: '__RES__/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多订单了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '__RES__/empty.jpg',
+                        tip: '没有找到相关订单'
+                    }
+                }
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+        }
+    });
+</script>

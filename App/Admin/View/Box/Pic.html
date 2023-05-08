@@ -1,0 +1,49 @@
+<div id="VueBox">
+    <el-upload :action="'{:U(\'addPic_api\')}?Id=' + Id" name="pic" :on-preview="OnPreview" :on-remove="OnRemove" list-type="picture-card" :file-list="Pic">
+        <i class="el-icon-plus"></i>
+    </el-upload>
+    <el-dialog :visible.sync="elDialogVisible">
+        <img :src="elDialogImgSrc" width="100%">
+    </el-dialog>
+    <input type="submit" class="btn" value="返回" style="margin: 20px 10px 0 0;" @click="window.location.href = '{:U(\'lists\')}?lastCurPage={$_GET[\'lastCurPage\']}'">
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Id: '{$_GET[\'Id\']}',
+            Pic: [],
+            elDialogVisible: false,
+            elDialogImgSrc: null
+        },
+        methods: {
+            OnPreview: function (file) {
+                this.elDialogImgSrc = file.url;
+                this.elDialogVisible = true;
+            },
+            OnRemove: function (file) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'delPic_api\')}',
+                    type: 'get',
+                    data: {Id: _this.Id,Pic: file.name}
+                });
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            $.ajax({
+                url: '{:U(\'showPic_api\')}',
+                type: 'get',
+                data: {Id: _this.Id},
+                success: function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    $.each(respon,function (k,v) {
+                        _this.Pic.push({name: v,url: '__RES__/' + v});
+                    });
+                }
+            });
+        }
+    });
+</script>

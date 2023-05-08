@@ -1,0 +1,167 @@
+<script src="{:C('WXJSSDK_CDN')}"></script>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <cell-group style="margin-top: 40px;margin-bottom: 40px;">
+        <field label="条形码编号" type="number" placeholder="扫码或输入条形码编号" v-model="form.StockNo">
+            <div slot="right-icon" style="margin-left: 10px;cursor: pointer;" @click="scanQRCode()">
+                <i class="iconfont icon-saomiao4" :style="{'color':iconMode?'#1aad19':'#a9a9a9'}"></i>
+            </div>
+        </field>
+        <cell title="门幅(mm)">
+            <span v-html="PaperWidth"></span>
+        </cell>
+        <cell title="纸质">
+            <span v-html="PaperCode"></span>
+        </cell>
+        <cell title="克重(g)">
+            <span v-html="PaperWt"></span>
+        </cell>
+        <cell title="重量(kg)">
+            <span v-html="CurWt"></span>
+        </cell>
+        <field label="班次" placeholder="输入班次" v-model="form.OpClass" onkeyup="this.value=this.value.toUpperCase()"></field>
+        <field label="机台" placeholder="输入机台" v-model="form.SFluteTo" onkeyup="this.value=this.value.toUpperCase()"></field>
+        <field label="剥纸重量" type="number" placeholder="输入剥纸重量" v-model="form.BZWt"></field>
+        <cell title="出库日期" placeholder="选择出库日期" @click="$refs.OpTime.open()" is-link>
+            {{datetimeFormat(form.OpTime,'yyyy-MM-dd')}}
+        </cell>
+    </cell-group>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.OpTime" ref="OpTime"></mt-datetime-picker>
+    <div class="cell-group-btn" @click="DoStockOut()">出库</div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            iconMode: true,
+            //存放初始化数据
+            form_ini: {
+                StockNo: '',
+                OpClass: '',
+                SFluteTo: '',
+                BZWt: '0',
+                OpTime: '{:date(\'Y-m-d\',strtotime($config[\'DoStockOutOpTime\']))}'
+            },
+            //实际数据
+            form: {},
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'DoStockOutMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'DoStockOutMaxDate\']))}'),
+            flag1: '<span style="color: #32cd32;">自动查询</span>',
+            flag2: '<span style="color: red;">查询失败</span>',
+            PaperWidth: '',
+            PaperCode: '',
+            PaperWt: '',
+            CurWt: ''
+        },
+        methods: {
+            DoStockOut: function () {
+                var _this = this;
+                if(!_this.form.StockNo){$.toast('请填写条形码编号','text');return;}
+                //if(!_this.form.OpClass){$.toast('请填写班次','text');return;}
+                //if(!_this.form.SFluteTo){$.toast('请填写机台','text');return;}
+                if(!_this.form.BZWt){$.toast('请填写剥纸重量','text');return;}
+                if(!_this.form.OpTime){$.toast('请填写出库日期','text');return;}
+                $.confirm('确认出库？','',function () {
+                    _this.form.OpTime = datetimeFormat(_this.form.OpTime,'yyyy-MM-dd');
+                    $.ajax({
+                        url: '{:U(\'DoStockOut_api\')}',
+                        type: 'get',
+                        data: _this.form,
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                $.alert(respon.msg,'', function () {
+                                    _this.form = Object.assign({},_this.form_ini);
+                                });
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                });
+            },
+            scanQRCode: function () {
+                var _this = this;
+                if(_this.iconMode){
+                    wx.scanQRCode({
+                        needResult: 1,
+                        success: function (res) {
+                            _this.form.StockNo = res.resultStr.split(',')[1];
+                        }
+                    });
+                }else{
+                    $.toast('当前不支持扫码功能','forbidden');
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.form = Object.assign({},_this.form_ini);
+            wx.config({
+                debug: false,
+                appId: '{$signPackage.appId}',
+                timestamp: '{$signPackage.timestamp}',
+                nonceStr: '{$signPackage.nonceStr}',
+                signature: '{$signPackage.signature}',
+                jsApiList: ['scanQRCode']
+            });
+            wx.error(function (res) {
+                //$.toast(res.errMsg,'forbidden');
+                _this.iconMode = false;
+            });
+        },
+        watch: {
+            'form.StockNo': function () {
+                var _this = this;
+                if(!isNaN(_this.form.StockNo) && _this.form.StockNo.length === 12){
+                    $.ajax({
+                        url: '{:U(\'GetInfoByDoStockOut_api\')}',
+                        type: 'get',
+                        data: {StockNo: _this.form.StockNo.substring(2,11)},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.PaperWidth = Math.round(respon.data.PaperWidth);
+                                _this.PaperCode = respon.data.PaperCode;
+                                _this.PaperWt = respon.data.PaperWt;
+                                _this.CurWt = Math.round(respon.data.CurWt);
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                                _this.PaperWidth = _this.flag2;
+                                _this.PaperCode = _this.flag2;
+                                _this.PaperWt = _this.flag2;
+                                _this.CurWt = _this.flag2;
+                            }
+                        }
+                    });
+                }else{
+                    _this.PaperWidth = _this.flag1;
+                    _this.PaperCode = _this.flag1;
+                    _this.PaperWt = _this.flag1;
+                    _this.CurWt = _this.flag1;
+                }
+            }
+        }
+    });
+</script>

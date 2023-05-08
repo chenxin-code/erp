@@ -1,0 +1,286 @@
+<!-- 引入highcharts插件 -->
+<script src="__RES__/highcharts/highcharts.js"></script>
+<script src="__RES__/highcharts/highcharts-3d.js"></script>
+<script src="__RES__/highcharts/exporting.js"></script>
+<script src="__RES__/highcharts/highcharts-zh_CN.js"></script>
+<script src="__RES__/highcharts/offline-exporting.js"></script>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="statis-card">
+        <div class="page">
+            <div class="header">
+                <div class="show-tags">
+                    <div class="tags" v-html="statisStr" @click="showFilterPage"></div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn" @click="GetProInfo()">
+                        <i class="iconfont icon-icon--"></i>&nbsp;刷新
+                    </div>
+                    <div class="btn" @click="OpenSlider()">
+                        <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+                    </div>
+                </div>
+            </div>
+            <div class="main">
+                <div v-show="lists_">
+                    <div class="common-item" v-for="(v,k) in lists">
+                        <div class="pane-box">
+                            <div class="pane" style="color: #1aad19;border-color: #1aad19;">{{v.CateName}}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="flex-box">
+                                <div>总订单面积：<span>{{v.sumOrdArea}}</span></div>
+                            </div>
+                            <div class="flex-box">
+                                <div>总金额：<span>{{v.sumAmt}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="column_negative" v-show="column_negative"></div>
+                <div class="error" v-show="Error">
+                    <img src="__RES__/empty.jpg">
+                    <p>{{ErrorInfo}}</p>
+                </div>
+            </div>
+        </div>
+        <transition name="slide-father">
+            <open-statis-card v-if="filterbarMode" :filterbar-mode.sync="filterbarMode"
+                       :statis-filter="statisFilter" :statis-model-prop="statisModelProp"
+                       @finish="finishFilter"></open-statis-card>
+        </transition>
+    </div>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row1">
+                    <div class="title">开始日期</div>
+                    <div class="input" @click="$refs.BeginDate.open()">{{datetimeFormat(form.BeginDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row1">
+                    <div class="title">结束日期</div>
+                    <div class="input" @click="$refs.EndDate.open()">{{datetimeFormat(form.EndDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+                <!--<div style="height:1500px;background-color:#1aad19;border:5px solid #ff5000;"></div>-->
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.BeginDate" ref="BeginDate"></mt-datetime-picker>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.EndDate" ref="EndDate"></mt-datetime-picker>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            filterbarMode: false,
+            statisFilter: [
+                {
+                    title: '统计方式',
+                    data: [
+                        {name: '列表', value: 'lists'},
+                        {name: '图表', value: 'charts'},
+                    ],
+                },
+            ],
+            statisModelProp: {
+                //统计类型
+                type: {},
+                //统计方式
+                way: {},
+                //图表选择
+                charts: {
+                    type: {},
+                    prop: {},
+                },
+            },
+            //侧边栏的表单
+            form: {
+                BeginDate: '{:date(\'Y-m-d\',strtotime($config[\'GetProInfoBeginDate\']))}',
+                EndDate: '{:date(\'Y-m-d\',strtotime($config[\'GetProInfoEndDate\']))}',
+                rememberForm: 'no'
+            },
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetProInfoMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetProInfoMaxDate\']))}'),
+            BeforeOpenSliderForm: {},//打开侧边栏前的form对象
+            BarVisible: false,
+            tempTop: 0,
+            highcharts: {
+                CateName: [],
+                sumOrdArea: [],
+                sumAmt: []
+            },
+            lists: {},
+            lists_: false, column_negative: false,
+            Error: false,ErrorInfo: ''
+        },
+        computed: {
+            statisStr: function () {
+                var smp = this.statisModelProp;
+                var str = this.BuildElement('统计方式：',smp.way.name);
+                return str;
+            },
+        },
+        methods: {
+            BuildApiParams: function () {
+                this.form.BeginDate = datetimeFormat(this.form.BeginDate,'yyyy-MM-dd');
+                this.form.EndDate = datetimeFormat(this.form.EndDate,'yyyy-MM-dd');
+                return {
+                    form: this.form,
+                };
+            },
+            BuildOnlyShowChartsParams: function () {
+                return {
+                    form: this.form,
+                    way: this.statisModelProp.way,
+                };
+            },
+            GetProInfo: function () {
+                var _this = this;
+                _this.highcharts.CateName = [];
+                _this.highcharts.sumOrdArea = [];
+                _this.highcharts.sumAmt = [];
+                _this.lists = {};
+                _this.lists_ = false;_this.column_negative = false;
+                _this.Error = false;_this.ErrorInfo = '';
+                $.ajax({
+                    url: '{:U(\'GetProInfo_api\')}',
+                    type: 'get',
+                    data: _this.BuildApiParams(),
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret !== '{:C(\'succ_ret\')}'){
+                            _this.Error = true;_this.ErrorInfo = respon.msg;return;
+                        }
+                        if(_this.statisModelProp.way.value === 'lists'){
+                            //列表
+                            _this.lists_ = true;
+                            _this.lists = respon.data;
+                        }else if(_this.statisModelProp.way.value === 'charts') {
+                            //图表
+                            _this.column_negative = true;
+                            $(respon.data).each(function(k,v){
+                                _this.highcharts.CateName[k] = v.CateName;
+                                _this.highcharts.sumOrdArea[k] = Number(v.sumOrdArea);
+                                _this.highcharts.sumAmt[k] = Number(v.sumAmt);
+                            });
+                            $('#column_negative').highcharts({
+                                chart: {
+                                    type: 'column',
+                                    zoomType: 'xy',
+                                    panning: true,
+                                    panKey: 'shift'
+                                },
+                                title: {text: ''},
+                                xAxis: {categories: _this.highcharts.CateName},
+                                yAxis: {title: {text: ''}},
+                                credits: {
+                                    text: '图表单独显示',
+                                    href: '{:U(\'OnlyShowCharts_GetProInfo\')}' + '?Params=' + JSON.stringify(_this.BuildOnlyShowChartsParams())
+                                },
+                                series: [{
+                                    name: '总订单面积(㎡)',
+                                    data: _this.highcharts.sumOrdArea
+                                },{
+                                    name: '总金额(元)',
+                                    data: _this.highcharts.sumAmt
+                                }]
+                            });
+                        }
+                    }
+                });
+            },
+            BuildElement: function (str1,str2) {
+                return '<span class="tag">' + str1 + '<span>' + str2 + '</span>' + '</span>';
+            },
+            showFilterPage: function() {
+                this.filterbarMode = true;
+                //$('footer').hide();
+                (function(window, location) {
+                    var u = (location.href).replace(location.hash, '');
+                    history.replaceState(null, document.title, u + '#!/filterbar');
+                    history.pushState(null, document.title, u);
+                    window.addEventListener('popstate', function() {
+                        if (location.hash === '#!/filterbar') {
+                            history.replaceState(null, document.title, u);
+                            this.filterbarMode = false;
+                        }
+                    }, false);
+                } (window, location));
+            },
+            finishFilter: function(statisFilter) {
+                //$('footer').show();
+                this.statisModelProp = statisFilter;
+                this.GetProInfo();
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm
+                    //&& !checkObjectIsEqual(this.form,this.BeforeOpenSliderForm)
+                ){
+                    this.GetProInfo();
+                }else{
+                    this.ResetForm();
+                }
+            }
+        },
+        created: function () {
+            var _this = this;
+            _this.statisFilter.forEach(function(item) {
+                switch (item.title) {
+                    case '统计类型':
+                        _this.statisModelProp.type = item.data[0];
+                        break;
+                    case '统计方式':
+                        _this.statisModelProp.way = item.data[0];
+                        break;
+                }
+            });
+            if('{$_GET[\'Params\']}'){
+                var Params = eval('(' + '{$_GET[\'Params\']}' + ')');
+                _this.form = Params.form;
+                _this.statisModelProp.way = Params.way;
+            }
+            _this.form = Object.assign({},_this.form,eval('(' + '{$rememberForm}' + ')'));
+            _this.GetProInfo();
+        },
+    });
+</script>

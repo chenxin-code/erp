@@ -1,0 +1,67 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('menu')}"
+            logout_url="{:U('logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <cell-group style="margin-top: 40px;margin-bottom: 40px;">
+        <field label="账号" value="{:session('ERP_Wap0_User.UserName')}" disabled></field>
+        <field type="password" label="原密码" placeholder="输入原密码" v-model="pwd0"></field>
+        <field type="password" label="新密码" placeholder="输入新密码" v-model="pwd1"></field>
+        <field type="password" label="确认新密码" placeholder="再输入一次新密码" v-model="pwd2"></field>
+    </cell-group>
+    <div class="cell-group-btn" @click="change_pwd()">更改密码</div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            pwd0: '',
+            pwd1: '',
+            pwd2: ''
+        },
+        methods: {
+            change_pwd: function () {
+                var _this = this;
+                if(!_this.pwd0){$.toast('请填写原密码','text');return;}
+                if(!_this.pwd1){$.toast('请填写新密码','text');return;}
+                if(!_this.pwd2){$.toast('请填写确认新密码','text');return;}
+                if(_this.pwd1 !== _this.pwd2){$.toast('新密码两次输入不一致','text');return;}
+                $.confirm('确认更改密码？','',function () {
+                    $.ajax({
+                        url: '{:U(\'change_pwd_api\')}',
+                        type: 'post',
+                        data: {
+                            OriPwd: _this.pwd0,
+                            NewPwd: _this.pwd1
+                        },
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                $.alert(respon.msg,'请重新登录',function () {
+                                    window.location.href = '{:U(\'Login/login\')}';
+                                });
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    });
+</script>

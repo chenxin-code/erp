@@ -1,0 +1,190 @@
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <cell-group style="margin-top: 40px;margin-bottom: 40px;">
+        <field label="客订单号" placeholder="未填写则系统自动生成" v-model="form.CusPoNo"></field>
+        <field label="PO号" placeholder="输入PO号" v-model="form.PON"></field>
+        <cell title="套件" placeholder="选择套件" @click="showBoxSetMainSelect = true" is-link>
+            <span v-if="form.ProductId">{{form.ProductId}}</span>
+        </cell>
+        <field label="订单数" type="number" placeholder="输入订单数" v-model="form.OrdQty" @blur="checkOrdQty()" @icon-click="$.alert('订单数范围：' + MinOrdQty + '&nbsp;~&nbsp;' + MaxOrdQty,'')" help></field>
+        <cell title="送货公司" placeholder="选择送货公司" @click="showCustomerDNSelect = true" is-link>
+            <span v-if="form.CusSubNo">{{form.CusSubNo}}</span>
+        </cell>
+        <cell title="交货日期" placeholder="选择交货日期" @click="$refs.DeliveryDate.open()" is-link>
+            {{datetimeFormat(form.DeliveryDate,'yyyy-MM-dd')}}
+        </cell>
+        <field label="送货备注" placeholder="填写送货备注" rows="1" type="textarea" v-model="form.DNRemark" autosize></field>
+        <field label="生产备注" placeholder="填写生产备注" rows="1" type="textarea" v-model="form.ProRemark" autosize></field>
+    </cell-group>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.DeliveryDate" ref="DeliveryDate"></mt-datetime-picker>
+    <div class="cell-group-btn" @click="bcheck()">下单</div>
+    <transition name="fullpage">
+        <div class="diy-select-fullpage" v-if="showBoxSetMainSelect">
+            <div class="empty" v-if="$.isEmptyObject(BoxSetMainSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.ProductId === form.ProductId_}" @click="form.ProductId_ = v.ProductId" v-for="v in BoxSetMainSelect">
+                    <div class="content">
+                        <span>{{v.ProductId}}</span>
+                        <span v-if="v.ProductName">套件名称：{{v.ProductName}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.ProductId = form.ProductId_;showBoxSetMainSelect = false">确定</div>
+        </div>
+        <div class="diy-select-fullpage" v-if="showCustomerDNSelect">
+            <div class="empty" v-if="$.isEmptyObject(CustomerDNSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.CusSubNo === form.CusSubNo_}" @click="form.CusSubNo_ = v.CusSubNo" v-for="v in CustomerDNSelect">
+                    <div class="content">
+                        <span>{{v.CusSubNo}}</span>
+                        <span v-if="v.SubDNAddress">送货地址：{{v.SubDNAddress}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.CusSubNo = form.CusSubNo_;showCustomerDNSelect = false">确定</div>
+        </div>
+    </transition>
+    <confirm-build-info
+            build_type="x"
+            :form="form"
+            :show-confirm-build-info.sync="showConfirmBuildInfo"
+            @build="build()">
+    </confirm-build-info>
+    <transition name="fullpage">
+        <build-result-fullpage
+                :result="result"
+                :msg="msg"
+                weborder_url="{:U('Weborder/lists')}"
+                :show-build-result.sync="showBuildResult"
+                v-if="showBuildResult">
+        </build-result-fullpage>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            //存放初始化数据
+            form_ini: {
+                CusPoNo: null,
+                PON: null,
+                OrdQty: null,
+                ProductId: null,
+                ProductId_: null,
+                CusSubNo: '{$ERPId}',
+                CusSubNo_: '{$ERPId}',
+                DeliveryDate: '{:date(\'Y-m-d\',strtotime($config[\'BuildDeliveryDate\']))}',
+                DNRemark: null,
+                ProRemark: null
+            },
+            //实际数据
+            form: {},
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMaxDate\']))}'),
+            MinOrdQty: Number('{$config[\'BuildMinOrdQty\']}'),
+            MaxOrdQty: Number('{$config[\'BuildMaxOrdQty\']}'),
+            BoxSetMainSelect: eval('(' + '{$BoxSetMainSelect}' + ')'),
+            CustomerDNSelect: eval('(' + '{$CustomerDNSelect}' + ')'),
+            showBoxSetMainSelect: false,
+            showCustomerDNSelect: false,
+            //确认下单信息
+            showConfirmBuildInfo: false,
+            //下单结果
+            result: Boolean,
+            msg: String,
+            showBuildResult: false
+        },
+        methods: {
+            checkOrdQty: function () {
+                var _this = this;
+                if(_this.form.OrdQty){
+                    if(!(/(^[1-9]\d*$)/.test(_this.form.OrdQty))){
+                        $.toast('订单数错误','text',function () {
+                            _this.form.OrdQty = null;
+                        });return;
+                    }
+                    if(_this.form.OrdQty < _this.MinOrdQty || _this.form.OrdQty > _this.MaxOrdQty){
+                        $.toast('订单数范围：' + _this.MinOrdQty + '&nbsp;~&nbsp;' + _this.MaxOrdQty,'text',function () {
+                            _this.form.OrdQty = null;
+                        });
+                    }
+                }
+            },
+            bcheck: function () {
+                var _this = this;
+                if(!_this.form.ProductId){$.toast('请选择套件','text');return;}
+                if(!_this.form.OrdQty){$.toast('请填写订单数','text');return;}
+                if(_this.form.OrdQty && (_this.form.OrdQty < _this.MinOrdQty || _this.form.OrdQty > _this.MaxOrdQty)){
+                    $.toast('订单数范围：' + _this.MinOrdQty + '&nbsp;~&nbsp;' + _this.MaxOrdQty,'text');return;
+                }
+                if(!_this.form.CusSubNo){$.toast('请选择送货公司','text');return;}
+                if(!_this.form.DeliveryDate){$.toast('请填写交货日期','text');return;}
+                _this.form.DeliveryDate = datetimeFormat(_this.form.DeliveryDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'bcheck_x_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            document.body.classList.add('body-lock');
+                            _this.showConfirmBuildInfo = true;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            build: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'x_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        _this.result = (respon.ret === '{:C(\'succ_ret\')}');
+                        if(_this.result){
+                            _this.form = Object.assign({},_this.form_ini,{CusSubNo: _this.form.CusSubNo,CusSubNo_: _this.form.CusSubNo});
+                        }
+                        _this.msg = respon.msg;
+                        _this.showBuildResult = true;
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form_ini,eval('(' + '{$FastBuildInfo}' + ')'));
+        }
+    });
+</script>

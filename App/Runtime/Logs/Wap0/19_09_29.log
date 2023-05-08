@@ -1,0 +1,1328 @@
+[ 2019-09-29T10:25:37+08:00 ] 115.206.53.0 /erp/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: HeaderFlag D:\xampp\htdocs\erp\App\Runtime\Cache\Wap0\a68ecbeabefa551c189026061d74aa41.php 第 37 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:25:38+08:00 ] 115.206.53.0 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:25:38+08:00 ] 115.206.53.0 /erp/Wap0/Login/login
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: HeaderFlag D:\xampp\htdocs\erp\App\Runtime\Cache\Wap0\e0d16c64741d9322294d00c91013f413.php 第 33 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:25:38+08:00 ] 115.206.53.0 /erp/Wap0/Login/make_code
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:25:52+08:00 ] 115.206.53.0 /erp/Wap0/Login/login_api?UserName=AQ&PassWord=AQ&code=309
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebappUser] WHERE [UserName] = 'AQ' AND [PassWord] = 'AQ' AND [UserType] = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0050s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.002000s ]
+
+[ 2019-09-29T10:25:52+08:00 ] 115.206.53.0 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebUserRight' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [URName] FROM [WebUserRight] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.001000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.012001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.012001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:25:55+08:00 ] 115.206.53.0 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebUserRight' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [URName] FROM [WebUserRight] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.006000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.006000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:25:56+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0020s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.001000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.001000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.014001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.014001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:25:57+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:41:18+08:00 ] 115.206.53.0 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebUserRight' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [URName] FROM [WebUserRight] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:33+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001001s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001001s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.012001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.012001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:34+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:35+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:36+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001001s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:37+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001001s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001001s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0010s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:41:38+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:39+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.001000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0010s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:41:40+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:43:04+08:00 ] 115.206.53.0 /erp/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: HeaderFlag D:\xampp\htdocs\erp\App\Runtime\Cache\Wap0\a68ecbeabefa551c189026061d74aa41.php 第 37 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.006000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.006000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:43:36+08:00 ] 112.17.247.99 /erp/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.002000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'testtb2' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = null ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.006000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.006000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:43:39+08:00 ] 112.17.247.99 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'testtb2' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = null ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebUserRight' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [URName] FROM [WebUserRight] WHERE [UserName] = 'testtb2' ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.001000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.001000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.009001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.009001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:43:43+08:00 ] 112.17.247.99 /erp/Wap0/Weborder/lists
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'testtb2' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = null ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.021002s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.021002s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:43:44+08:00 ] 112.17.247.99 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'testtb2' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = null ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = null AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = null AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0050s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = null AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0010s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001001s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001001s ]
+
+[ 2019-09-29T10:44:20+08:00 ] 115.206.53.0 /erp/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001001s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001001s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0010s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: HeaderFlag D:\xampp\htdocs\erp\App\Runtime\Cache\Wap0\a68ecbeabefa551c189026061d74aa41.php 第 37 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:44:42+08:00 ] 101.91.60.109 /erp/
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: HeaderFlag D:\xampp\htdocs\erp\App\Runtime\Cache\Wap0\a68ecbeabefa551c189026061d74aa41.php 第 37 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:51:44+08:00 ] 115.206.53.0 /erp/Wap0/Index/menu
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebUserRight' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [URName] FROM [WebUserRight] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+
+[ 2019-09-29T10:56:01+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0010s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.012001s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.012001s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:56:01+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2019-09-29T10:56:03+08:00 ] 115.206.53.0 /erp/Wap0/Weborder/lists_api?CurPage=1&PageSize=7&State=1&form%5BCType%5D=&form%5BIsGroup%5D=&form%5BDateType%5D=BuildDate&form%5BBeginDate%5D=2019-09-28&form%5BEndDate%5D=2019-10-06&form%5BrememberForm%5D=no
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappUser' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [ERPId] FROM [WebappUser] WHERE [UserName] = 'AQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'Customer' [ RunTime:0.0000s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  [CusShortName] FROM [Customer] WHERE [CusId] = 'JXCQ' ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebConfig' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  * FROM [WebConfig] ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.Id,wo.BoardId,wo.MatNo,wgo.Title,wgo.FirstPic,wgo.Cost,wp.PayDeadlineTime FROM WebappOrder wo LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.IsDel = 0 AND wo.Checked = 0 AND wp.Paid = 0 AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' ) AS thinkphp) AS T1  [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY rand()) AS ROW_NUMBER FROM (SELECT  COUNT(*) AS tp_count FROM WebappOrder wo WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 1 AND 1) [ RunTime:0.0000s ]
+SQL: SELECT   column_name,   data_type,   column_default,   is_nullable
+        FROM    INFORMATION_SCHEMA.TABLES AS t
+        JOIN    INFORMATION_SCHEMA.COLUMNS AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = 'WebappOrder' [ RunTime:0.0010s ]
+SQL: SELECT T1.* FROM (SELECT thinkphp.*, ROW_NUMBER() OVER ( ORDER BY Id desc) AS ROW_NUMBER FROM (SELECT  wo.CusPoNo,wo.BoardId,wo.ProductId,wo.MatNo,wo.Id,wo.OrdQty,wo.CType,wo.DeliveryDate,wo.BuildDate,wo.IsDel,wo.DelRemark,wo.Checked,wo.IsCard,wo.CardFlag,wo.IsGroup,wo.Length,wo.Width,wo.BoxL,wo.BoxW,wo.BoxH,wo.Area,cdn.SubDNAddress,bsm.ProductName,bc.BoxName,wgo.WebProductId,wgo.UsePay,wgo.Title,wgo.FirstPic,wp.PayDeadlineTime,wp.Paid,wp.Apply,wp.Refund FROM WebappOrder wo LEFT OUTER JOIN CustomerDN cdn ON wo.CusId = cdn.CusId AND wo.CusSubNo = cdn.CusSubNo LEFT OUTER JOIN BoxSetMain bsm ON wo.FactoryId = bsm.FactoryId AND wo.CusId = bsm.CusId AND wo.ProductId = bsm.ProductId LEFT OUTER JOIN BoxCode bc ON wo.BoxId = bc.BoxId LEFT OUTER JOIN WebGroupOrder wgo ON wo.FactoryId = wgo.FactoryId AND wo.CusId = wgo.CusId AND wo.CusPoNo = wgo.CusPoNo LEFT OUTER JOIN WebPay wp ON wo.FactoryId = wp.FactoryId AND wo.CusId = wp.CusId AND wo.CusPoNo = wp.CusPoNo  WHERE wo.FactoryId = 'LY' AND wo.CusId = 'JXCQ' AND wo.BuildDate BETWEEN '2019-09-28' AND '2019-10-06' AND wo.IsDel = 0 AND wo.Checked = 0 ) AS thinkphp) AS T1 WHERE (T1.ROW_NUMBER BETWEEN 0 + 1 AND 0 + 7) [ RunTime:0.0000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+

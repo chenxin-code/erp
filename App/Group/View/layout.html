@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+    <title>{$LayoutTitle}</title>
+    <script src="__RES__/vue.js"></script>
+    <!-- jQuery -->
+    <script src="__RES__/jquery.min.js"></script>
+    <!-- jQuery WeUI -->
+    <link rel="stylesheet" href="__RES__/jqweui/css/weui.min.css">
+    <link rel="stylesheet" href="__RES__/jqweui/css/jquery-weui.min.css">
+    <script src="__RES__/jqweui/js/jquery-weui.min.js"></script>
+    <!-- mint-ui -->
+    <link rel="stylesheet" href="__RES__/mint-ui/style.css">
+    <script src="__RES__/mint-ui/index.js"></script>
+    <!-- 阿里图标cdn -->
+    <link rel="stylesheet" href="{:C('ali_iconfont_cdn')}">
+    <!-- common 样式 -->
+    <link rel="stylesheet" href="__RES__/common.css?time={:time()}">
+    <!-- 自定义组件 -->
+    <script src="__RES__/component.js?time={:time()}"></script>
+    <!-- 函数库 -->
+    <script src="__RES__/function.js?time={:time()}"></script>
+</head>
+<body>
+{__LAYOUT_CONTENT__}
+</body>
+</html>

@@ -1,0 +1,187 @@
+<style>
+    .reg-container {
+        margin-top: 40px;
+        padding: 15px 25px 50px;
+    }
+    .reg-container .input-box {
+        padding: 7px 0;
+        display: -webkit-box;
+    }
+    .reg-container .input-box p {
+        margin: 0 25px 0 0;
+        font-size: 15px;
+        color: #737373;
+        line-height: 35px;
+    }
+    .reg-container .input-box input {
+        -webkit-box-flex: 1;
+        display: block;
+        height: 35px;
+        line-height: 35px;
+        text-indent: 15px;
+        border: 1px solid #e2e2e2;
+        border-radius: 5px;
+    }
+    .reg-container .input-box input::-webkit-input-placeholder {
+        color: #b3b3b3;
+    }
+    .reg-container .input-box input:-moz-placeholder {
+        color: #b3b3b3;
+    }
+    .reg-container .input-box input::-moz-placeholder {
+        color: #b3b3b3;
+    }
+    .reg-container .input-box input:-ms-input-placeholder {
+        color: #b3b3b3;
+    }
+    .reg-container .input-box #code_img {
+        margin-left: 8px;
+        height: 35px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .reg-container .reg-btn {
+        margin-top: 15px;
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        color: #fff;
+        font-size: 17px;
+        text-align: center;
+        background-color: #de5145;
+        border: 1px solid #de1935;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .reg-container .reg-btn:hover {
+        box-shadow: 0 15px 30px 0 rgba(255,255,255,0.15) inset,0 2px 7px 0 rgba(0,0,0,0.2);
+    }
+</style>
+
+<div id="VueBox">
+    <wap0-header flag="{$HeaderFlag}" index_url="{:U('index')}"></wap0-header>
+    <div class="reg-container">
+        <div class="input-box">
+            <p>账号</p>
+            <input maxlength="10" placeholder="大写字母,小写字母,数字,长度2-10位" v-model="UserName">
+        </div>
+        <div class="input-box">
+            <p>密码</p>
+            <input type="password" maxlength="20" v-model="PassWord">
+        </div>
+        <div class="input-box">
+            <p>确认密码</p>
+            <input type="password" maxlength="20" v-model="ConfirmPassWord">
+        </div>
+        <div class="input-box">
+            <p>客户全称</p>
+            <input maxlength="20" v-model="CusSubChiName">
+        </div>
+        <div class="input-box">
+            <p>客户简称</p>
+            <input maxlength="20" v-model="CusShortName">
+        </div>
+        <div class="input-box">
+            <p>客户编号</p>
+            <input maxlength="6" placeholder="大写字母,数字,长度2-6位" v-model="ERPId">
+        </div>
+        <div class="input-box">
+            <p>送货地址</p>
+            <input maxlength="50" v-model="SubDNAddress">
+        </div>
+        <div class="input-box">
+            <p>联系人</p>
+            <input maxlength="10" v-model="SubContactPerson">
+        </div>
+        <div class="input-box">
+            <p>联系电话</p>
+            <input type="number" v-model="SubTelNo">
+        </div>
+        <div class="input-box">
+            <p>联系传真</p>
+            <input type="number" placeholder="可省略" v-model="SubFaxNo">
+        </div>
+        <div class="input-box">
+            <p>验证码</p>
+            <input type="number" v-model="code">
+            <img id="code_img" src="{:U('make_code')}" @click="change_code_img()">
+        </div>
+        <div class="reg-btn" @click="reg()">注册</div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            UserName: null,
+            PassWord: null,
+            ConfirmPassWord: null,
+            CusSubChiName: null,
+            CusShortName: null,
+            ERPId: null,
+            SubDNAddress: null,
+            SubContactPerson: null,
+            SubTelNo: null,
+            SubFaxNo: null,
+            code: null
+        },
+        methods: {
+            reg: function () {
+                var _this = this;
+                if(!_this.UserName){$.toast('请填写账号','text');return;}
+                if(!new RegExp('{:C(\'UserNamePattern\')}').test(_this.UserName)){
+                    $.toast('账号格式不正确','text');return;
+                }
+                if(!_this.PassWord){$.toast('请填写密码','text');return;}
+                if(!_this.ConfirmPassWord){$.toast('请填写确认密码','text');return;}
+                if(_this.PassWord !== _this.ConfirmPassWord){$.toast('密码与确认密码不一致','text');return;}
+                if(!_this.CusSubChiName){$.toast('请填写客户全称','text');return;}
+                if(!_this.CusShortName){$.toast('请填写客户简称','text');return;}
+                if(!_this.ERPId){$.toast('请填写客户编号','text');return;}
+                if(!new RegExp('{:C(\'CusIdPattern\')}').test(_this.ERPId)){
+                    $.toast('客户编号格式不正确','text');return;
+                }
+                if(!_this.SubDNAddress){$.toast('请填写送货地址','text');return;}
+                if(!_this.SubContactPerson){$.toast('请填写联系人','text');return;}
+                if(!_this.SubTelNo){$.toast('请填写联系电话','text');return;}
+                if(!_this.code){$.toast('请填写验证码','text');return;}
+                $.ajax({
+                    url: '{:U(\'reg_api\')}',
+                    type: 'post',
+                    data: {
+                        UserName: _this.UserName,
+                        PassWord: _this.PassWord,
+                        CusSubChiName: _this.CusSubChiName,
+                        CusShortName: _this.CusShortName,
+                        ERPId: _this.ERPId,
+                        SubDNAddress: _this.SubDNAddress,
+                        SubContactPerson: _this.SubContactPerson,
+                        SubTelNo: _this.SubTelNo,
+                        SubFaxNo: _this.SubFaxNo,
+                        code: _this.code
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            $.alert(respon.msg,'去登录',function () {
+                                window.location.href = '{:U(\'Wap0/Login/login\')}';
+                            });
+                        }else{
+                            $.toast(respon.msg,'cancel');
+                            _this.change_code_img();
+                        }
+                    }
+                });
+            },
+            change_code_img: function () {
+                $('#code_img').attr('src','{:U(\'make_code\')}?' + Math.random());
+                this.code = null;
+            }
+        }
+    });
+</script>

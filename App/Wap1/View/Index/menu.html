@@ -1,0 +1,75 @@
+<script src="__RES__/qrcode.min.js"></script>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            logout_url="{:U('logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="menu-top-container">
+        <div class="flag">
+            账号&nbsp;<span style="color: #1aad19;">{:session('ERP_Wap1_User.UserName')}</span>
+            <span v-if="'{$SubFacName}'">&nbsp;分厂&nbsp;<span style="color: #1aad19;">{$SubFacName}</span></span>
+        </div>
+        <div class="btn-box">
+            <div class="btn" @click="window.location.href = '{:U(\'change_pwd\')}'">
+                <i class="iconfont icon-iconfontmima"></i>&nbsp;更改密码
+            </div>
+            <div class="btn" @click="document.body.classList.add('body-lock');showQrcode = true">
+                <i class="iconfont icon-erweima2"></i>&nbsp;登录二维码
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage1">
+        <div class="qrcode-fullpage" v-show="showQrcode">
+            <div id="qrcode"></div>
+            <p>当前账号&nbsp;<span style="color: #3cc51f;">{:session('ERP_Wap1_User.UserName')}</span>&nbsp;登录二维码</p>
+            <div class="close-btn" @click="document.body.classList.remove('body-lock');showQrcode = false">关闭</div>
+        </div>
+    </transition>
+    <menu-box :lists="lists" right="{$config['Wap1Right']}" ur_name="{$URName}" empty_img="__RES__/empty.jpg"></menu-box>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            showQrcode: false,
+            qrcode: null,
+            lists: [
+                {URName: '用户管理',title: '用户管理',href: '{:U(\'User/manage\')}',iconClass: 'icon-guanwangicon31334',},
+                {URName: 'ERP订单',title: 'ERP订单',href: '{:U(\'Order/GetOrders\')}',iconClass: 'icon-erp',},
+                {URName: '客户每日订单',title: '客户每日订单',href: '{:U(\'Order1/WGetCusOrder\')}',iconClass: 'icon-meiri',},
+                {URName: '客户信用余额',title: '客户信用余额',href: '{:U(\'Cred/WGetCusAmt\')}',iconClass: 'icon-xinyongyue',},
+                {URName: '订单统计',title: '订单统计',href: '{:U(\'Statis/GetOrderSum\')}',iconClass: 'icon-dingdan2',},
+                {URName: '退货统计',title: '退货统计',href: '{:U(\'Statis/GetOrdReturnSum\')}',iconClass: 'icon-tuihuo1',},
+                {URName: '传单统计',title: '传单统计',href: '{:U(\'Statis/GetSchSum\')}',iconClass: 'icon-chuandan',},
+                {URName: '库存统计',title: '库存统计',href: '{:U(\'Statis/GetOrdStock\')}',iconClass: 'icon-storage',},
+                {URName: '生产分析总计',title: '生产分析总计',href: '{:U(\'Statis/GetProInfo\')}',iconClass: 'icon-iconfont-shengchan',},
+                {URName: '原纸采购',title: '原纸采购',href: '{:U(\'Paper1/WGetPOMain\')}',iconClass: 'icon-caigou',},
+                {URName: '原纸收货',title: '原纸收货',href: '{:U(\'Paper1/WGetPOIn\')}',iconClass: 'icon-che2',},
+                {URName: '原纸出库',title: '原纸出库',href: '{:U(\'Paper/DoStockOut\')}',iconClass: 'icon-ccgl-chukucaozuo-5',},
+                {URName: '原纸入库',title: '原纸入库',href: '{:U(\'Paper/DoRStockIn\')}',iconClass: 'icon-ruku',},
+                {URName: '直接入库',title: '直接入库',href: '{:U(\'Paper/DirectInStock\')}',iconClass: 'icon-ruku2',},
+                {URName: '原纸库存',title: '原纸库存',href: '{:U(\'Paper/GetSStock\')}',iconClass: 'icon-weishengzhi',},
+                {URName: '安全库存',title: '安全库存',href: '{:U(\'Paper/GetSafeStockQ\')}',iconClass: 'icon-anquanmenhu',},
+                {URName: '扫描装货',title: '扫描装货',href: '{:U(\'Stow/lists\')}',iconClass: 'icon-zhuangche1',},
+                {URName: '库存修改',title: '库存修改',href: '{:U(\'Stock/MStockDetailR\')}',iconClass: 'icon-iconfontzhizuobiaozhunbduan24',},
+                {URName: '库区面积',title: '库区面积',href: '{:U(\'Stock/deliveryArea\')}',iconClass: 'icon-fangwumianji',},
+                {URName: '订单试算',title: '订单试算',href: '{:U(\'Calc/index\')}',iconClass: 'icon-jisuanqi',},
+                {URName: '收款调账',title: '收款调账',href: '{:U(\'Frec/RecAdjust\')}',iconClass: 'icon-yewutiaozhang',},
+                {URName: '客户往来统计',title: '客户往来统计',href: '{:U(\'Frec/CusContact\')}',iconClass: 'icon-kehu',},
+            ],
+        },
+        mounted: function () {
+            this.qrcode = new QRCode('qrcode');
+            this.qrcode.makeCode('{:U(\'Login/login\',\'\',true,true)}?UserName={:session(\'ERP_Wap1_User.UserName\')}&secret={:md5(session(\'ERP_Wap1_User.UserName\').C(\'md5_salt\'))}');
+        }
+    });
+</script>

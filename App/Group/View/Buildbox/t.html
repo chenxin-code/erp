@@ -1,0 +1,251 @@
+<div id="VueBox">
+    <group-header flag="{$HeaderFlag}" index_url="{:U('Wap0/Index1/index')}" menu_url="{:U('Wap0/Index/menu')}"></group-header>
+    <div class="product-card" style="margin-top: 40px;" @click="window.location.href = '{:U(\'Box/detail\')}?Id=' + ProductInfo.Id">
+        <div class="item1">
+            <img :src="'__RES__/' + ProductInfo.Pic[0]" v-if="ProductInfo.Pic[0]">
+        </div>
+        <div class="item2">
+            <div class="title">
+                <span style="color: #e01835;">{{ProductInfo.MatNo}}</span><span v-if="ProductInfo.Title">,{{ProductInfo.Title}}</span>
+            </div>
+            <vue2-countdown
+                    :start-time="ProductInfo.BeginTime"
+                    :end-time="ProductInfo.EndTime"
+                    :current-time="'{:time()}'"
+                    :tip-text="'距团购开始'"
+                    :tip-text-end="'距团购结束'"
+                    :end-text="'团购已结束'"
+                    v-on:end_callback="window.location.href = '{:U(\'Box/detail\')}?Id=' + ProductInfo.Id"
+                    style="font-size: 13px;">
+            </vue2-countdown>
+        </div>
+        <div class="item3">
+            <div style="color: #e01835;">¥{{ProductInfo.Price}}/个</div>
+            <div style="color: #999;text-decoration: line-through;">¥{{ProductInfo.MarketPrice}}/个</div>
+        </div>
+    </div>
+    <cell-group>
+        <field label="客订单号" placeholder="未填写则系统自动生成" v-model="form.CusPoNo"></field>
+        <field label="PO号" placeholder="输入PO号" v-model="form.PON"></field>
+        <field label="订单数" type="number" placeholder="输入订单数" v-model="form.OrdQty" ref="OrdQty" @focus="disBtn = true" @blur="checkOrdQty()" @icon-click="$.alert('订单数范围：' + Number(ProductInfo.BuildMin) + '&nbsp;~&nbsp;' + Number(ProductInfo.BuildMax),'')" help></field>
+        <cell title="送货公司" placeholder="选择送货公司" @click="showCustomerDNSelect = true" is-link>
+            <span v-if="form.CusSubNo">{{form.CusSubNo}}</span>
+        </cell>
+        <cell title="交货日期" placeholder="选择交货日期" @click="$refs.DeliveryDate.open()" is-link>
+            {{datetimeFormat(form.DeliveryDate,'yyyy-MM-dd')}}
+        </cell>
+        <field label="送货备注" placeholder="填写送货备注" rows="1" type="textarea" v-model="form.DNRemark" autosize></field>
+        <field label="生产备注" placeholder="填写生产备注" rows="1" type="textarea" v-model="form.ProRemark" autosize></field>
+    </cell-group>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.DeliveryDate" ref="DeliveryDate"></mt-datetime-picker>
+    <div class="group-build-footer2" v-if="IsRangePrice">
+        当前价格&nbsp;<span style="color: #e01835;">¥{{Price}}/个</span>
+        <span class="pane" v-if="$.isEmptyObject(help)">最低价</span>
+        <div class="help" v-for="v in help">
+            订单数满&nbsp;<span style="color: #4b0;text-decoration: underline;cursor: pointer;" @click="form.OrdQty = v.OrdQty;$refs.OrdQty.focus()">{{v.OrdQty}}</span>
+            价格减至&nbsp;<span style="color: #e01835;">¥{{v.Price}}/个</span>
+        </div>
+    </div>
+    <div class="group-build-footer1">
+        <div class="cost">
+            <span v-if="validOrdQty">下单金额：<span style="color: #e01835;">¥{{Cost}}</span></span>
+            <span v-if="validOrdQty">节省金额：<span style="color: #e01835;">¥{{SaveCost}}</span></span>
+        </div>
+        <div class="btn" @click="bcheck()">下单</div>
+    </div>
+    <transition name="fullpage">
+        <div class="diy-select-fullpage" v-if="showCustomerDNSelect">
+            <div class="empty" v-if="$.isEmptyObject(CustomerDNSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':v.CusSubNo === form.CusSubNo_}" @click="form.CusSubNo_ = v.CusSubNo" v-for="v in CustomerDNSelect">
+                    <div class="content">
+                        <span>{{v.CusSubNo}}</span>
+                        <span v-if="v.SubDNAddress">送货地址：{{v.SubDNAddress}}</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="form.CusSubNo = form.CusSubNo_;showCustomerDNSelect = false">确定</div>
+        </div>
+    </transition>
+    <confirm-build-info
+            group
+            build_type="t"
+            :form="form"
+            :cost.sync="Cost"
+            :save-cost.sync="SaveCost"
+            :show-confirm-build-info.sync="showConfirmBuildInfo"
+            @build="build()">
+    </confirm-build-info>
+    <transition name="fullpage">
+        <build-result-fullpage
+                :result="result"
+                :msg="msg"
+                :pay_url="pay_url"
+                weborder_url="{:U('Wap0/Weborder/lists')}"
+                :show-build-result.sync="showBuildResult"
+                v-if="showBuildResult">
+        </build-result-fullpage>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            //存放初始化数据
+            form_ini: {
+                CusPoNo: null,
+                PON: null,
+                OrdQty: null,
+                CusSubNo: '{$ERPId}',
+                CusSubNo_: '{$ERPId}',
+                DeliveryDate: '{:date(\'Y-m-d\',strtotime($config[\'BuildDeliveryDate\']))}',
+                DNRemark: null,
+                ProRemark: null
+            },
+            //实际数据
+            form: {},
+            disBtn: false,//禁用下单按钮
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'BuildMaxDate\']))}'),
+            MinOrdQty: Number('{$config[\'BuildMinOrdQty\']}'),
+            MaxOrdQty: Number('{$config[\'BuildMaxOrdQty\']}'),
+            ProductInfo: eval('(' + '{$ProductInfo}' + ')'),
+            CustomerDNSelect: eval('(' + '{$CustomerDNSelect}' + ')'),
+            showCustomerDNSelect: false,
+            validOrdQty: false,
+            Cost: null,
+            SaveCost: null,
+            IsRangePrice: false,
+            Price: null,
+            help: null,
+            //确认下单信息
+            showConfirmBuildInfo: false,
+            //下单结果
+            result: Boolean,
+            msg: String,
+            pay_url: undefined,
+            showBuildResult: false
+        },
+        methods: {
+            checkOrdQty: function () {
+                var _this = this;
+                if(_this.form.OrdQty){
+                    if(!(/(^[1-9]\d*$)/.test(_this.form.OrdQty))){
+                        $.toast('订单数错误','text',function () {
+                            _this.validOrdQty = false;
+                            _this.form.OrdQty = null;
+                            _this.IsRangePrice = false;
+                            _this.disBtn = false;
+                        });return;
+                    }
+                    $.ajax({
+                        url: '{:U(\'calcCost_api\')}',
+                        type: 'get',
+                        data: {
+                            Id: _this.ProductInfo.Id,
+                            OrdQty: _this.form.OrdQty
+                        },
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(Number(respon.validOrdQty)){
+                                _this.validOrdQty = true;
+                                _this.Cost = respon.Cost;
+                                _this.SaveCost = respon.SaveCost;
+                                if(Number(respon.IsRangePrice)){
+                                    _this.IsRangePrice = true;
+                                    _this.Price = respon.Price;
+                                    _this.help = respon.help;
+                                }else{
+                                    _this.IsRangePrice = false;
+                                    _this.Price = null;
+                                    _this.help = null;
+                                }
+                            }else{
+                                $.toast('订单数范围：' + Number(_this.ProductInfo.BuildMin) + '&nbsp;~&nbsp;' + Number(_this.ProductInfo.BuildMax),'text',function () {
+                                    _this.validOrdQty = false;
+                                    _this.form.OrdQty = null;
+                                    _this.IsRangePrice = false;
+                                });
+                            }
+                            _this.disBtn = false;
+                        }
+                    });
+                }else{
+                    _this.disBtn = false;
+                }
+            },
+            bcheck: function () {
+                var _this = this;
+                if(_this.disBtn){return;}
+                if(!_this.form.OrdQty){$.toast('请填写订单数','text');return;}
+                if(_this.form.OrdQty && !_this.validOrdQty){
+                    $.toast('订单数范围：' + Number(_this.ProductInfo.BuildMin) + '&nbsp;~&nbsp;' + Number(_this.ProductInfo.BuildMax),'text');return;
+                }
+                if(!_this.form.CusSubNo){$.toast('请选择送货公司','text');return;}
+                if(!_this.form.DeliveryDate){$.toast('请填写交货日期','text');return;}
+                _this.form = Object.assign({},_this.form,{Id: _this.ProductInfo.Id});
+                _this.form.DeliveryDate = datetimeFormat(_this.form.DeliveryDate,'yyyy-MM-dd');
+                $.ajax({
+                    url: '{:U(\'bcheck_t_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            document.body.classList.add('body-lock');
+                            _this.showConfirmBuildInfo = true;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            },
+            build: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'t_api\')}',
+                    type: 'post',
+                    data: _this.form,
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        _this.result = (respon.ret === '{:C(\'succ_ret\')}');
+                        if(_this.result){
+                            _this.form = Object.assign({},_this.form_ini,{CusSubNo: _this.form.CusSubNo,CusSubNo_: _this.form.CusSubNo});
+                            _this.validOrdQty = false;
+                            _this.Cost = null;
+                            _this.SaveCost = null;
+                            _this.IsRangePrice = false;
+                            _this.Price = null;
+                            _this.help = null;
+                        }
+                        _this.msg = respon.msg;
+                        if(Number('{$config[\'UseWxPay\']}') || Number('{$config[\'UseAliPay\']}')){
+                            _this.pay_url = '{:U(\'Pay/Order/way\')}?CusPoNo=' + respon.CusPoNo;
+                        }
+                        _this.showBuildResult = true;
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.form = Object.assign({},this.form_ini);
+        }
+    });
+</script>

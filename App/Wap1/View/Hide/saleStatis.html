@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+{__NOLAYOUT__}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+    <title>{$LayoutTitle}</title>
+    <script src="__RES__/vue.js"></script>
+    <!-- jQuery -->
+    <script src="__RES__/jquery.min.js"></script>
+    <!-- jQuery WeUI -->
+    <link rel="stylesheet" href="__RES__/jqweui/css/weui.min.css">
+    <link rel="stylesheet" href="__RES__/jqweui/css/jquery-weui.min.css">
+    <script src="__RES__/jqweui/js/jquery-weui.min.js"></script>
+    <!-- 引入highcharts插件 -->
+    <script src="__RES__/highcharts/highcharts.js"></script>
+    <script src="__RES__/highcharts/highcharts-3d.js"></script>
+    <script src="__RES__/highcharts/exporting.js"></script>
+    <script src="__RES__/highcharts/highcharts-zh_CN.js"></script>
+    <script src="__RES__/highcharts/offline-exporting.js"></script>
+    <style>
+        .tab {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: #fff;
+            border-bottom: 1px solid #e7e7e7;
+            display: flex;
+            position: fixed;
+            top: 0;
+            z-index: 1;
+        }
+        .tab > div {
+            flex: 1;
+            padding: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .tab > div.active {
+            color: #1aad19;
+            border-bottom: 2px solid #1aad19;
+        }
+        .item {
+            padding: 11px 16px;
+            font-size: 16px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .item::after {
+            content: '';
+            height: 1px;
+            background-color: #c8c7cc;
+            transform: scaleY(0.25);
+            position: absolute;
+            bottom: 0;
+            left: 8px;
+            right: 0;
+        }
+        .item .r1 {
+            float: right;
+        }
+        .item .r2 {
+            position: absolute;
+            right: 100px;
+        }
+        nav {
+            width: 40%;
+            height: 35px;
+            line-height: 35px;
+            margin-left: -20%;
+            display: flex;
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+        }
+        nav > div {
+            flex: 1;
+            font-size: 16px;
+            text-align: center;
+            color: #000;
+            background-color: #ddd;
+            cursor: pointer;
+        }
+        nav > div:nth-child(1) {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+        nav > div:nth-child(2) {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        nav > div.choose {
+            color: #fff;
+            background-color: #1aad19;
+        }
+    </style>
+</head>
+<body>
+<div id="VueBox">
+    <div class="tab">
+        <div :class="{'active':Tab === '1'}" @click="Tab = '1'">接单</div>
+        <!--<div :class="{'active':Tab === '2'}" @click="Tab = '2'">班组排产</div>-->
+        <div :class="{'active':Tab === '3'}" @click="Tab = '3'">客户({{Object.keys(CusOrdSum).length}})</div>
+        <div :class="{'active':Tab === '4'}" @click="Tab = '4'">业务员({{Object.keys(TaskOrdSum).length}})</div>
+    </div>
+    <div style="margin-top: 40px;" v-show="Tab === '1'">
+        <div class="item">
+            <span>接单金额合计</span>
+            <span class="r1">{{FacOrdSum.OrdAmt}}</span>
+        </div>
+        <div class="item">
+            <span>二层米数合计</span>
+            <span class="r1">{{FacOrdSum.TLength0}}</span>
+        </div>
+        <div class="item">
+            <span>单坑米数合计</span>
+            <span class="r1">{{FacOrdSum.TLength1}}</span>
+        </div>
+        <div class="item">
+            <span>双坑米数合计</span>
+            <span class="r1">{{FacOrdSum.TLength2}}</span>
+        </div>
+        <div class="item">
+            <span>三坑米数合计</span>
+            <span class="r1">{{FacOrdSum.TLength3}}</span>
+        </div>
+        <div class="item">
+            <span>接单米数合计</span>
+            <span class="r1">{{FacOrdSum.TLength}}</span>
+        </div>
+        <div class="item">
+            <span>未排米数合计</span>
+            <span class="r1">{{FacOrdSum.WTLength}}</span>
+        </div>
+        <div class="item">
+            <span>接单客户数</span>
+            <span class="r1">{{FacOrdSum.ccount}}</span>
+        </div>
+    </div>
+    <!--<div style="margin-top: 40px;" v-show="Tab === '2'">
+        <div class="item">
+            <span>DA刘保刚排产米数</span>
+            <span class="r1">71,685</span>
+        </div>
+        <div class="item">
+            <span>DB姜中林排产米数</span>
+            <span class="r1">71,259</span>
+        </div>
+        <div class="item">
+            <span>D东恒套料排产米数</span>
+            <span class="r1">1,278</span>
+        </div>
+    </div>-->
+    <div style="margin: 40px 0 60px;" v-show="Tab === '3'">
+        <div v-if="CusType === 'lists'">
+            <div class="item" style="color: #1aad19;">
+                <span>客户</span>
+                <span class="r2">米数</span>
+                <span class="r1">金额</span>
+            </div>
+            <div class="item" v-for="v in CusOrdSum">
+                <span>{{v.CusShortName}}</span>
+                <span class="r2">{{v.TLength}}</span>
+                <span class="r1">{{v.Amt}}</span>
+            </div>
+        </div>
+        <div id="charts1" v-show="CusType === 'charts'"></div>
+        <div id="charts2" v-show="CusType === 'charts'"></div>
+    </div>
+    <div style="margin: 40px 0 60px;" v-show="Tab === '4'">
+        <div v-if="TaskType === 'lists'">
+            <div class="item" style="color: #1aad19;">
+                <span>业务员</span>
+                <span class="r2">米数</span>
+                <span class="r1">金额</span>
+            </div>
+            <div class="item" v-for="v in TaskOrdSum">
+                <span>{{v.TaskName}}</span>
+                <span class="r2">{{v.TLength}}</span>
+                <span class="r1">{{v.Amt}}</span>
+            </div>
+        </div>
+        <div id="charts3" v-show="TaskType === 'charts'"></div>
+        <div id="charts4" v-show="TaskType === 'charts'"></div>
+    </div>
+    <nav v-show="Tab === '3'">
+        <div :class="{'choose':CusType === 'lists'}" @click="CusType = 'lists'">列表</div>
+        <div :class="{'choose':CusType === 'charts'}" @click="CusType = 'charts'">图表</div>
+    </nav>
+    <nav v-show="Tab === '4'">
+        <div :class="{'choose':TaskType === 'lists'}" @click="TaskType = 'lists'">列表</div>
+        <div :class="{'choose':TaskType === 'charts'}" @click="TaskType = 'charts'">图表</div>
+    </nav>
+</div>
+<script>
+    //3D饼状图
+    function pie_3d (highcharts) {
+        return {
+            chart: {
+                type: 'pie',
+                //zoomType: 'xy',
+                panning: true,
+                panKey: 'shift',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {text: highcharts.title},
+            //tooltip: {pointFormat: '{series.name} : <b>{point.percentage:.2f}%</b>'},
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: highcharts.mark,// + '占比',
+                data: highcharts.data
+            }],
+            credits: {
+                enabled: false
+            }
+        };
+    }
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Tab: '1',
+            FacOrdSum: eval('(' + '{$FacOrdSum}' + ')'),
+            CusOrdSum: eval('(' + '{$CusOrdSum}' + ')'),
+            CusType: 'lists',
+            TaskOrdSum: eval('(' + '{$TaskOrdSum}' + ')'),
+            TaskType: 'lists',
+            charts1: {
+                title: '米数分布',
+                mark: '米数',
+                data: []
+            },
+            charts2: {
+                title: '金额分布',
+                mark: '金额',
+                data: []
+            },
+            charts3: {
+                title: '米数分布',
+                mark: '米数',
+                data: []
+            },
+            charts4: {
+                title: '金额分布',
+                mark: '金额',
+                data: []
+            }
+        },
+        methods: {
+            call_highcharts: function () {
+                var _this = this;
+                if(_this.Tab === '3' && _this.CusType === 'charts'){
+                    $('#charts1').highcharts(pie_3d(_this.charts1));
+                    $('#charts2').highcharts(pie_3d(_this.charts2));
+                }else if(_this.Tab === '4' && _this.TaskType === 'charts'){
+                    $('#charts3').highcharts(pie_3d(_this.charts3));
+                    $('#charts4').highcharts(pie_3d(_this.charts4));
+                }
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            $(_this.CusOrdSum).each(function(k,v){
+                _this.charts1.data[k] = [v.CusShortName,Number(v.TLength)];
+            });
+            $(_this.CusOrdSum).each(function(k,v){
+                _this.charts2.data[k] = [v.CusShortName,Number(v.Amt)];
+            });
+            $(_this.TaskOrdSum).each(function(k,v){
+                _this.charts3.data[k] = [v.TaskName,Number(v.TLength)];
+            });
+            $(_this.TaskOrdSum).each(function(k,v){
+                _this.charts4.data[k] = [v.TaskName,Number(v.Amt)];
+            });
+        },
+        watch: {
+            Tab: function () {
+                this.call_highcharts();
+            },
+            CusType: function () {
+                this.call_highcharts();
+            },
+            TaskType: function () {
+                this.call_highcharts();
+            }
+        }
+    });
+</script>
+</body>
+</html>

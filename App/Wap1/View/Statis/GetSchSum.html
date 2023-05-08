@@ -1,0 +1,410 @@
+<!-- 引入highcharts插件 -->
+<script src="__RES__/highcharts/highcharts.js"></script>
+<script src="__RES__/highcharts/highcharts-3d.js"></script>
+<script src="__RES__/highcharts/exporting.js"></script>
+<script src="__RES__/highcharts/highcharts-zh_CN.js"></script>
+<script src="__RES__/highcharts/offline-exporting.js"></script>
+<script src="__RES__/highcharts_diy_func.js?time={:time()}"></script>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="statis-card">
+        <div class="page">
+            <div class="header">
+                <div class="show-tags">
+                    <div class="tags" v-html="statisStr" @click="showFilterPage"></div>
+                </div>
+                <div class="btn-box">
+                    <div class="btn" @click="GetSchSum()">
+                        <i class="iconfont icon-icon--"></i>&nbsp;刷新
+                    </div>
+                    <div class="btn" @click="OpenSlider()">
+                        <i class="iconfont icon-shaixuan"></i>&nbsp;筛选
+                    </div>
+                </div>
+            </div>
+            <div class="main">
+                <div v-show="lists_">
+                    <div class="error" v-if="$.isEmptyObject(lists)">
+                        <img src="__RES__/empty.jpg">
+                        <p>没有相关数据</p>
+                    </div>
+                    <div v-else>
+                        <div :class="'common-item ' + (k%2?'bgc1':'bgc2')" v-for="(v,k) in lists">
+                            <div class="info-box">
+                                <div class="flex-box">
+                                    <div>生产线：<span>{{v.LineId}}</span></div>
+                                    <div>门幅：<span>{{v.SPaperWidth}}</span></div>
+                                </div>
+                                <div class="flex-box">
+                                    <div>坑型：<span>{{v.Flutes}}</span></div>
+                                    <div>总订单面积：<span>{{v.sumOrdArea}}</span></div>
+                                </div>
+                                <div class="flex-box">
+                                    <div>总长度：<span>{{v.sumLength}}</span></div>
+                                    <div>平均修边：<span>{{v.AvgTrim}}</span></div>
+                                </div>
+                                <div class="flex-box">
+                                    <div>平均门幅：<span>{{v.AvgPW}}</span></div>
+                                    <div>总款数：<span>{{v.sumCount}}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pie_3d" v-show="pie_3d"></div>
+                <div id="pie_basic" v-show="pie_basic"></div>
+                <div id="pie_donut_3d" v-show="pie_donut_3d"></div>
+                <div id="column_rotated_labels" v-show="column_rotated_labels"></div>
+                <div id="line_basic" v-show="line_basic"></div>
+                <div id="line_time_series" v-show="line_time_series"></div>
+                <div class="error" v-show="Error">
+                    <img src="__RES__/empty.jpg">
+                    <p>{{ErrorInfo}}</p>
+                </div>
+            </div>
+        </div>
+        <transition name="slide-father">
+            <open-statis-card v-if="filterbarMode" :filterbar-mode.sync="filterbarMode"
+                       :statis-filter="statisFilter" :statis-model-prop="statisModelProp"
+                       @finish="finishFilter"></open-statis-card>
+        </transition>
+    </div>
+    <div class="right-aside" :class="{'push':BarVisible}">
+        <div class="shadow" @click="CloseSlider(false)"></div>
+        <div class="form">
+            <div class="rows">
+                <div class="row2">
+                    <div class="title">完工状态</div>
+                    <label :class="{'checked':form.SState === ''}">
+                        全部<input type="radio" value="" v-model="form.SState" hidden>
+                    </label>
+                    <label :class="{'checked':form.SState === '1'}">
+                        已传<input type="radio" value="1" v-model="form.SState" hidden>
+                    </label>
+                    <label :class="{'checked':form.SState === '2'}">
+                        已提取<input type="radio" value="2" v-model="form.SState" hidden>
+                    </label>
+                </div>
+                <div class="row2">
+                    <div class="title">日期类型</div>
+                    <label :class="{'checked':form.DateType === 'ProDate'}">
+                        生产日期<input type="radio" value="ProDate" v-model="form.DateType" hidden>
+                    </label>
+                </div>
+                <div class="row1">
+                    <div class="title">开始日期</div>
+                    <div class="input" @click="$refs.BeginDate.open()">{{datetimeFormat(form.BeginDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row1">
+                    <div class="title">结束日期</div>
+                    <div class="input" @click="$refs.EndDate.open()">{{datetimeFormat(form.EndDate,'yyyy-MM-dd')}}</div>
+                </div>
+                <div class="row3">
+                    <label for="rememberForm" :class="{'checked':form.rememberForm === 'yes'}"></label>
+                    <label for="rememberForm">记住筛选条件(本次登录有效)</label>
+                    <input type="checkbox" id="rememberForm" v-model="form.rememberForm" true-value="yes" false-value="no" hidden>
+                </div>
+                <!--<div style="height:1500px;background-color:#1aad19;border:5px solid #ff5000;"></div>-->
+            </div>
+            <div class="footer">
+                <div class="reset" @click="ResetForm()">重置</div>
+                <div class="confirm" @click="CloseSlider(true)">确定</div>
+            </div>
+        </div>
+    </div>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.BeginDate" ref="BeginDate"></mt-datetime-picker>
+    <mt-datetime-picker type="date" :start-date="MinDate" :end-date="MaxDate" v-model="form.EndDate" ref="EndDate"></mt-datetime-picker>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            filterbarMode: false,
+            statisFilter: [
+                {
+                    title: '统计类型',
+                    data: [
+                        {name: '汇总', value: ''},
+                        {name: '按生产线', value: '1'},
+                        {name: '按门幅', value: '2'},
+                        {name: '按坑型', value: '3'},
+                    ],
+                },
+                {
+                    title: '统计方式',
+                    data: [
+                        {name: '列表', value: 'lists'},
+                        {name: '图表', value: 'charts'},
+                    ],
+                },
+                {
+                    title: '图表类型',
+                    data: [
+                        {name: '3D饼状图', value: 'pie_3d'},
+                        {name: '饼状图', value: 'pie_basic'},
+                        {name: '3D环形图', value: 'pie_donut_3d'},
+                        {name: '柱状图', value: 'column_rotated_labels'},
+                        {name: '直线图', value: 'line_basic'},
+                        {name: '走势图', value: 'line_time_series'},
+                    ],
+                },
+                {
+                    title: '图表属性',
+                    data: [
+                        {name: '总订单面积', value: 'sumOrdArea'},
+                        {name: '总长度', value: 'sumLength'},
+                        {name: '平均修边', value: 'AvgTrim'},
+                        {name: '平均门幅', value: 'AvgPW'},
+                        {name: '总款数', value: 'sumCount'},
+                    ],
+                },
+            ],
+            statisModelProp: {
+                //统计类型
+                type: {},
+                //统计方式
+                way: {},
+                //图表选择
+                charts: {
+                    type: {},
+                    prop: {},
+                },
+            },
+            //侧边栏的表单
+            form: {
+                SState: '',
+                DateType: 'ProDate',
+                BeginDate: '{:date(\'Y-m-d\',strtotime($config[\'GetSchSumBeginDate\']))}',
+                EndDate: '{:date(\'Y-m-d\',strtotime($config[\'GetSchSumEndDate\']))}',
+                rememberForm: 'no'
+            },
+            MinDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetSchSumMinDate\']))}'),
+            MaxDate: new Date('{:date(\'Y-m-d\',strtotime($config[\'GetSchSumMaxDate\']))}'),
+            BeforeOpenSliderForm: {},//打开侧边栏前的form对象
+            BarVisible: false,
+            tempTop: 0,
+            highcharts: {
+                title: '',
+                mark: '',
+                data: []
+            },
+            lists: {},
+            lists_: false, pie_3d: false, pie_basic: false, pie_donut_3d: false, column_rotated_labels: false, line_basic: false, line_time_series: false,
+            Error: false,ErrorInfo: ''
+        },
+        computed: {
+            statisStr: function () {
+                var smp = this.statisModelProp;
+                var str = this.BuildElement('统计类型：',smp.type.name) + this.BuildElement('统计方式：',smp.way.name);
+                var ctn = smp.charts.type.name;
+                var cpn = smp.charts.prop.name;
+                if (ctn) {
+                    str += this.BuildElement('图表类型：',ctn);
+                }
+                if (cpn) {
+                    str += this.BuildElement('图表属性：',cpn);
+                }
+                return str;
+            },
+        },
+        methods: {
+            BuildApiParams: function () {
+                this.form.BeginDate = datetimeFormat(this.form.BeginDate,'yyyy-MM-dd');
+                this.form.EndDate = datetimeFormat(this.form.EndDate,'yyyy-MM-dd');
+                return {
+                    State: this.statisModelProp.type.value,
+                    form: this.form,
+                };
+            },
+            BuildOnlyShowChartsParams: function () {
+                return {
+                    State: this.statisModelProp.type,
+                    form: this.form,
+                    way: this.statisModelProp.way,
+                    type: this.statisModelProp.charts.type,
+                    prop: this.statisModelProp.charts.prop,
+                };
+            },
+            GetSchSum: function () {
+                var _this = this;
+                _this.highcharts.title = '';
+                _this.highcharts.mark = '';
+                _this.highcharts.data = [];
+                _this.lists = {};
+                _this.lists_ = false;_this.pie_3d = false;_this.pie_basic = false;_this.pie_donut_3d = false;_this.column_rotated_labels = false;_this.line_basic = false;_this.line_time_series = false;
+                _this.Error = false;_this.ErrorInfo = '';
+                $.ajax({
+                    url: '{:U(\'GetSchSum_api\')}',
+                    type: 'get',
+                    data: _this.BuildApiParams(),
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret !== '{:C(\'succ_ret\')}'){
+                            _this.Error = true;_this.ErrorInfo = respon.msg;return;
+                        }
+                        if(_this.statisModelProp.way.value === 'lists'){
+                            //列表
+                            _this.lists_ = true;
+                            _this.lists = respon.data;
+                        }else if(_this.statisModelProp.way.value === 'charts'){
+                            //图表
+                            switch (_this.statisModelProp.charts.prop.value) {
+                                case 'sumOrdArea': _this.highcharts.mark = '总订单面积';break;
+                                case 'sumLength': _this.highcharts.mark = '总长度';break;
+                                case 'AvgTrim': _this.highcharts.mark = '平均修边';break;
+                                case 'AvgPW': _this.highcharts.mark = '平均门幅';break;
+                                case 'sumCount': _this.highcharts.mark = '总款数';break;
+                                default: _this.Error = true;_this.ErrorInfo = '非法操作';return;
+                            }
+                            if(_this.statisModelProp.type.value === ''){
+                                //_this.Error = true;_this.ErrorInfo = '汇总不支持图表统计';return;
+                                _this.highcharts.title = '汇总';
+                                //汇总其实只有1条数据，为了严谨还是按遍历的写法来构建图表数据
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = ['汇总',Number(v[_this.statisModelProp.charts.prop.value])];
+                                });
+                            }else if(_this.statisModelProp.type.value === '1'){
+                                _this.highcharts.title = '生产线分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.LineId,Number(v[_this.statisModelProp.charts.prop.value])];
+                                });
+                            }else if(_this.statisModelProp.type.value === '2'){
+                                _this.highcharts.title = '门幅分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.SPaperWidth,Number(v[_this.statisModelProp.charts.prop.value])];
+                                });
+                            }else if(_this.statisModelProp.type.value === '3'){
+                                _this.highcharts.title = '坑型分布';
+                                $(respon.data).each(function(k,v){
+                                    _this.highcharts.data[k] = [v.Flutes,Number(v[_this.statisModelProp.charts.prop.value])];
+                                });
+                            }else{
+                                _this.Error = true;_this.ErrorInfo = '非法操作';return;
+                            }
+                            if(_this.statisModelProp.charts.type.value === 'pie_3d'){
+                                //3D饼状图
+                                _this.pie_3d = true;
+                                var obj = pie_3d(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#pie_3d').highcharts(obj);
+                            }else if(_this.statisModelProp.charts.type.value === 'pie_basic'){
+                                //饼状图
+                                _this.pie_basic = true;
+                                var obj = pie_basic(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#pie_basic').highcharts(obj);
+                            }else if(_this.statisModelProp.charts.type.value === 'pie_donut_3d'){
+                                //3D环形图
+                                _this.pie_donut_3d = true;
+                                var obj = pie_donut_3d(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#pie_donut_3d').highcharts(obj);
+                            }else if(_this.statisModelProp.charts.type.value === 'column_rotated_labels'){
+                                //柱状图
+                                _this.column_rotated_labels = true;
+                                var obj = column_rotated_labels(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#column_rotated_labels').highcharts(obj);
+                            }else if(_this.statisModelProp.charts.type.value === 'line_basic'){
+                                //直线图
+                                _this.line_basic = true;
+                                var obj = line_basic(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#line_basic').highcharts(obj);
+                            }else if(_this.statisModelProp.charts.type.value === 'line_time_series'){
+                                //走势图
+                                _this.line_time_series = true;
+                                var obj = line_time_series(_this.highcharts,'{:U(\'OnlyShowCharts_GetSchSum\')}',_this.BuildOnlyShowChartsParams());
+                                $('#line_time_series').highcharts(obj);
+                            }else{
+                                _this.Error = true;_this.ErrorInfo = '非法操作';
+                            }
+                        }else{
+                            _this.Error = true;_this.ErrorInfo = '非法操作';
+                        }
+                    }
+                });
+            },
+            BuildElement: function (str1,str2) {
+                return '<span class="tag">' + str1 + '<span>' + str2 + '</span>' + '</span>';
+            },
+            showFilterPage: function() {
+                this.filterbarMode = true;
+                //$('footer').hide();
+                (function(window, location) {
+                    var u = (location.href).replace(location.hash, '');
+                    history.replaceState(null, document.title, u + '#!/filterbar');
+                    history.pushState(null, document.title, u);
+                    window.addEventListener('popstate', function() {
+                        if (location.hash === '#!/filterbar') {
+                            history.replaceState(null, document.title, u);
+                            this.filterbarMode = false;
+                        }
+                    }, false);
+                } (window, location));
+            },
+            finishFilter: function(statisFilter) {
+                //$('footer').show();
+                this.statisModelProp = statisFilter;
+                this.GetSchSum();
+            },
+            ResetForm: function () {
+                this.form = Object.assign({},this.BeforeOpenSliderForm);
+            },
+            OpenSlider: function () {
+                this.BarVisible = true;
+                this.tempTop = document.scrollingElement.scrollTop;
+                document.body.classList.add('body-lock');
+                document.body.style.top = -this.tempTop + 'px';
+                this.BeforeOpenSliderForm = Object.assign({},this.form);
+            },
+            CloseSlider: function (IsClickConfirm) {
+                this.BarVisible = false;
+                document.body.classList.remove('body-lock');
+                document.scrollingElement.scrollTop = this.tempTop;
+                if(IsClickConfirm
+                    //&& !checkObjectIsEqual(this.form,this.BeforeOpenSliderForm)
+                ){
+                    this.GetSchSum();
+                }else{
+                    this.ResetForm();
+                }
+            }
+        },
+        created: function () {
+            var _this = this;
+            _this.statisFilter.forEach(function(item) {
+                switch (item.title) {
+                    case '统计类型':
+                        _this.statisModelProp.type = item.data[0];
+                        break;
+                    case '统计方式':
+                        _this.statisModelProp.way = item.data[0];
+                        break;
+                }
+            });
+            if('{$_GET[\'Params\']}'){
+                var Params = eval('(' + '{$_GET[\'Params\']}' + ')');
+                _this.statisModelProp.type = Params.State;
+                _this.form = Params.form;
+                _this.statisModelProp.way = Params.way;
+                _this.statisModelProp.charts.type = Params.type;
+                _this.statisModelProp.charts.prop = Params.prop;
+            }
+            _this.form = Object.assign({},_this.form,eval('(' + '{$rememberForm}' + ')'));
+            _this.GetSchSum();
+        },
+    });
+</script>

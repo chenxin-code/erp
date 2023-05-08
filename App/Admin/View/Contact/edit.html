@@ -1,0 +1,70 @@
+<div id="VueBox">
+    <form>
+        <table>
+            <tr>
+                <td>图标</td>
+                <td>
+                    <label :for="v" style="display: block;" v-for="v in ContactIcon">
+                        <input type="radio" :value="v" :id="v" v-model="Icon">&nbsp;
+                        <i class="iconfont" :class="v"></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>名称</td>
+                <td>
+                    <input style="width: 300px;" v-model="Name">
+                </td>
+            </tr>
+            <tr>
+                <td>内容</td>
+                <td>
+                    <input style="width: 500px;" v-model="Content">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <input type="submit" class="btn" value="保存" style="margin: 20px 10px 0 0;" @click="edit()">
+    <input type="submit" class="btn" value="返回" @click="window.location.href = '{:U(\'lists\')}'">
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            ContactIcon: eval('(' + '{$ContactIcon}' + ')'),
+            Icon: '{$data.Icon}',
+            Name: '{$data.Name}',
+            Content: '{$data.Content}'
+        },
+        methods: {
+            edit: function () {
+                var _this = this;
+                if(!_this.Icon){swal({type: 'error', title: '请选择图标'});return;}
+                if(!_this.Name){swal({type: 'error', title: '请填写名称'});return;}
+                if(!_this.Content){swal({type: 'error', title: '请填写内容'});return;}
+                $.ajax({
+                    url: '{:U(\'edit_api\')}',
+                    type: 'post',
+                    data: {
+                        Id: '{$_GET[\'Id\']}',
+                        Icon: _this.Icon,
+                        Name: _this.Name,
+                        Content: _this.Content
+                    },
+                    //beforeSend: function () {},
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            swal({type: 'success', title: respon.msg}).then(function () {
+                                window.location.href = '{:U(\'lists\')}';
+                            });
+                        }else{
+                            swal({type: 'error', title: respon.msg});
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>

@@ -1,0 +1,573 @@
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="tab-box">
+        <div @click="Type = 's'" :class="{'active':Type === 's'}">
+            <i class="iconfont icon-mobancaidan"></i>&nbsp;简单纸板
+        </div>
+        <div @click="Type = 'c'" :class="{'active':Type === 'c'}">
+            <i class="iconfont icon-zhixiang"></i>&nbsp;纸箱纸板
+        </div>
+    </div>
+    <cell-group style="margin-top: 80px;margin-bottom: 40px;" mini>
+        <cell title="客户" placeholder="选择客户" @click="OpenCusPicker()" is-link>
+            <span v-if="form.CusId">{{form.CusId}}</span>
+        </cell>
+        <cell title="材质" placeholder="选择材质" @click="OpenBoardPicker()" is-link>
+            <span v-if="form.BoardId">{{form.BoardId}}</span>
+        </cell>
+        <cell title="加修边">
+            <mt-switch style="float: right;" v-model="form.bAddTrim"></mt-switch>
+        </cell>
+        <cell title="加面积">
+            <mt-switch style="float: right;" v-model="form.bAddArea"></mt-switch>
+        </cell>
+        <cell title="毛片">
+            <mt-switch style="float: right;" v-model="form.bEdge"></mt-switch>
+        </cell>
+        <cell title="规格(mm)" v-if="Type === 's'">
+            <div class="slot">
+                <input type="number" placeholder="板长" v-model="form.Length">
+                x
+                <input type="number" placeholder="板宽" v-model="form.Width">
+            </div>
+        </cell>
+        <field label="压线" placeholder="压线和=板宽（格式：x+x+x）" v-model="form.ScoreInfo" v-if="Type === 's'"></field>
+        <field label="订单数" type="number" placeholder="输入订单数" v-model="form.OrdQty1" v-if="Type === 's'"></field>
+        <cell title="箱型" placeholder="选择箱型" @click="OpenBoxPicker()" v-if="Type === 'c'" is-link>
+            <span v-if="form.BoxId">{{form.BoxId}}</span>
+        </cell>
+        <cell title="规格(mm)" v-if="Type === 'c'">
+            <div class="slot">
+                <input type="number" placeholder="箱长" v-model="form.BoxL">
+                x
+                <input type="number" placeholder="箱宽" v-model="form.BoxW">
+                x
+                <input type="number" placeholder="箱高" v-model="form.BoxH">
+            </div>
+        </cell>
+        <field label="箱舌(mm)" type="number" placeholder="输入箱舌" v-model="form.TonLen" v-if="Type === 'c'"></field>
+        <field label="封箱调整(mm)" type="number" placeholder="输入封箱调整" v-model="form.ULen" v-if="Type === 'c'"></field>
+        <field label="订单数" type="number" placeholder="输入订单数" v-model="form.OrdQty2" v-if="Type === 'c'"></field>
+        <cell title="销售面积(㎡)" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dSalesArea">{{r1.dSalesArea}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="折扣" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dDisRate">{{r1.dDisRate}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="平方报价(元/㎡)" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dOriPrice">{{r1.dOriPrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="片价(元/片)" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dUnitPrice">{{r1.dUnitPrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="平方价(元/㎡)" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dSquarePrice">{{r1.dSquarePrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="金额(元)" v-if="Type === 's'">
+            <span style="color: #3cb371;" v-if="r1.dAmt">{{r1.dAmt}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="销售面积(㎡)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dSalesArea">{{r2.dSalesArea}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="折扣" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dDisRate">{{r2.dDisRate}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="平方报价(元/㎡)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dOriPrice">{{r2.dOriPrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="片价(元/片)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dUnitPrice">{{r2.dUnitPrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="平方价(元/㎡)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dSquarePrice">{{r2.dSquarePrice}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="金额(元)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.dAmt">{{r2.dAmt}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="板长(mm)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.iLength">{{r2.iLength}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="板宽(mm)" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.iWidth">{{r2.iWidth}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+        <cell title="压线" v-if="Type === 'c'">
+            <span style="color: #3cb371;" v-if="r2.strScoreInfo">{{r2.strScoreInfo}}</span>
+            <span style="color: #999;" v-else>待计算</span>
+        </cell>
+    </cell-group>
+    <div class="cell-group-btn" @click="CalBdPriceInfo()">计算</div>
+    <master-picker :show.sync="CusPickMode"
+                   :select-data="CusPickData"
+                   :no-data="CusNoData"
+                   :loading="CusLoading"
+                   @clear="clearCusPicker"
+                   @confirm="confirmCusPicker"
+                   @close="closeCusPicker"
+                   connection>
+        <input class="keyword" placeholder="请输入关键词" v-model="CusKeyword">
+    </master-picker>
+    <master-picker :show.sync="BoardPickMode"
+                   :select-data="BoardPickData"
+                   :no-data="BoardNoData"
+                   :loading="BoardLoading"
+                   @clear="clearBoardPicker"
+                   @confirm="confirmBoardPicker"
+                   @close="closeBoardPicker"
+                   connection>
+        <input class="keyword" placeholder="请输入关键词" v-model="BoardKeyword">
+    </master-picker>
+    <master-picker :show.sync="BoxPickMode"
+                   :select-data="BoxPickData"
+                   :no-data="BoxNoData"
+                   :loading="BoxLoading"
+                   @clear="clearBoxPicker"
+                   @confirm="confirmBoxPicker"
+                   @close="closeBoxPicker"
+                   connection>
+        <input class="keyword" placeholder="请输入关键词" v-model="BoxKeyword">
+    </master-picker>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            Type: 's',
+            form: {
+                CusId: null,
+                BoardId: null,
+                bAddTrim: false,
+                bAddArea: false,
+                bEdge: false,
+                Length: null,
+                Width: null,
+                ScoreInfo: null,
+                OrdQty1: null,
+                BoxId: null,
+                BoxL: null,
+                BoxW: null,
+                BoxH: null,
+                TonLen: null,
+                ULen: null,
+                OrdQty2: null
+            },
+            r1: {
+                dSalesArea: null,
+                dDisRate: null,
+                dOriPrice: null,
+                dUnitPrice: null,
+                dSquarePrice: null,
+                dAmt: null
+            },
+            r2: {
+                dSalesArea: null,
+                dDisRate: null,
+                dOriPrice: null,
+                dUnitPrice: null,
+                dSquarePrice: null,
+                dAmt: null,
+                iLength: null,
+                iWidth: null,
+                strScoreInfo: null
+            },
+            //客户Picker
+            CusKeyword: '',
+            CusPickMode: false,
+            CusPickData: {
+                columns: 1,
+                default: [],
+                pData1: []
+            },
+            CusLoading: true,
+            CusNoData: true,
+            CusLastPicked: {},
+            //材质Picker
+            BoardKeyword: '',
+            BoardPickMode: false,
+            BoardPickData: {
+                columns: 1,
+                default: [],
+                pData1: []
+            },
+            BoardLoading: true,
+            BoardNoData: true,
+            BoardLastPicked: {},
+            //箱型Picker
+            BoxKeyword: '',
+            BoxPickMode: false,
+            BoxPickData: {
+                columns: 1,
+                default: [],
+                pData1: []
+            },
+            BoxLoading: true,
+            BoxNoData: true,
+            BoxLastPicked: {}
+        },
+        methods: {
+            CalBdQuotaInfo: function () {
+                var _this = this;
+                if(Number('{$config[\'CalcAutoGetdOriPrice\']}') && _this.form.CusId && _this.form.BoardId){
+                    $.ajax({
+                        url: '{$ErpApiPrefix}/CalBdQuotaInfo',
+                        type: 'post',
+                        data: {
+                            strFactoryId: '{$config[\'FactoryId\']}',
+                            strCusId: _this.form.CusId,
+                            strBoardId: _this.form.BoardId
+                        },
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                            _this.r1.dOriPrice = _this.r2.dOriPrice = null;
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.result[2] === false){
+                                $.alert(respon.result[1],'计算失败');
+                            }else{
+                                var result = eval('(' + respon.result[0] + ')');
+                                _this.r1.dOriPrice = _this.r2.dOriPrice = result[0].dOriPrice;
+                                $.toast('平方报价 => ' + result[0].dOriPrice,'text');
+                            }
+                        }
+                    });
+                }
+            },
+            CalBdPriceInfo: function () {
+                var _this = this;
+                if(!_this.form.CusId){$.toast('请选择客户','text');return;}
+                if(!_this.form.BoardId){$.toast('请选择材质','text');return;}
+                if(_this.Type === 's' && !_this.form.Length){$.toast('请填写板长','text');return;}
+                if(_this.Type === 's' && !_this.form.Width){$.toast('请填写板宽','text');return;}
+                if(_this.Type === 's' && _this.form.ScoreInfo){
+                    if(!new RegExp('{:C(\'ScoreInfoPatternJS\')}').test(_this.form.ScoreInfo)){
+                        $.toast('压线格式不正确','text');return;
+                    }
+                    if(Number(this.form.Width) !== eval(this.form.ScoreInfo)){
+                        $.toast('压线和不等于板宽','text');return;
+                    }
+                }
+                if(_this.Type === 's' && !_this.form.OrdQty1){$.toast('请填写订单数','text');return;}
+                if(_this.Type === 'c' && !_this.form.BoxId){$.toast('请选择箱型','text');return;}
+                if(_this.Type === 'c' && !_this.form.BoxL){$.toast('请填写箱长','text');return;}
+                if(_this.Type === 'c' && !_this.form.BoxW){$.toast('请填写箱宽','text');return;}
+                if(_this.Type === 'c' && !_this.form.BoxH){$.toast('请填写箱高','text');return;}
+                if(_this.Type === 'c' && !_this.form.OrdQty2){$.toast('请填写订单数','text');return;}
+                $.ajax({
+                    url: '{$ErpApiPrefix}/CalBdPriceInfo/' + _this.Type,
+                    type: 'post',
+                    data: {
+                        strFactoryId: '{$config[\'FactoryId\']}',
+                        strCusId: _this.form.CusId,
+                        strBoardId: _this.form.BoardId,
+                        bAddTrim: _this.form.bAddTrim,
+                        bAddArea: _this.form.bAddArea,
+                        bEdge: _this.form.bEdge,
+                        iLength: _this.Type === 's'?_this.form.Length:null,
+                        iWidth: _this.Type === 's'?_this.form.Width:null,
+                        strScoreInfo: _this.Type === 's'?_this.form.ScoreInfo:null,
+                        iQty: _this.Type === 's'?_this.form.OrdQty1:_this.form.OrdQty2,
+                        strBoxId: _this.Type === 'c'?_this.form.BoxId:null,
+                        iBoxL: _this.Type === 'c'?_this.form.BoxL:null,
+                        iBoxW: _this.Type === 'c'?_this.form.BoxW:null,
+                        iBoxH: _this.Type === 'c'?_this.form.BoxH:null,
+                        iTonLen: _this.Type === 'c'?_this.form.TonLen:null,
+                        iULen: _this.Type === 'c'?_this.form.ULen:null
+                    },
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                        if(_this.Type === 's'){
+                            _this.r1.dSalesArea = null;
+                            _this.r1.dDisRate = null;
+                            _this.r1.dOriPrice = null;
+                            _this.r1.dUnitPrice = null;
+                            _this.r1.dSquarePrice = null;
+                            _this.r1.dAmt = null;
+                        }else{
+                            _this.r2.dSalesArea = null;
+                            _this.r2.dDisRate = null;
+                            _this.r2.dOriPrice = null;
+                            _this.r2.dUnitPrice = null;
+                            _this.r2.dSquarePrice = null;
+                            _this.r2.dAmt = null;
+                            _this.r2.iLength = null;
+                            _this.r2.iWidth = null;
+                            _this.r2.strScoreInfo = null;
+                        }
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.result[2] === false){
+                            $.alert(respon.result[1],'计算失败');
+                        }else{
+                            var result = eval('(' + respon.result[0] + ')');
+                            if(_this.Type === 's'){
+                                _this.r1.dSalesArea = result[0].dSalesArea;
+                                _this.r1.dDisRate = result[0].dDisRate;
+                                _this.r1.dOriPrice = result[0].dOriPrice;
+                                _this.r1.dUnitPrice = result[0].dUnitPrice;
+                                _this.r1.dSquarePrice = result[0].dSquarePrice;
+                                _this.r1.dAmt = result[0].dAmt;
+                            }else{
+                                _this.r2.dSalesArea = result[0].dSalesArea;
+                                _this.r2.dDisRate = result[0].dDisRate;
+                                _this.r2.dOriPrice = result[0].dOriPrice;
+                                _this.r2.dUnitPrice = result[0].dUnitPrice;
+                                _this.r2.dSquarePrice = result[0].dSquarePrice;
+                                _this.r2.dAmt = result[0].dAmt;
+                                _this.r2.iLength = result[0].iLength;
+                                _this.r2.iWidth = result[0].iWidth;
+                                _this.r2.strScoreInfo = result[0].strScoreInfo;
+                            }
+                            $.toast('计算结果已更新');
+                        }
+                    }
+                });
+            },
+            //自动获取默认的箱舌＆封箱调整
+            AutoGetTonLenAndULen: function (IsContinueCallCalBdQuotaInfo) {
+                var _this = this;
+                if(Number('{$config[\'CalcAutoGetTonLenAndULen\']}') && _this.Type === 'c' && _this.form.CusId && _this.form.BoardId){
+                    //console.log('自动获取默认的箱舌＆封箱调整');
+                    $.ajax({
+                        url: '{:U(\'AutoGetTonLenAndULen_api\')}',
+                        type: 'get',
+                        data: {CusId: _this.form.CusId,BoardId: _this.form.BoardId},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            _this.form.TonLen = respon.TonLen;
+                            _this.form.ULen = respon.ULen;
+                            $.toast('箱舌 => ' + respon.TonLen + '&nbsp;&nbsp;&nbsp;封箱调整 => ' + respon.ULen,'text',function () {
+                                if(IsContinueCallCalBdQuotaInfo){
+                                    _this.CalBdQuotaInfo();
+                                }
+                            });
+                        }
+                    });
+                }else{
+                    if(IsContinueCallCalBdQuotaInfo){
+                        _this.CalBdQuotaInfo();
+                    }
+                }
+            },
+            //客户Picker
+            OpenCusPicker: function () {
+                this.CusPickMode = true;
+                if(this.CusPickData.pData1.length === 0){
+                    this.SearchCus();
+                }else{
+                    this.CusPickData.default[0] = this.CusLastPicked;
+                }
+            },
+            SearchCus: function () {
+                var _this = this;
+                _this.CusPickData.default[0] = {};
+                _this.CusPickData.pData1 = [];
+                _this.CusLoading = true;
+                _this.CusNoData = false;
+                $.ajax({
+                    url: '{:U(\'CusPicker_api\')}',
+                    type: 'get',
+                    data: {CusKeyword: _this.CusKeyword}
+                }).then(function (respon) {
+                    _this.CusLoading = false;
+                    var respon = eval('(' + respon + ')');
+                    var data = [];
+                    respon.forEach(function (item,index) {
+                        data.push({text: respon[index].CusName,value: respon[index].CusId});
+                    });
+                    _this.CusPickData.default[0] = data[0];
+                    _this.CusPickData.pData1 = data;
+                    if (!data[0]) {
+                        _this.CusNoData = true;
+                    }
+                });
+            },
+            clearCusPicker: function () {
+                this.CusPickMode = false;
+                this.form.CusId = '';
+                //还原
+                this.form.bAddTrim = false;
+                this.form.bAddArea = false;
+            },
+            confirmCusPicker: function (val) {
+                var _this = this;
+                _this.CusPickMode = false;
+                if(val.select1){
+                    _this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                    _this.form.CusId = val.select1.value;
+                    if(Number('{$config[\'CalcAutoGetTrimAndAreaByCus\']}')){
+                        $.ajax({
+                            url: '{:U(\'AutoGetTrimAndAreaByCus_api\')}',
+                            type: 'get',
+                            data: {CusId: _this.form.CusId},
+                            beforeSend: function () {
+                                _this.$indicator.open();
+                            },
+                            success: function (respon) {
+                                _this.$indicator.close();
+                                var respon = eval('(' + respon + ')');
+                                _this.form.bAddTrim = (respon.SaAreaAddTrim === '1');
+                                _this.form.bAddArea = (respon.SaAreaAddArea === '1');
+                            }
+                        });
+                    }
+                }
+            },
+            closeCusPicker: function (val) {
+                if(val.select1){
+                    this.CusLastPicked = {text: val.select1.text,value: val.select1.value};
+                }
+            },
+            //材质Picker
+            OpenBoardPicker: function () {
+                this.BoardPickMode = true;
+                if(this.BoardPickData.pData1.length === 0){
+                    this.SearchBoard();
+                }else{
+                    this.BoardPickData.default[0] = this.BoardLastPicked;
+                }
+            },
+            SearchBoard: function () {
+                var _this = this;
+                _this.BoardPickData.default[0] = {};
+                _this.BoardPickData.pData1 = [];
+                _this.BoardLoading = true;
+                _this.BoardNoData = false;
+                $.ajax({
+                    url: '{:U(\'BoardPicker_api\')}',
+                    type: 'get',
+                    data: {BoardKeyword: _this.BoardKeyword}
+                }).then(function (respon) {
+                    _this.BoardLoading = false;
+                    var respon = eval('(' + respon + ')');
+                    var data = [];
+                    respon.forEach(function (item,index) {
+                        data.push({text: respon[index].BoardName,value: respon[index].BoardId});
+                    });
+                    _this.BoardPickData.default[0] = data[0];
+                    _this.BoardPickData.pData1 = data;
+                    if (!data[0]) {
+                        _this.BoardNoData = true;
+                    }
+                });
+            },
+            clearBoardPicker: function () {
+                this.BoardPickMode = false;
+                this.form.BoardId = '';
+            },
+            confirmBoardPicker: function (val) {
+                this.BoardPickMode = false;
+                if(val.select1){
+                    this.BoardLastPicked = {text: val.select1.text,value: val.select1.value};
+                    this.form.BoardId = val.select1.value;
+                }
+            },
+            closeBoardPicker: function (val) {
+                if(val.select1){
+                    this.BoardLastPicked = {text: val.select1.text,value: val.select1.value};
+                }
+            },
+            //箱型Picker
+            OpenBoxPicker: function () {
+                this.BoxPickMode = true;
+                if(this.BoxPickData.pData1.length === 0){
+                    this.SearchBox();
+                }else{
+                    this.BoxPickData.default[0] = this.BoxLastPicked;
+                }
+            },
+            SearchBox: function () {
+                var _this = this;
+                _this.BoxPickData.default[0] = {};
+                _this.BoxPickData.pData1 = [];
+                _this.BoxLoading = true;
+                _this.BoxNoData = false;
+                $.ajax({
+                    url: '{:U(\'BoxPicker_api\')}',
+                    type: 'get',
+                    data: {BoxKeyword: _this.BoxKeyword}
+                }).then(function (respon) {
+                    _this.BoxLoading = false;
+                    var respon = eval('(' + respon + ')');
+                    var data = [];
+                    respon.forEach(function (item,index) {
+                        data.push({text: respon[index].BoxName,value: respon[index].BoxId});
+                    });
+                    _this.BoxPickData.default[0] = data[0];
+                    _this.BoxPickData.pData1 = data;
+                    if (!data[0]) {
+                        _this.BoxNoData = true;
+                    }
+                });
+            },
+            clearBoxPicker: function () {
+                this.BoxPickMode = false;
+                this.form.BoxId = '';
+            },
+            confirmBoxPicker: function (val) {
+                this.BoxPickMode = false;
+                if(val.select1){
+                    this.BoxLastPicked = {text: val.select1.text,value: val.select1.value};
+                    this.form.BoxId = val.select1.value;
+                }
+            },
+            closeBoxPicker: function (val) {
+                if(val.select1){
+                    this.BoxLastPicked = {text: val.select1.text,value: val.select1.value};
+                }
+            }
+        },
+        watch: {
+            CusKeyword: function () {
+                this.SearchCus();
+            },
+            BoardKeyword: function () {
+                this.SearchBoard();
+            },
+            BoxKeyword: function () {
+                this.SearchBox();
+            },
+            Type: function () {
+                this.AutoGetTonLenAndULen(false);
+            },
+            'form.CusId': function () {
+                this.AutoGetTonLenAndULen(true);
+            },
+            'form.BoardId': function () {
+                this.AutoGetTonLenAndULen(true);
+            }
+        }
+    });
+</script>

@@ -1,0 +1,103 @@
+<style>
+    .img-box {
+        margin: 5px auto;
+        padding-bottom: 100%;
+        width: 96%;
+        position: relative;
+    }
+    .img-box img {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        position: absolute;
+    }
+    .img-box .icons-group {
+        height: 16px;
+        line-height: 16px;
+        color: #fff;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .img-box .icons-group > div {
+        padding: 0 3px;
+        font-size: 12px;
+        border-top-right-radius: 5px;
+        float: right;
+    }
+    /****************************************/
+    .progress-bar {
+        margin: 5px auto;
+        width: 90%;
+        height: 25px;
+        background-color: #fff;
+        border: 1px solid #fc91b1;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+    }
+    .progress-bar .liquid {
+        height: 100%;
+        background-color: #fedee8;
+        border-radius: 15px;
+    }
+    .progress-bar .descr {
+        width: 100%;
+        line-height: 25px;
+        color: #e60044;
+        font-size: 15px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        position: absolute;
+        top: 0;
+    }
+</style>
+
+<div id="VueBox">
+    <group-header flag="{$HeaderFlag}" index_url="{:U('Wap0/Index1/index')}" menu_url="{:U('Wap0/Index/menu')}"></group-header>
+    <div style="margin: 50% 0;text-align: center;" v-if="$.isEmptyObject(FlagLists)">
+        <img src="__RES__/empty.jpg" style="width: 45%;">
+        <p style="margin-top: 6px;font-size: 15px;color: gray;">没有“{$config['BoardFlag']}”产品</p>
+    </div>
+    <div style="margin: 40px 0 10px;display: flex;flex-flow: wrap;" v-else>
+        <div style="width: 50%;cursor: pointer;" @click="window.location.href = '{:U(\'detail\')}?Id=' + v.Id" v-for="v in FlagLists">
+            <div class="img-box" v-if="v.Pic[0]">
+                <img :src="'__RES__/' + v.Pic[0]">
+                <div class="icons-group">
+                    <div style="background-color: #d51938;">{$config['BoardFlag']}</div>
+                </div>
+            </div>
+            <div style="margin: 0 auto;width: 90%;font-size: 15px;word-break: break-all;">
+                <span style="color: #e01835;">{{v.BoardId}}</span><span v-if="v.Title">,{{v.Title}}</span>
+            </div>
+            <div style="margin: 0 auto;width: 90%;">
+                <span style="font-size: 20px;color: #de1935;">¥{{v.Price}}/㎡</span>
+                <span style="font-size: 15px;color: #cacaca;text-decoration: line-through;">¥{{v.MarketPrice}}/㎡</span>
+            </div>
+            <vue2-countdown
+                    :start-time="v.BeginTime"
+                    :end-time="v.EndTime"
+                    :current-time="v.CurTime"
+                    :tip-text="'距团购开始'"
+                    :tip-text-end="'距团购结束'"
+                    :end-text="'团购已结束'"
+                    style="margin: 0 2px;padding: 5px 0;font-size: 15px;text-align: center;background-color: #f5f5f5;border-radius: 8px;">
+            </vue2-countdown>
+            <div class="progress-bar">
+                <div class="liquid" :style="'width: ' + v.SalePercent + '%;'"></div>
+                <div class="descr">已抢{{v.SalePercent}}%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            FlagLists: eval('(' + '{$FlagLists}' + ')')
+        }
+    });
+</script>

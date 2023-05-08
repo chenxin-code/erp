@@ -1,0 +1,55 @@
+<div id="VueBox">
+    <form>
+        <table>
+            <tr>
+                <td>账号</td>
+                <td>
+                    <input style="width: 100px;" v-model="UserName">
+                </td>
+            </tr>
+            <tr>
+                <td>密码</td>
+                <td>
+                    <input style="width: 100px;" v-model="PassWord">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <input type="submit" class="btn" value="添加用户" style="margin: 20px 10px 0 0;" @click="add()">
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            UserName: null,
+            PassWord: null
+        },
+        methods: {
+            add: function () {
+                var _this = this;
+                if(!_this.UserName){swal({type: 'error', title: '请填写账号'});return;}
+                if(!_this.PassWord){swal({type: 'error', title: '请填写密码'});return;}
+                $.ajax({
+                    url: '{:U(\'add_api\')}',
+                    type: 'post',
+                    data: {
+                        UserName: _this.UserName,
+                        PassWord: _this.PassWord
+                    },
+                    //beforeSend: function () {},
+                    success: function (respon) {
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            swal({type: 'success', title: respon.msg}).then(function () {
+                                window.location.href = '{:U(\'lists\')}';
+                            });
+                        }else{
+                            swal({type: 'error', title: respon.msg});
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>

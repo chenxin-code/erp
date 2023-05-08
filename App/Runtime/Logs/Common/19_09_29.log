@@ -1,0 +1,24 @@
+[ 2019-09-29T10:25:14+08:00 ] 115.206.53.0 /erp/res/5cf0d4b4ef8b5.jpg
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+ERR: 无法加载模块:Res
+
+[ 2019-09-29T10:25:18+08:00 ] 115.206.53.0 /erp/res/5cf0d4b4ef8b5.jpg
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+ERR: 无法加载模块:Res
+
+[ 2019-09-29T10:25:38+08:00 ] 115.206.53.0 /erp/res/5cf0d4b4ef8b5.jpg
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+ERR: 无法加载模块:Res
+
+[ 2019-09-29T10:43:05+08:00 ] 115.206.53.0 /erp/res/5cf0d4b4ef8b5.jpg
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+ERR: 无法加载模块:Res
+

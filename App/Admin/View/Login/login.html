@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{__NOLAYOUT__}
+<html>
+<head>
+	<meta charset="utf-8">
+	<link href="__RES__/{$config['FactoryLogo']}" rel="shortcut icon">
+	<title>{$LayoutTitle}</title>
+	<!-- jQuery -->
+	<script src="__RES__/jquery.min.js"></script>
+	<!-- SweetAlert2 插件 -->
+	<link rel="stylesheet" href="__RES__/SweetAlert2/sweetalert2.min.css">
+	<script src="__RES__/SweetAlert2/sweetalert2.min.js"></script>
+	<!-- 后台样式 -->
+	<link rel="stylesheet" href="__RES__/admin.css?time={:time()}">
+</head>
+<body class="admin-login">
+	<div class="container">
+		<div class="content">
+			<form>
+				<div style="margin: 0 0 15px 0;padding: 0;background-position: 10px 11px !important;background-repeat: no-repeat !important;width: 99.8%;border: 0;color: #fff !important;position: relative;">
+					<div style="padding: 10px 10px 10px 36px;display: block;font-style:normal;line-height: 1.5em;font-size: 15px;">
+						<span style="color: #1a991d;">{$config['FactoryName']}</span>&nbsp;&nbsp;后台管理
+					</div>
+				</div>
+				<table>
+					<tbody>
+						<tr>
+							<td style="padding: 5px 0;width: 60px;vertical-align: baseline;">
+								<label>帐号</label>
+							</td>
+							<td style="padding: 5px 0;vertical-align: baseline;">
+								<input id="UserName" style="height: 25px;font-size: 16px;">
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 5px 0;vertical-align: baseline;">
+								<label>密码</label>
+							</td>
+							<td style="padding: 5px 0;vertical-align: baseline;">
+								<input type="password" id="PassWord" style="height: 25px;font-size: 16px;">
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 5px 0;vertical-align: baseline;">
+								<label>验证码</label>
+							</td>
+							<td style="padding: 5px 0;vertical-align: baseline;position: relative;">
+								<input id="code" style="height: 25px;font-size: 16px;">
+								<img id="code_img" src="{:U('make_code')}" onclick="change_code_img()" title="点击更换验证码"
+									 style="height: 38px;border-top-right-radius: 4px;border-bottom-right-radius: 4px;cursor: pointer;position: absolute;top: 4.5px;right: 0;">
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 5px 0;">
+								<p>
+									<input type="submit" class="btn" style="margin-top: 20px;width: auto;" value="登录" onclick="login();return false;">
+								</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+	function login() {
+		var UserName = $('#UserName').val();
+		var PassWord = $('#PassWord').val();
+		var code = $('#code').val();
+		if(!UserName){swal({type: 'error', title: '请输入帐号'});return;}
+		if(!PassWord){swal({type: 'error', title: '请输入密码'});return;}
+		if(!code){swal({type: 'error', title: '请输入验证码'});return;}
+		$.ajax({
+			url: '{:U(\'login_api\')}',
+			type: 'get',
+			data: {UserName: UserName,PassWord: PassWord,code: code},
+			success: function (respon) {
+				var respon = eval('(' + respon + ')');
+				if(respon.ret === '{:C(\'succ_ret\')}'){
+					window.location.href = (respon.ERP_Admin_ReturnUrl)?respon.ERP_Admin_ReturnUrl:'{:U(\'Index/config\')}';
+				}else{
+					swal({type: 'error', title: respon.msg}).then(function () {
+						change_code_img();
+					});
+				}
+			}
+		});
+	}
+	function change_code_img() {
+		$('#code_img').attr('src','{:U(\'make_code\')}?' + Math.random());
+		$('#code').val('');
+	}
+</script>

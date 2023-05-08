@@ -1,0 +1,205 @@
+<style>
+    .mint-indicator-wrapper {
+        z-index: 2;
+    }
+</style>
+
+<div id="VueBox">
+    <wap1-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Wap0/Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            open_80port="{$config['Open80Port']}"
+            use_scan="{$config['UseScan']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap1-header>
+    <div class="prev-next-select">
+        <div class="prev" @click="change('prev')">
+            <div class="content" v-if="POInSelect[index - 1]">
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">{{POInSelect[index - 1].RecDate}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-zuojiantouxiangzuofanhuimianxing"></i>
+                <span class="patch">到顶了</span>
+            </div>
+        </div>
+        <div class="cur" @click="document.body.classList.add('body-lock');showSelect = true">
+            <div class="content" v-if="POInSelect[index]">
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">{{POInSelect[index].RecDate}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-gouxuan4"></i>
+                <span class="patch">未选择</span>
+            </div>
+        </div>
+        <div class="next" @click="change('next')">
+            <div class="content" v-if="POInSelect[index + 1]">
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">{{POInSelect[index + 1].RecDate}}</span>
+            </div>
+            <div class="content warn" v-else>
+                <i class="iconfont icon-youjiantouxiangyouqianwangmianxing"></i>
+                <span class="patch">到底了</span>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage1">
+        <div class="diy-select-fullpage" v-if="showSelect">
+            <div class="empty" v-if="$.isEmptyObject(POInSelect)">
+                <img src="__RES__/empty.jpg">
+                <p>没有可选择项</p>
+            </div>
+            <div v-else>
+                <div class="item" :class="{'selected':k === index_}" @click="index_ = k" v-for="(v,k) in POInSelect">
+                    <div class="content">
+                        <span>{{v.RecDate}}</span>
+                        <span>{{v.InQty}}&nbsp;件</span>
+                        <span>{{v.SumInWt}}&nbsp;kg</span>
+                    </div>
+                    <label></label>
+                </div>
+            </div>
+            <div class="confirm-btn" @click="document.body.classList.remove('body-lock');showSelect = false;index = index_;WGetPOIn2();">确定</div>
+        </div>
+    </transition>
+    <div class="dongheng-lists-box" style="top: 100px;">
+        <div class="empty" v-if="$.isEmptyObject(lists1)">
+            <img src="__RES__/empty.jpg">
+            <p>没有原纸收货记录</p>
+        </div>
+        <div v-else>
+            <div class="line-item" @click="WGetPOInDetail(v.InNo,v.ShortName)" v-for="(v,k) in lists1">
+                <span style="flex: 1;">{{v.InNo}}<br>{{v.PONo}}</span>
+                <span style="flex: 1;text-align: center;">{{v.InQty}}&nbsp;件<br>{{v.SumPaper}}</span>
+                <span style="flex: 1;text-align: right;">{{v.SumInWt}}&nbsp;kg<br>{{v.ShortName}}</span>
+            </div>
+        </div>
+    </div>
+    <transition name="fullpage">
+        <div class="dongheng-line-info-fullpage" v-if="showLists2">
+            <div>
+                <div class="item span2">
+                    <span>收货日期</span>
+                    <span>{{POInSelect[index].RecDate}}</span>
+                </div>
+                <div class="item span2">
+                    <span>收货单号</span>
+                    <span>{{InNo}}</span>
+                </div>
+                <div class="item span2">
+                    <span>供应商</span>
+                    <span>{{ShortName}}</span>
+                </div>
+                <div class="item" style="color: #0a0;">
+                    <span style="flex: 0.7;">纸类</span>
+                    <span style="flex: 1;text-align: center;">门幅</span>
+                    <span style="flex: 1;text-align: center;">克重</span>
+                    <span style="flex: 1.3;text-align: center;">收货重量(kg)</span>
+                    <span style="flex: 1;text-align: right;">单价</span>
+                </div>
+                <div class="item" v-for="v in lists2">
+                    <span style="flex: 0.7;">{{v.PaperCode}}</span>
+                    <span style="flex: 1;text-align: center;">{{v.PaperWidth}}</span>
+                    <span style="flex: 1;text-align: center;">{{v.PaperWt}}</span>
+                    <span style="flex: 1.3;text-align: center;">{{v.InWt}}</span>
+                    <span style="flex: 1;text-align: right;">{{v.dPrice}}</span>
+                </div>
+            </div>
+            <div class="close-btn" @click="showLists2 = false">关闭</div>
+        </div>
+    </transition>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            POInSelect: eval('(' + '{$POInSelect}' + ')'),
+            index: null,
+            index_: null,
+            showSelect: false,
+            lists1: null,
+            showLists2: false,
+            InNo: null,//收货单号
+            ShortName: null,//供应商
+            lists2: null
+        },
+        methods: {
+            change: function (p) {
+                var _this = this;
+                $.each(_this.POInSelect,function (k,v) {
+                    if(v.RecDate === _this.POInSelect[_this.index].RecDate){
+                        var temp;
+                        if(p === 'prev'){
+                            temp = k - 1;
+                        }else if(p === 'next'){
+                            temp = k + 1;
+                        }
+                        if(_this.POInSelect[temp]){
+                            _this.index = _this.index_ = temp;
+                            _this.WGetPOIn2();
+                        }else{
+                            //$.toast('无效操作','text');
+                        }
+                        return false;
+                    }
+                });
+            },
+            WGetPOIn2: function () {
+                var _this = this;
+                if(_this.POInSelect[_this.index]){
+                    $.ajax({
+                        url: '{:U(\'WGetPOIn2_api\')}',
+                        type: 'get',
+                        data: {RecDate: _this.POInSelect[_this.index].RecDate},
+                        beforeSend: function () {
+                            _this.$indicator.open();
+                        },
+                        success: function (respon) {
+                            _this.$indicator.close();
+                            var respon = eval('(' + respon + ')');
+                            if(respon.ret === '{:C(\'succ_ret\')}'){
+                                _this.lists1 = respon.data;
+                            }else{
+                                $.toast(respon.msg,'forbidden');
+                            }
+                        }
+                    });
+                }
+            },
+            WGetPOInDetail: function (InNo,ShortName) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'WGetPOInDetail_api\')}',
+                    type: 'get',
+                    data: {InNo: InNo},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            _this.showLists2 = true;
+                            _this.InNo = InNo;
+                            _this.ShortName = ShortName;
+                            _this.lists2 = respon.data;
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            this.index = this.index_ = 0;
+            this.WGetPOIn2();
+        }
+    });
+</script>

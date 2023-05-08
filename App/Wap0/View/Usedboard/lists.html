@@ -1,0 +1,306 @@
+<!-- 引入 mescroll 插件 -->
+<script src="__RES__/mescroll/mescroll.min.js"></script>
+<link rel="stylesheet" href="__RES__/mescroll/mescroll.min.css">
+
+<style>
+    .mescroll {
+        height: auto;
+        position: fixed;
+        top: 90px;
+        bottom: 40px;
+    }
+    .mescroll-totop {
+        bottom: 50px;
+        z-index: 1;
+    }
+    /*****************************************************/
+    .usedboard-footer {
+        width: 100%;
+        line-height: 39px;
+        background-color: #fff;
+        display: flex;
+        position: fixed;
+        bottom: 0;
+    }
+    .usedboard-footer::before {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .usedboard-footer .row {
+        flex: auto;
+        padding: 0 15px;
+    }
+    .usedboard-footer .row > label:nth-child(1) {
+        margin-right: 8px;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #979797;
+        border-radius: 3px;
+        cursor: pointer;
+        float: left;
+        position: relative;
+        top: 11px;
+    }
+    .usedboard-footer .row > label:nth-child(1).checked:after {
+        content: '';
+        width: 4px;
+        height: 10px;
+        border: solid #1a991d;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        position: absolute;
+        right: 4px;
+    }
+    .usedboard-footer .row > label:nth-child(2) {
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .usedboard-footer .btn {
+        width: 35%;
+        font-size: 14px;
+        text-align: center;
+        background-color: #1aad19;
+        color: #fff;
+        cursor: pointer;
+    }
+    .usedboard-footer .btn:active {
+        background-color: #179b16;
+    }
+    /*****************************************************/
+    .weui-cells {
+        margin-top: 0;
+    }
+    .weui-cells::before,
+    .weui-cells::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        border: none;
+        transform: scaleY(0.25);
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+    .weui-cells::before {
+        top: 0;
+    }
+    .weui-cells::after {
+        bottom: 0;
+    }
+    .weui-cells .weui-cell {
+        /*padding: 5px;*/
+        font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    .weui-cells .weui-cell::before {
+        display: none;
+    }
+    .weui-cells .weui-cell::after {
+        content: '';
+        height: 1px;
+        background-color: #c8c7cc;
+        transform: scaleY(0.25);
+        position: absolute;
+        bottom: 0;
+        left: 8px;
+        right: 0;
+    }
+    .weui-cells .weui-cell:last-child::after {
+        left: 0;
+    }
+    .weui-cells .weui-cell .weui-cell__bd {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div id="VueBox">
+    <wap0-header
+            flag="{$HeaderFlag}"
+            index_url="{:U('Index1/index')}"
+            menu_url="{:U('Index/menu')}"
+            logout_url="{:U('Index/logout_api')}"
+            use_board_group="{$config['UseBoardGroup']}"
+            use_box_group="{$config['UseBoxGroup']}"
+            open_80port="{$config['Open80Port']}"
+            use_wxpay="{$config['UseWxPay']}"
+            server_name="{$_SERVER['SERVER_NAME']}"
+            frp_80port_domain="{$config['Frp80PortDomain']}"
+            logout_ori_url="{:str_replace($config['OriDomain'],$config['OriDomain'].':'.$config['OriPort'],U('Index/logout_api@'.$config['OriDomain']))}"
+            logout_frp_80port_url="{:U('Index/logout_api@'.$config['Frp80PortDomain'])}">
+    </wap0-header>
+    <div class="diy-search">
+        <div class="container">
+            <i class="iconfont icon-sousuo"></i>
+            <input v-model="Key" placeholder="搜索材质编号">
+            <i class="iconfont icon-qingchu" @click="Key = ''" v-if="Key"></i>
+        </div>
+    </div>
+    <div id="mescroll" class="mescroll">
+        <div id="lists">
+            <div class="weui-cells weui-cells_checkbox">
+                <label class="weui-cell weui-check__label" v-for="(v,k) in BoardCodeCheckbox">
+                    <div class="weui-cell__hd">
+                        <!--参考链接：http://blog.csdn.net/u013910340/article/details/71601554?ABstrategy=codes_snippets_optimize_v3-->
+                        <input type="checkbox" :value="v.BoardId" v-model="BeChecked" class="weui-check">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        {{v.BoardId}}
+                        <span v-if="v.BoardName">[{{v.BoardName}}]</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="usedboard-footer">
+        <div class="row">
+            <label for="only" :class="{'checked':OnlyShowChecked === 'true'}"></label>
+            <label for="only">只显示已选择的</label>
+            <input type="checkbox" id="only" v-model="OnlyShowChecked" true-value="true" false-value="false" hidden>
+        </div>
+        <div class="btn" @click="save()">保存</div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#VueBox',
+        data: {
+            UseQuoBoard: Number('{$config[\'UseQuoBoard\']}'),
+            Key: '',
+            OnlyShowChecked: false,
+            mescroll: null,
+            BoardCodeCheckbox: [],
+            BeChecked: []
+        },
+        methods: {
+            upCallback0: function(page) {
+                var _this = this;
+                _this.search0(page.num, page.size, function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    if(page.num === 1){
+                        _this.BoardCodeCheckbox = [];//如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
+                        _this.BeChecked = respon.BeChecked;//仅在第一页赋值
+                    }
+                    _this.BoardCodeCheckbox = _this.BoardCodeCheckbox.concat(respon.BoardCodeCheckbox);
+                    //console.log(_this.BoardCodeCheckbox);
+                    //console.log(respon.count);
+                    //_this.mescroll.endSuccess(respon.BoardCodeCheckbox.length);
+                    _this.mescroll.endBySize(respon.BoardCodeCheckbox.length, respon.count);
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            upCallback1: function() {
+                var _this = this;
+                _this.search1(function (respon) {
+                    var respon = eval('(' + respon + ')');
+                    _this.BoardCodeCheckbox = respon.BoardCodeCheckbox;
+                    _this.BeChecked = respon.BeChecked;
+                    _this.mescroll.endSuccess(respon.BoardCodeCheckbox.length,false);//如果不涉及到分页取数据，直接给个false
+                }, function() {
+                    _this.mescroll.endErr();
+                });
+            },
+            search0: function (CurPage,PageSize,successCallback,errorCallback) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'lists_api\')}',
+                    type: 'get',
+                    data: {
+                        CurPage: CurPage,
+                        PageSize: PageSize,
+                        Key: _this.Key,
+                        OnlyShowChecked: _this.OnlyShowChecked
+                    },
+                    success: function (respon) {
+                        successCallback && successCallback(respon);
+                    },
+                    error: errorCallback
+                });
+            },
+            search1: function (successCallback,errorCallback) {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'lists_api\')}',
+                    type: 'get',
+                    data: {
+                        Key: _this.Key,
+                        OnlyShowChecked: _this.OnlyShowChecked
+                    },
+                    success: function (respon) {
+                        successCallback && successCallback(respon);
+                    },
+                    error: errorCallback
+                });
+            },
+            ResetLists: function () {
+                this.BoardCodeCheckbox = [];
+                this.BeChecked = [];
+                this.mescroll.resetUpScroll();
+                this.mescroll.hideTopBtn();
+            },
+            save: function () {
+                var _this = this;
+                $.ajax({
+                    url: '{:U(\'save_api\')}',
+                    type: 'post',
+                    data: {BeChecked: _this.BeChecked},
+                    beforeSend: function () {
+                        _this.$indicator.open();
+                    },
+                    success: function (respon) {
+                        _this.$indicator.close();
+                        var respon = eval('(' + respon + ')');
+                        if(respon.ret === '{:C(\'succ_ret\')}'){
+                            $.toast(respon.msg,'text',function () {
+                                _this.ResetLists();
+                            });
+                        }else{
+                            $.toast(respon.msg,'forbidden');
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.mescroll = new MeScroll('mescroll',{
+                up: Object.assign({
+                    isBounce: false, //此处禁止ios回弹,如果您的项目是在iOS的微信,QQ,Safari等浏览器访问的,建议配置此项
+                    noMoreSize: 0, //如果列表已无数据,可设置列表的总数量要大于0条才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看
+                    toTop: {src: '__RES__/totop.png'},
+                    htmlNodata: '<p class="upwarp-nodata">-- 没有更多材质了 --</p>',
+                    //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
+                    //clearEmptyId: 'lists', //1.下拉刷新时会自动先清空此列表,再加入数据; 2.无任何数据时会在此列表自动提示空
+                    empty: {
+                        warpId: 'lists',
+                        icon: '__RES__/empty.jpg',
+                        tip: '没有找到相关材质'
+                    }
+                },_this.UseQuoBoard?{
+                    callback: _this.upCallback1 //上拉回调
+                }:{
+                    callback: _this.upCallback0, //上拉回调
+                    page: {size: 100}
+                })
+            });
+            //初始化vue后,显示vue模板布局
+            //document.getElementById('lists').style.display = 'block';
+        },
+        watch: {
+            Key: function () {this.ResetLists();},
+            OnlyShowChecked: function () {this.ResetLists();}
+        }
+    });
+</script>
